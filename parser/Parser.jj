@@ -60,3 +60,204 @@ MORE: {
 |	<"\\" ~[]>
 }
 <IN_STRING> TOKEN: { <STRING: "\""> : DEFAULT }
+
+void name(): {}
+{
+	<IDENTIFIER>
+}
+void defvars(): {}
+{
+	type() name() ["=" expr()]	 ("," name() ["=" expr()])* ";"
+}
+void defun(): {}
+{
+	typeref() name() "(" params() ")" block()
+}
+void params(): {}
+{
+	LOOKAHEAD(<VOID> ")") <VOID>
+|	fixedparams() ["," "..."]
+}
+void fixedparams(): {}
+{
+	param() (LOOKAHEAD(2) "," param())*
+}
+void param(): {}
+{
+	type() name()
+}
+void block(): {}
+{
+	"{" defvar_list() stmts() "}"
+}
+void type(): {}
+{
+	typeref()
+}
+void typeref(): {}
+{
+	typeref_base()
+	( LOOKAHEAD(2) "[" "]"
+|	"[" <INTEGER> "]")*
+}
+void typeref_base(): {}
+{
+	<VOID>
+|	<INT>
+| LOOKAHEAD({isType(getToken(1).image)}) <IDENTIFIER>
+}
+void stmts(): {}
+{
+	(stmt())*
+}
+void stmt(): {}
+{
+	( ";"
+	|	expr() ";"
+	|	block()
+	|	if_stmt()
+	|	while_stmt()
+	|	for_stmt()
+	|	break_stmt()
+	|	continue_stmt()
+	|	return_stmt()
+	)
+}
+void if_stmt(): {}
+{
+	<IF> "(" expr() ")" stmt() [LOOKAHEAD(1) <ELSE> stmt()]
+}
+void while_stmt(): {}
+{
+	<WHILE> "(" expr() ")" stmt()
+}
+void for_stmt(): {}
+{
+	<FOR> "(" [expr()] ";" [expr()] ";" [expr()] ")" stmt()
+}
+void break_stmt(): {}
+{
+	<BREAK> ";"
+}
+void continue_stmt(): {}
+{
+	<CONTINUE> ";"
+}
+void return_stmt(): {}
+{
+	LOOKAHEAD(2) <RETURN> ";" // 函数没有返回值的情况
+|	<RETURN> expr() ";" // 函数有返回值的情况
+}
+void expr(): {}
+{
+	LOOKAHEAD(term() "=")
+	term() "=" expr()
+|	LOOKAHEAD(term() opassign_op())
+	term() opassign_op() expr()
+|	expr10()
+}
+void opassign_op(): {}
+{
+	( "+="
+	| "-="
+	| "*="
+	| "/="
+	| "%="
+	| "&="
+	| "|="
+	| "^="
+	| "<<="
+	| ">>="
+	)
+}
+void expr10(): {}
+{
+	expr9() ["?" expr() ":" expr10()]
+}
+void expr9(): {}
+{
+	expr8() ("||" expr8())*
+}
+void expr8(): {}
+{
+	expr7() ("&&" expr7())*
+}
+void expr7(): {}
+{
+	expr6() ( ">" expr6()
+|	"<" expr6()
+|	">=" expr6()
+|	"<=" expr6()
+|	"==" expr6()
+|	"!=" expr6() )*
+}
+void expr6(): {}
+{
+	expr5() ("|" expr5())*
+}
+void expr5(): {}
+{
+	expr4() ("^" expr4())*
+}
+void expr4(): {}
+{
+	expr3() ("&" expr3())*
+}
+void expr3(): {}
+{
+	expr2() ( ">>" expr2()
+|	"<<" expr2()
+)*
+}
+void expr2(): {}
+{
+	expr1() ( "+" expr1()
+|	"-" expr1()
+)*
+}
+void expr1(): {}
+{
+	term() ( "*" term()
+|	"/" term()
+|	"%" term()
+)*
+}
+void term(): {}
+{
+	LOOKAHEAD("(" type()) "(" type() ")" term()
+|	unary()
+}
+void unary(): {}
+{
+	"++" unary() 
+|	"--" unary() 
+|	"+" term() 
+|	"-" term()
+|	"!" term() 
+|	"~" term() 
+|	"*" term()
+|	"&" term()
+|	postfix()
+}
+void postfix(): {}
+{
+	primary()
+	( "++" 
+	|	"--" 
+	|	"[" expr() "]"
+	|	"." name() 
+	|	"->" name() 
+	|	"(" args() ")" 
+	)*
+}
+void args(): {}
+{
+	[ expr() ("," expr())* ]
+}
+void primary(): {}
+{
+	<INTEGER>
+|	<STRING>
+|	<IDENTIFIER>
+|	"(" expr() ")"
+}
