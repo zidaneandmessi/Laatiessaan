@@ -1,0 +1,32 @@
+options {
+	STATIC = false;
+	DEBUG_PARSER = true;
+	UNICODE_INPUT = true;
+	JDK_VERSION = "1.6";
+}
+
+TOKEN: {
+    	<VOID: "void">
+    |	<NULL: "null">
+    |	<BOOL: "bool">
+    |	<TRUE: "true">
+    |	<FALSE: "false">
+    |	<CHAR: "char">
+    |	<STRING: "string">
+    |   <INT: "int">
+    |   <CLASS: "class">
+    |   <IF: "if">
+    |   <ELSE: "else">
+    |   <WHILE: "while">
+    |   <FOR: "for">
+    |   <RETURN: "return">
+    |   <BREAK: "break">
+    |   <CONTINUE: "continue">
+    |   <IDENTIFIER: ["a"-"z", "A"-"Z", "_"] (["a"-"z", "A"-"Z", "_", "0"-"9"])*>
+    | 	<INTEGER: ["1"-"9"] (["0"-"9"])*>
+}
+
+SPECIAL_TOKEN: {
+		<SPACES: ([" ", "\t", "\n", "\r", "\f"])+>
+	|	<LINE_COMMENT: "//" (~["\n", "\r"])* ("\n" | "\r\n" | "\r")?> 
+}
