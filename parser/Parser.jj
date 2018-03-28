@@ -5,28 +5,58 @@ options {
 	JDK_VERSION = "1.6";
 }
 
+PARSER_BEGIN(Parser)
+import java.io.*;
+
+class Parser {
+	static public void main(String[] args) {
+		for (String arg : args) {
+			try {
+				System.out.println(evaluate(arg));
+			}
+			catch (ParseException ex) {
+				System.err.println(ex.getMessage());
+			}
+		}
+	}
+	static public long evaluate(String src) throws ParseException {
+		Reader reader = new StringReader(src);
+		return new Parser(reader).expr();
+	}
+}
+
+PARSER_END(Parser)
+
 TOKEN: {
-    	<VOID: "void">
-    |	<NULL: "null">
-    |	<BOOL: "bool">
-    |	<TRUE: "true">
-    |	<FALSE: "false">
-    |	<CHAR: "char">
-    |	<STRING: "string">
-    |   <INT: "int">
-    |   <CLASS: "class">
-    |   <IF: "if">
-    |   <ELSE: "else">
-    |   <WHILE: "while">
-    |   <FOR: "for">
-    |   <RETURN: "return">
-    |   <BREAK: "break">
-    |   <CONTINUE: "continue">
-    |   <IDENTIFIER: ["a"-"z", "A"-"Z", "_"] (["a"-"z", "A"-"Z", "_", "0"-"9"])*>
-    | 	<INTEGER: ["1"-"9"] (["0"-"9"])*>
+	<VOID: "void">
+|	<NULL: "null">
+|	<BOOL: "bool">
+|	<TRUE: "true">
+|	<FALSE: "false">
+|   <INT: "int">
+|   <CLASS: "class">
+|   <IF: "if">
+|   <ELSE: "else">
+|   <WHILE: "while">
+|   <FOR: "for">
+|   <RETURN: "return">
+|   <BREAK: "break">
+|   <CONTINUE: "continue">
+|   <IDENTIFIER: ["a"-"z", "A"-"Z", "_"] (["a"-"z", "A"-"Z", "_", "0"-"9"])*>
+| 	<INTEGER: ["1"-"9"] (["0"-"9"])*>
 }
 
 SPECIAL_TOKEN: {
-		<SPACES: ([" ", "\t", "\n", "\r", "\f"])+>
-	|	<LINE_COMMENT: "//" (~["\n", "\r"])* ("\n" | "\r\n" | "\r")?> 
+	<SPACES: ([" ", "\t", "\n", "\r", "\f"])+>
+|	<LINE_COMMENT: "//" (~["\n", "\r"])* ("\n" | "\r\n" | "\r")?> 
 }
+
+MORE: {
+  	<"\""> : IN_STRING
+}
+<IN_STRING> MORE: {
+	<(~["\"", "\\", "\n", "\r"])+>
+|	<"\\" (["0"-"7"]){3}>
+|	<"\\" ~[]>
+}
+<IN_STRING> TOKEN: { <STRING: "\""> : DEFAULT }
