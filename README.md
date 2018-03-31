@@ -21,18 +21,18 @@ Parser Generator: JavaCC (LL)
 
 # AST
 
-## Root
+- Root
 
-## ExprNode
+- ExprNode
 
-### AbstractAssignNode
+    - AbstractAssignNode
 
-#### AssignNode (=)
+        - AssignNode (=)
 
-#### OpAssignNode (+=, -=, ...)
+        - OpAssignNode (+=, -=, ...)
 
-### BinaryOpNode (+, -, ...)
+    - BinaryOpNode (+, -, ...)
 
-#### LogicalAndNode (&&)
+        - LogicalAndNode (&&)
 
-#### LogicalOrNode (||)
+        - LogicalOrNode (||)
