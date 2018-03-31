@@ -36,3 +36,49 @@ Parser Generator: JavaCC (LL)
         - LogicalAndNode (&&)
 
         - LogicalOrNode (||)
+
+    - FuncallNode
+
+    - LHSNode
+
+        - ArefNode (a[i])
+
+        - MemberNode (a.memb)
+
+        - VariableNode
+
+    - LiteralNode
+
+        - IntegerLiteralNode
+
+        - StringLiteralNode
+
+    - UnaryOpNode
+
+        - PrefixOpNode (++i)
+
+        - SuffixOpNode (i++)
+
+- StmtNode
+
+    - BlockNode
+
+    - BreakNode
+
+    - ContinueNode
+
+    - ExprStmtNode
+
+    - ForNode
+
+    - IfNode
+
+    - ReturnNode
+
+    - WhileNode
+
+- TypeDefinition
+
+    - TypedefNode
+
+- TypeNode
