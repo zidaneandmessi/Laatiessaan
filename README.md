@@ -18,3 +18,21 @@ From Mx* language to Linux x86-64 Assembly Compiler
 # Parser
 
 Parser Generator: JavaCC (LL)
+
+# AST
+
+## Root
+
+## ExprNode
+
+### AbstractAssignNode
+
+#### AssignNode (=)
+
+#### OpAssignNode (+=, -=, ...)
+
+### BinaryOpNode (+, -, ...)
+
+#### LogicalAndNode (&&)
+
+#### LogicalOrNode (||)

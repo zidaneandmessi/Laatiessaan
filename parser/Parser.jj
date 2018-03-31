@@ -117,22 +117,49 @@ MORE: {
 |	<"\\" ~[]>
 }
 <IN_STRING> TOKEN: { <STRING: "\""> : DEFAULT }
-void name(): {}
+String name():
 {
-	<IDENTIFIER>
+    Token t;
 }
-void params(): {}
 {
-	LOOKAHEAD(<VOID> ")") <VOID>
-|	fixedparams() ["," "..."]
+    t=<IDENTIFIER> { return t.image; }
 }
-void fixedparams(): {}
+Params params():
 {
-	param() (LOOKAHEAD(2) "," param())*
+    Token t;
+    Params params;
 }
-void param(): {}
 {
-	type() name()
+      LOOKAHEAD(<VOID> ")")
+      t=<VOID>
+        {
+            return new Params(location(t), new ArrayList<Parameter>());
+        }
+    | params=fixedparams()
+            ["," "..." { params.acceptVarargs(); }]
+        {
+            return params;
+        }
+}
+Params fixedparams():
+{
+    List<Parameter> params = new ArrayList<Parameter>();
+    Parameter param, param1;
+}
+{
+    param1=param() { params.add(param1); }
+    ( LOOKAHEAD(2) "," param=param() { params.add(param); } )*
+        {
+            return new Params(param1.location(), params);
+        }
+}
+Parameter param():
+{
+    TypeNode t;
+    String n;
+}
+{
+    t=type() n=name() { return new Parameter(t, n); }
 }
 void block(): {}
 {
