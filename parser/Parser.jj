@@ -23,6 +23,63 @@ class Parser {
 		Reader reader = new StringReader(src);
 		return new Parser(reader).expr();
 	}
+	private String sourceName;
+	private LibraryLoader loader;
+	private ErrorHandler errorHandler;
+	private Set<String> knownTypedefs;
+	public Parser(Reader s, String name, LibraryLoader loader,
+	ErrorHandler errorHandler, boolean debug) {
+		this(s);
+		this.sourceName = name;
+		this.loader = loader;
+		this.errorHandler = errorHandler;
+		this.knownTypedefs = new HashSet<String>();
+		if (debug) {
+			enable_tracing();
+		}
+		else {
+			disable_tracing();
+		}
+	}
+	static public AST parseFile(File file, LibraryLoader loader,
+	ErrorHandler errorHandler, boolean debug)
+	throws SyntaxException, FileException {
+		return newFileParser(file, loader, errorHandler, debug).parse();
+	}
+	static final public String SOURCE_ENCODING = "UTF-8";
+	static public Parser newFileParser(File file,
+	LibraryLoader loader,
+	ErrorHandler errorHandler,
+	boolean debug)
+	throws FileException {
+		try {
+			BufferedReader r =
+			new BufferedReader(
+			new InputStreamReader(new FileInputStream(file),
+			SOURCE_ENCODING));
+			return new Parser(r, file.getPath(), loader, errorHandler, debug);
+		}
+		catch (FileNotFoundException ex) {
+			throw new FileException(ex.getMessage());
+		}
+		catch (UnsupportedEncodingException ex) {
+			throw new Error("UTF-8 is not supported??: " + ex.getMessage());
+		}
+	}
+	public AST parse() throws SyntaxException {
+		try {
+			return compilation_unit();
+		}
+		catch (TokenMgrError err) {
+			throw new SyntaxException(err.getMessage());
+		}
+		catch (ParseException ex) {
+			throw new SyntaxException(ex.getMessage());
+		}
+		catch (LookaheadSuccess err) {
+			throw new SyntaxException("syntax error");
+		}
+	}
 }
 
 PARSER_END(Parser)
@@ -60,18 +117,9 @@ MORE: {
 |	<"\\" ~[]>
 }
 <IN_STRING> TOKEN: { <STRING: "\""> : DEFAULT }
-
 void name(): {}
 {
 	<IDENTIFIER>
-}
-void defvars(): {}
-{
-	type() name() ["=" expr()]	 ("," name() ["=" expr()])* ";"
-}
-void defun(): {}
-{
-	typeref() name() "(" params() ")" block()
 }
 void params(): {}
 {
@@ -145,8 +193,8 @@ void continue_stmt(): {}
 }
 void return_stmt(): {}
 {
-	LOOKAHEAD(2) <RETURN> ";" // 函数没有返回值的情况
-|	<RETURN> expr() ";" // 函数有返回值的情况
+	LOOKAHEAD(2) <RETURN> ";"
+|	<RETURN> expr() ";"
 }
 void expr(): {}
 {
@@ -260,4 +308,86 @@ void primary(): {}
 |	<STRING>
 |	<IDENTIFIER>
 |	"(" expr() ")"
+}
+List<DefinedVariable> defvars():
+{
+	List<DefinedVariable> defs = new ArrayList<DefinedVariable>();
+	TypeNode type;
+	String name;
+	ExprNode init = null;
+}
+{
+	 type=type() name=name() ["=" init=expr()]
+		{
+			defs.add(new DefinedVariable(type, name, init));
+			init = null;
+		}
+	( "," name=name() ["=" init=expr()]
+		{
+			defs.add(new DefinedVariable(type, name, init));
+			init = null;
+		}
+	)* ";"
+		{
+			return defs;
+		}
+}
+DefinedFunction defun():
+{
+	TypeRef ret;
+	String n;
+	Params ps;
+	BlockNode body;
+}
+{
+	ret=typeref() n=name() "(" ps=params() ")" body=block()
+		{
+			TypeRef t = new FunctionTypeRef(ret, ps.parametersTypeRef());
+			return new DefinedFunction(new TypeNode(t), n, ps, body);
+		}
+}
+List<DefinedVariable> defvar_list():
+{
+	List<DefinedVariable> result = new ArrayList<DefinedVariable>();
+	List<DefinedVariable> vars;
+}
+{
+	( vars=defvars() { result.addAll(vars); } )*
+		{
+			return result;
+		}
+}
+Declarations top_defs():
+{
+	Declarations decls = new Declarations();
+	DefinedFunction defun;
+	List<DefinedVariable> defvars;
+	Constant defconst;
+	StructNode defstruct;
+	UnionNode defunion;
+	TypedefNode typedef;
+}
+{
+	( LOOKAHEAD(typeref() <IDENTIFIER> "(")
+		defun=defun() { decls.addDefun(defun); }
+	|	LOOKAHEAD(3)
+		defvars=defvars() { decls.addDefvars(defvars); }
+	)*
+		{
+			return decls;
+		}
+}
+AST compilation_unit():
+{
+	Token t;
+	Declarations decls;
+}
+{
+	{
+		t = getToken(1);
+	}
+	decls=top_defs() <EOF>
+		{
+			return new AST(location(t), decls);
+		}
 }
