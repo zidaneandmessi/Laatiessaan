@@ -55,9 +55,11 @@ Parser Generator: JavaCC (LL)
 
     - UnaryOpNode
 
-        - PrefixOpNode (++i)
+        - UnaryArithmeticOpNode
 
-        - SuffixOpNode (i++)
+            - PrefixOpNode (++i)
+
+            - SuffixOpNode (i++)
 
 - StmtNode
 
@@ -78,7 +80,5 @@ Parser Generator: JavaCC (LL)
     - WhileNode
 
 - TypeDefinition
-
-    - TypedefNode
 
 - TypeNode
