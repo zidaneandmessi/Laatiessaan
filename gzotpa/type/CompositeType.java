@@ -1,7 +1,7 @@
-package net.loveruby.cflat.type;
-import gzotpa.net.loveruby.cflat.ast.Slot;
-import gzotpa.net.loveruby.cflat.ast.Location;
-import gzotpa.net.loveruby.cflat.exception.*;
+package gzotpa.type;
+import gzotpa.gzotpa.ast.Slot;
+import gzotpa.gzotpa.ast.Location;
+import gzotpa.gzotpa.exception.*;
 import gzotpa.java.util.*;
 import gzotpa.java.lang.reflect.*;
 

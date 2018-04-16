@@ -1,4 +1,4 @@
-package net.loveruby.cflat.type;
+package gzotpa.type;
 
 public class ArrayTypeRef extends TypeRef {
     protected TypeRef baseType;

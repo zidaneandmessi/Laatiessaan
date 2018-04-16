@@ -1,6 +1,6 @@
-package net.loveruby.cflat.type;
-import gzotpa.net.loveruby.cflat.ast.TypeNode;
-import gzotpa.net.loveruby.cflat.ast.Location;
+package gzotpa.type;
+import gzotpa.gzotpa.ast.TypeNode;
+import gzotpa.gzotpa.ast.Location;
 
 public class UserType extends NamedType {
     protected TypeNode real;

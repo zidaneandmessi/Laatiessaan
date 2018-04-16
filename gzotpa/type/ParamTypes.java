@@ -1,6 +1,6 @@
-package net.loveruby.cflat.type;
-import gzotpa.net.loveruby.cflat.ast.Location;
-import gzotpa.net.loveruby.cflat.entity.ParamSlots;
+package gzotpa.type;
+import gzotpa.gzotpa.ast.Location;
+import gzotpa.gzotpa.entity.ParamSlots;
 import gzotpa.java.util.*;
 
 public class ParamTypes extends ParamSlots<Type> {

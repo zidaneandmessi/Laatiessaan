@@ -1,4 +1,4 @@
-package net.loveruby.cflat.type;
+package gzotpa.type;
 
 public class ArrayType extends Type {
     protected Type baseType;

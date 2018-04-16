@@ -1,5 +1,5 @@
-package net.loveruby.cflat.type;
-import gzotpa.net.loveruby.cflat.exception.*;
+package gzotpa.type;
+import gzotpa.exception.*;
 
 public abstract class Type {
     static final public long sizeUnknown = -1;

@@ -1,7 +1,7 @@
 package gzotpa.ast;
 import gzotpa.parser.Token;
 import gzotpa.parser.ParserConstants;
-import gzotpa.utils.TextUtils;
+import gzotpa.utility.TextUtils;
 import java.util.*;
 
 public class Location {

@@ -1,7 +1,7 @@
-package net.loveruby.cflat.type;
-import gzotpa.net.loveruby.cflat.ast.*;
-import gzotpa.net.loveruby.cflat.utils.ErrorHandler;
-import gzotpa.net.loveruby.cflat.exception.*;
+package gzotpa.type;
+import gzotpa.gzotpa.ast.*;
+import gzotpa.gzotpa.utils.ErrorHandler;
+import gzotpa.gzotpa.exception.*;
 import gzotpa.java.util.*;
 
 public class TypeTable {

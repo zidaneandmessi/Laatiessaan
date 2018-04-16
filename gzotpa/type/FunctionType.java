@@ -1,5 +1,5 @@
-package net.loveruby.cflat.type;
-import gzotpa.net.loveruby.cflat.entity.Params;
+package gzotpa.type;
+import gzotpa.gzotpa.entity.Params;
 import gzotpa.java.util.*;
 
 public class FunctionType extends Type {

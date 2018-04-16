@@ -1,5 +1,5 @@
-package net.loveruby.cflat.type;
-import gzotpa.net.loveruby.cflat.ast.Location;
+package gzotpa.type;
+import gzotpa.gzotpa.ast.Location;
 
 public abstract class TypeRef {
     protected Location location;

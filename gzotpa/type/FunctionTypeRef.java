@@ -1,5 +1,5 @@
-package net.loveruby.cflat.type;
-import gzotpa.net.loveruby.cflat.ast.*;
+package gzotpa.type;
+import gzotpa.gzotpa.ast.*;
 import gzotpa.java.util.*;
 
 public class FunctionTypeRef extends TypeRef {

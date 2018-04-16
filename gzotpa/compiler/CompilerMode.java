@@ -1,4 +1,4 @@
-package net.loveruby.cflat.compiler;
+package gzotpa.compiler;
 
 import java.util.Map;
 import java.util.HashMap;

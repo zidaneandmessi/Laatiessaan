@@ -1,6 +1,6 @@
-package net.loveruby.cflat.type;
-import gzotpa.net.loveruby.cflat.ast.Location;
-import gzotpa.net.loveruby.cflat.exception.*;
+package gzotpa.type;
+import gzotpa.gzotpa.ast.Location;
+import gzotpa.gzotpa.exception.*;
 import gzotpa.java.util.*;
 
 abstract public class NamedType extends Type {
