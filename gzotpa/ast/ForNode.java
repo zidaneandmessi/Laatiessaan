@@ -30,15 +30,4 @@ public class ForNode extends StmtNode {
     public StmtNode body() {
         return body;
     }
-
-    protected void _dump(Dumper d) {
-        d.printMember("init", init);
-        d.printMember("cond", cond);
-        d.printMember("incr", incr);
-        d.printMember("body", body);
-    }
-
-    public <S,E> S accept(ASTVisitor<S,E> visitor) {
-        return visitor.visit(this);
-    }
 }

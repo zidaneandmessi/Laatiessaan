@@ -52,15 +52,4 @@ public class VariableNode extends LHSNode {
     public Location location() {
         return location;
     }
-
-    protected void _dump(Dumper d) {
-        if (type != null) {
-            d.printMember("type", type);
-        }
-        d.printMember("name", name, isResolved());
-    }
-
-    public <S,E> E accept(ASTVisitor<S,E> visitor) {
-        return visitor.visit(this);
-    }
 }

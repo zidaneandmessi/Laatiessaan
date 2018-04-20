@@ -1,18 +1,15 @@
 package gzotpa.ast;
 import gzotpa.parser.Token;
-import gzotpa.parser.ParserConstants;
-import gzotpa.utility.TextUtils;
-import java.util.*;
 
 public class Location {
     protected String sourceName;
-    protected CflatToken token;
+    protected MxToken token;
 
     public Location(String sourceName, Token token) {
-        this(sourceName, new CflatToken(token));
+        this(sourceName, new MxToken(token));
     }
 
-    public Location(String sourceName, CflatToken token) {
+    public Location(String sourceName, MxToken token) {
         this.sourceName = sourceName;
         this.token = token;
     }
@@ -21,28 +18,7 @@ public class Location {
         return sourceName;
     }
 
-    public CflatToken token() {
+    public MxToken token() {
         return token;
-    }
-
-    /** line number */
-    public int lineno() {
-        return token.lineno();
-    }
-
-    public int column() {
-        return token.column();
-    }
-
-    public String line() {
-        return token.includedLine();
-    }
-
-    public String numberedLine() {
-        return "line " + token.lineno() + ": " + line();
-    }
-
-    public String toString() {
-        return sourceName + ":" + token.lineno();
     }
 }

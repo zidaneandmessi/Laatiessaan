@@ -12,13 +12,4 @@ public class IntegerLiteralNode extends LiteralNode {
     public long value() {
         return value;
     }
-
-    protected void _dump(Dumper d) {
-        d.printMember("typeNode", typeNode);
-        d.printMember("value", value);
-    }
-
-    public <S,E> E accept(ASTVisitor<S,E> visitor) {
-        return visitor.visit(this);
-    }
 }

@@ -13,7 +13,7 @@ public class MemberNode extends LHSNode {
     }
 
     public CompositeType baseType() {
-        try {
+    	try {
             return expr.type().getCompositeType();
         }
         catch (ClassCastException err) {
@@ -29,27 +29,11 @@ public class MemberNode extends LHSNode {
         return member;
     }
 
-    public long offset() {
-        return baseType().memberOffset(member);
-    }
-
     protected Type origType() {
         return baseType().memberType(member);
     }
 
     public Location location() {
         return expr.location();
-    }
-
-    protected void _dump(Dumper d) {
-        if (type != null) {
-            d.printMember("type", type);
-        }
-        d.printMember("expr", expr);
-        d.printMember("member", member);
-    }
-
-    public <S,E> E accept(ASTVisitor<S,E> visitor) {
-        return visitor.visit(this);
     }
 }

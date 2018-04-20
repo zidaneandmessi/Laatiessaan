@@ -1,7 +1,7 @@
 package gzotpa.type;
-import gzotpa.gzotpa.ast.Location;
-import gzotpa.gzotpa.exception.*;
-import gzotpa.java.util.*;
+import gzotpa.ast.Location;
+import gzotpa.exception.*;
+import java.util.*;
 
 abstract public class NamedType extends Type {
     protected String name;

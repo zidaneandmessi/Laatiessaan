@@ -1,7 +1,7 @@
 package gzotpa.type;
-import gzotpa.gzotpa.ast.Location;
-import gzotpa.gzotpa.entity.ParamSlots;
-import gzotpa.java.util.*;
+import gzotpa.ast.Location;
+import gzotpa.entity.ParamSlots;
+import java.util.*;
 
 public class ParamTypes extends ParamSlots<Type> {
     protected ParamTypes(Location loc, List<Type> paramDescs, boolean vararg) {
@@ -10,26 +10,5 @@ public class ParamTypes extends ParamSlots<Type> {
 
     public List<Type> types() {
         return paramDescriptors;
-    }
-
-    public boolean isSameType(ParamTypes other) {
-        if (vararg != other.vararg) return false;
-        if (minArgc() != other.minArgc()) return false;
-        Iterator<Type> otherTypes = other.types().iterator();
-        for (Type t : paramDescriptors) {
-            if (! t.isSameType(otherTypes.next())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean equals(Object other) {
-        return (other instanceof ParamTypes) && equals((ParamTypes)other);
-    }
-
-    public boolean equals(ParamTypes other) {
-        return vararg == other.vararg
-                && paramDescriptors.equals(other.paramDescriptors);
     }
 }

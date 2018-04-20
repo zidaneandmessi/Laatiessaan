@@ -38,13 +38,4 @@ public class UnaryOpNode extends ExprNode {
     public Location location() {
         return expr.location();
     }
-
-    protected void _dump(Dumper d) {
-        d.printMember("operator", operator);
-        d.printMember("expr", expr);
-    }
-
-    public <S,E> E accept(ASTVisitor<S,E> visitor) {
-        return visitor.visit(this);
-    }
 }

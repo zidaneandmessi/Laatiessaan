@@ -21,17 +21,12 @@ abstract public class AbstractAssignNode extends ExprNode {
     public ExprNode rhs() {
         return rhs;
     }
-
+    
     public void setRHS(ExprNode expr) {
         this.rhs = expr;
     }
 
     public Location location() {
         return lhs.location();
-    }
-
-    protected void _dump(Dumper d) {
-        d.printMember("lhs", lhs);
-        d.printMember("rhs", rhs);
     }
 }

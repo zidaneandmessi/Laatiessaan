@@ -2,7 +2,7 @@ options {
 	STATIC = false;
 	DEBUG_PARSER = true;
 	UNICODE_INPUT = true;
-	JDK_VERSION = "1.6";
+	JDK_VERSION = "1.8";
 }
 
 PARSER_BEGIN(Parser)
@@ -10,58 +10,49 @@ package gzotpa.parser;
 import gzotpa.ast.*;
 import gzotpa.entity.*;
 import gzotpa.type.*;
-import gzotpa.asm.Label;
-import gzotpa.utils.ErrorHandler;
+//import gzotpa.asm.Label;
+//import gzotpa.utils.ErrorHandler;
 import gzotpa.exception.*;
 import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
-class Parser {
-	static public void main(String[] args) {
-		for (String arg : args) {
-			try {
-				System.out.println(evaluate(arg));
-			}
-			catch (ParseException ex) {
-				System.err.println(ex.getMessage());
-			}
-		}
-	}
-	static public long evaluate(String src) throws ParseException {
-		Reader reader = new StringReader(src);
-		return new Parser(reader).expr();
-	}
+
+public class Parser {
 	private String sourceName;
-	private ErrorHandler errorHandler;
-	private Set<String> knownTypedefs;
-	public Parser(Reader s, String name,
-	ErrorHandler errorHandler, boolean debug) {
+	public Parser(Reader s, String name) {
 		this(s);
 		this.sourceName = name;
-		this.errorHandler = errorHandler;
-		this.knownTypedefs = new HashSet<String>();
-		if (debug) {
-			enable_tracing();
-		}
-		else {
-			disable_tracing();
-		}
 	}
-	static public AST parseFile(File file,
-	ErrorHandler errorHandler, boolean debug)
-	throws SyntaxException, FileException {
-		return newFileParser(file, errorHandler, debug).parse();
+	public AST parse() throws SyntaxException {
+        try {
+            return compilation_unit();
+        }
+        catch (TokenMgrError err) {
+            throw new SyntaxException(err.getMessage());
+        }
+        catch (ParseException ex) {
+            throw new SyntaxException(ex.getMessage());
+        }
+        catch (LookaheadSuccess err) {
+            throw new SyntaxException("syntax error");
+        }
+    }
+	static public AST parseFile(File file)
+								throws SyntaxException, FileException {
+		return newFileParser(file).parse();
 	}
 	static final public String SOURCE_ENCODING = "UTF-8";
-	static public Parser newFileParser(File file,
-	ErrorHandler errorHandler,
-	boolean debug)
-	throws FileException {
+	static public Parser newFileParser(File file)
+										throws FileException {
 		try {
 			BufferedReader r =
-			new BufferedReader(
-			new InputStreamReader(new FileInputStream(file),
-			SOURCE_ENCODING));
-			return new Parser(r, file.getPath(), errorHandler, debug);
+				new BufferedReader(
+					new InputStreamReader(new FileInputStream(file),
+						SOURCE_ENCODING));
+			return new Parser(r, file.getPath());
 		}
 		catch (FileNotFoundException ex) {
 			throw new FileException(ex.getMessage());
@@ -70,20 +61,34 @@ class Parser {
 			throw new Error("UTF-8 is not supported??: " + ex.getMessage());
 		}
 	}
-	public AST parse() throws SyntaxException {
-		try {
-			return compilation_unit();
-		}
-		catch (TokenMgrError err) {
-			throw new SyntaxException(err.getMessage());
-		}
-		catch (ParseException ex) {
-			throw new SyntaxException(ex.getMessage());
-		}
-		catch (LookaheadSuccess err) {
-			throw new SyntaxException("syntax error");
-		}
-	}
+	protected Location location(Token t) {
+        return new Location(sourceName, t);
+    }
+    private String stringValue(String _image) throws ParseException {
+        int pos = 0;
+        int idx;
+        StringBuffer buf = new StringBuffer();
+        String image = _image.substring(1, _image.length() - 1);
+
+        while ((idx = image.indexOf("\\", pos)) >= 0) {
+            buf.append(image.substring(pos, idx));
+            if (image.length() >= idx + 4
+                    && Character.isDigit(image.charAt(idx+1))
+                    && Character.isDigit(image.charAt(idx+2))
+                    && Character.isDigit(image.charAt(idx+3))) {
+                buf.append(unescapeOctal(image.substring(idx+1, idx+4)));
+                pos = idx + 4;
+            }
+            else {
+                buf.append(unescapeSeq(image.charAt(idx+1)));
+                pos = idx + 2;
+            }
+        }
+        if (pos < image.length()) {
+            buf.append(image.substring(pos, image.length()));
+        }
+        return buf.toString();
+    }
 }
 
 PARSER_END(Parser)
@@ -133,7 +138,6 @@ Params params():
             return new Params(location(t), new ArrayList<Parameter>());
         }
     | params=fixedparams()
-            ["," "..." { params.acceptVarargs(); }]
         {
             return params;
         }
@@ -178,7 +182,7 @@ TypeNode type():
 TypeRef typeref():
 {
     TypeRef ref;
-    ParamTypeRefs params;
+    //ParamTypeRefs params;
 }
 {
     ref=typeref_base()
@@ -414,9 +418,7 @@ ExprNode term():
     ExprNode n;
 }
 {
-      LOOKAHEAD("(" type())
-      "(" t=type() ")" n=term()     { return new CastNode(t, n); }
-    | n=unary()                     { return n; }
+    n=unary()                     { return n; }
 }
 ExprNode unary():
 {
@@ -515,6 +517,7 @@ List<DefinedVariable> defvars():
 			return defs;
 		}
 }
+
 DefinedFunction defun():
 {
 	TypeRef ret;
@@ -546,9 +549,6 @@ Declarations top_defs():
 	DefinedFunction defun;
 	List<DefinedVariable> defvars;
 	Constant defconst;
-	StructNode defstruct;
-	UnionNode defunion;
-	TypedefNode typedef;
 }
 {
 	( LOOKAHEAD(typeref() <IDENTIFIER> "(")

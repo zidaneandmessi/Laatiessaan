@@ -13,7 +13,7 @@ public class ArrayTypeRef extends TypeRef {
 
     public ArrayTypeRef(TypeRef baseType, long length) {
         super(baseType.location());
-        if (length < 0) throw new Error("negative array length");
+        if (length < 0) throw new Error("Gzotpa! Array length can't be negative!");
         this.baseType = baseType;
         this.length = length;
     }

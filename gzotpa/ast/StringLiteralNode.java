@@ -1,6 +1,6 @@
 package gzotpa.ast;
-import gzotpa.type.TypeRef;
 import gzotpa.entity.ConstantEntry;
+import gzotpa.type.TypeRef;
 
 public class StringLiteralNode extends LiteralNode {
     protected String value;
@@ -17,17 +17,5 @@ public class StringLiteralNode extends LiteralNode {
 
     public ConstantEntry entry() {
         return entry;
-    }
-
-    public void setEntry(ConstantEntry ent) {
-        entry = ent;
-    }
-
-    protected void _dump(Dumper d) {
-        d.printMember("value", value);
-    }
-
-    public <S,E> E accept(ASTVisitor<S,E> visitor) {
-        return visitor.visit(this);
     }
 }

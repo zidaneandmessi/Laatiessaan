@@ -10,6 +10,4 @@ abstract public class StmtNode extends Node {
     public Location location() {
         return location;
     }
-
-    abstract public <S,E> S accept(ASTVisitor<S,E> visitor);
 }

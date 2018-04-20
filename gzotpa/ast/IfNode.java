@@ -23,14 +23,4 @@ public class IfNode extends StmtNode {
     public StmtNode elseBody() {
         return elseBody;
     }
-
-    protected void _dump(Dumper d) {
-        d.printMember("cond", cond);
-        d.printMember("thenBody", thenBody);
-        d.printMember("elseBody", elseBody);
-    }
-
-    public <S,E> S accept(ASTVisitor<S,E> visitor) {
-        return visitor.visit(this);
-    }
 }

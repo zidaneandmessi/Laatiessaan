@@ -11,8 +11,4 @@ public class OpAssignNode extends AbstractAssignNode {
     public String operator() {
         return operator;
     }
-
-    public <S,E> E accept(ASTVisitor<S,E> visitor) {
-        return visitor.visit(this);
-    }
 }

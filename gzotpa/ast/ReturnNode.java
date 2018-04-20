@@ -11,16 +11,4 @@ public class ReturnNode extends StmtNode {
     public ExprNode expr() {
         return this.expr;
     }
-
-    public void setExpr(ExprNode expr) {
-        this.expr = expr;
-    }
-
-    protected void _dump(Dumper d) {
-        d.printMember("expr", expr);
-    }
-
-    public <S,E> S accept(ASTVisitor<S,E> visitor) {
-        return visitor.visit(this);
-    }
 }

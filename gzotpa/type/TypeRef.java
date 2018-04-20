@@ -1,5 +1,5 @@
 package gzotpa.type;
-import gzotpa.gzotpa.ast.Location;
+import gzotpa.ast.Location;
 
 public abstract class TypeRef {
     protected Location location;
@@ -10,9 +10,5 @@ public abstract class TypeRef {
 
     public Location location() {
         return location;
-    }
-
-    public int hashCode() {
-        return toString().hashCode();
     }
 }

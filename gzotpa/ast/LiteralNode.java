@@ -23,8 +23,4 @@ abstract public class LiteralNode extends ExprNode {
     public TypeNode typeNode() {
         return typeNode;
     }
-
-    public boolean isConstant() {
-        return true;
-    }
 }

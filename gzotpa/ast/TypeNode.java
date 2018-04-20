@@ -14,39 +14,26 @@ public class TypeNode extends Node {
         super();
         this.type = type;
     }
+    
+    public Location location() {
+        return typeRef == null ? null : typeRef.location();
+    }
 
     public TypeRef typeRef() {
         return typeRef;
     }
 
-    public boolean isResolved() {
-        return (type != null);
-    }
-
     public void setType(Type t) {
         if (type != null) {
-            throw new Error("TypeNode#setType called twice");
+            throw new Error("Gzotpa! Type already exists!");
         }
         type = t;
     }
 
     public Type type() {
         if (type == null) {
-            throw new Error("TypeNode not resolved: " + typeRef);
+            throw new Error("Gzotpa! Null type!");
         }
         return type;
-    }
-
-    public Location location() {
-        return typeRef == null ? null : typeRef.location();
-    }
-
-    protected void _dump(Dumper d) {
-        d.printMember("typeref", typeRef);
-        d.printMember("type", type);
-    }
-
-    public TypeNode accept(ASTVisitor visitor) {
-        throw new Error("do not call TypeNode#accept");
     }
 }
