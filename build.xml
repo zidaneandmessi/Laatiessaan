@@ -10,14 +10,7 @@
     </target>
 
     <target name="compile" depends="init, parser">
-        <mkdir dir="${build.dir}" />
-        <mkdir dir="${build.classes.dir}" />
-        <javac destdir="${build.classes.dir}" srcdir="${src.dir}"
-               debug="true" optimize="true">
-            <compilerarg value="-Xlint:unchecked" />
-            <include name="gzotpa/**/*.java" />
-        </javac>
-        <jar jarfile="${build.jar}" basedir="${build.classes.dir}" />
+       
     </target>
 
     <target name="recompile" depends="clean, compile" />
