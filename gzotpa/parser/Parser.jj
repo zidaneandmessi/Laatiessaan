@@ -186,7 +186,7 @@ TypeRef typeref():
 }
 {
     ref=typeref_base()
-    ( "[" "]"
+    ( "[" "]"7
         {
             ref = new ArrayTypeRef(ref);
         }
