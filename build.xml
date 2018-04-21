@@ -15,7 +15,7 @@
         <javac destdir="${build.classes.dir}" srcdir="${src.dir}"
                debug="true" optimize="true">
             <compilerarg value="-Xlint:unchecked" />
-            <include name="gzotpa/**/*.java" />
+            <include name="src/gzotpa/**/*.java" />
         </javac>
         <jar jarfile="${build.jar}" basedir="${build.classes.dir}" />
     </target>
