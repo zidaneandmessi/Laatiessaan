@@ -11,4 +11,12 @@ public class ArefNode extends LHSNode {
 
     public ExprNode expr() { return expr; }
     public ExprNode index() { return index; }
+
+    protected Type origType() {
+        return expr.origType().baseType();
+    }
+    
+    public Location location() {
+        return expr.location();
+    }
 }

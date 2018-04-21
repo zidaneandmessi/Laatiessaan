@@ -1,6 +1,7 @@
 package gzotpa.entity;
 import gzotpa.type.Type;
 import gzotpa.ast.*;
+import java.util.List;
 
 public class DefinedFunction extends Function {
     protected Params params;

@@ -7,5 +7,6 @@ abstract public class ExprNode extends Node {
     }
 
     abstract public Type type();
+    
     protected Type origType() { return type(); }
 }

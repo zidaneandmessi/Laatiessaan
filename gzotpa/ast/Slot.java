@@ -10,6 +10,10 @@ public class Slot extends Node {
         name = n;
     }
 
+    public Type type() {
+        return typeNode.type();
+    }
+
     public TypeNode typeNode() {
         return typeNode;
     }

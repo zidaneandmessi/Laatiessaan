@@ -1,12 +1,11 @@
 package gzotpa.type;
 import gzotpa.ast.Slot;
 import gzotpa.ast.Location;
+import gzotpa.exception.*;
 import java.util.List;
 
 abstract public class CompositeType extends NamedType {
     protected List<Slot> members;
-
-    public CompositeType() {}
 
     public CompositeType(String name, List<Slot> membs, Location loc) {
         super(name, loc);

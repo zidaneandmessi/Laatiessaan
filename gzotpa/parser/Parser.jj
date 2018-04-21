@@ -10,8 +10,6 @@ package gzotpa.parser;
 import gzotpa.ast.*;
 import gzotpa.entity.*;
 import gzotpa.type.*;
-//import gzotpa.asm.Label;
-//import gzotpa.utils.ErrorHandler;
 import gzotpa.exception.*;
 import java.io.*;
 import java.util.List;
@@ -64,6 +62,20 @@ public class Parser {
 	protected Location location(Token t) {
         return new Location(sourceName, t);
     }
+    private char unescapeOctal(String s) throws ParseException {
+    	int x = Integer.parseInt(s, 8);
+    	if (x > 255) throw new ParseException("Gzotpa! Octal ascii exceeds 255!");
+    	return (char)x;
+    }
+    private char unescapeSeq(char c) throws ParseException {
+        switch (c) {
+        case '"': return '"';
+        case '\'': return '\'';
+        case 'n': return '\n';
+        default:
+            throw new ParseException("Gzotpa! Unknown escape sequence: \"\\" + c + "!");
+        }
+    }
     private String stringValue(String _image) throws ParseException {
         int pos = 0;
         int idx;
@@ -88,6 +100,18 @@ public class Parser {
             buf.append(image.substring(pos, image.length()));
         }
         return buf.toString();
+    }
+    private long integerValue(String image) {
+        String s = image.replaceFirst("[UL]+", "");
+        if (s.startsWith("0x") || s.startsWith("0X")) {
+            return Long.parseLong(s.substring(2), 16);
+        }
+        else if (s.startsWith("0") && !s.equals("0")) {
+            return Long.parseLong(s.substring(1), 8);
+        }
+        else {
+            return Long.parseLong(s, 10);
+        }
     }
 }
 
@@ -202,7 +226,6 @@ TypeRef typeref_base():
 {
       t=<VOID>          { return new VoidTypeRef(location(t)); }
     | t=<INT>           { return IntegerTypeRef.intRef(location(t)); }
-    | t=<STRING>        { return StringTypeRef.intRef(location(t)); }
 }
 List<StmtNode> stmts():
 {
@@ -477,7 +500,7 @@ ExprNode primary():
 {
       t=<INTEGER>
         {
-            return integerNode(location(t), t.image);
+            return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(), integerValue(t.image));
         }
     | t=<STRING>
         {

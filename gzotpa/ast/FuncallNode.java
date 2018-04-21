@@ -15,13 +15,21 @@ public class FuncallNode extends ExprNode {
     public ExprNode expr() {
         return expr;
     }
+
+    public FunctionType functionType() {
+        return expr.type().getFunctionType();
+    }
+
     public Type type() {
-        return new Type();
-        /*try {
+        try {
             return functionType().returnType();
         }
         catch (ClassCastException err) {
             throw new SemanticError(err.getMessage());
-        }*/
+        }
+    }
+
+    public Location location() {
+        return expr.location();
     }
 }
