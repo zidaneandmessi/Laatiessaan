@@ -12,11 +12,12 @@ public class Compiler {
     static final public String Version = "0.0.1";
 
     static public void main(String[] args) {
-        new Compiler(ProgramName).commandMain(args);
+        Compiler comp = new Compiler(ProgramName);
+        comp.commandMain(args);
+        //System.err.println(comp.parseOptions(args).sourceFiles().get(0).toString());
     }
 
-    public Compiler(String programName) {
-    }
+    public Compiler(String programName) {}
     
     public void commandMain(String[] args) {
         Options opts = parseOptions(args);
