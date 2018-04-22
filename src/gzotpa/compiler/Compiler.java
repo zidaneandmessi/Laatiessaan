@@ -3,6 +3,7 @@ import gzotpa.parser.Parser;
 import gzotpa.ast.AST;
 import gzotpa.ast.StmtNode;
 import gzotpa.ast.ExprNode;
+import gzotpa.exception.*;
 import java.util.*;
 import java.io.*;
 
@@ -39,14 +40,13 @@ public class Compiler {
 
     private boolean isValidSyntax(String path, Options opts) {
         try {
-            parseFile(path, opts);
+            //parseFile(path, opts);
             return true;
         }
         catch (SyntaxException ex) {
             return false;
         }
         catch (FileException ex) {
-            errorHandler.error(ex.getMessage());
             return false;
         }
     }
