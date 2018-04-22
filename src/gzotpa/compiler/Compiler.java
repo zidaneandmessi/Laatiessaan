@@ -9,11 +9,15 @@ import java.io.*;
 
 public class Compiler {
     static final public String ProgramName = "laatiessaan";
+    static final public String Version = "0.0.1";
 
     static public void main(String[] args) {
         new Compiler(ProgramName).commandMain(args);
     }
 
+    public Compiler(String programName) {
+    }
+    
     public void commandMain(String[] args) {
         Options opts = parseOptions(args);
         if (opts.mode() == CompilerMode.CheckSyntax) {
@@ -40,7 +44,7 @@ public class Compiler {
 
     private boolean isValidSyntax(String path, Options opts) {
         try {
-            //parseFile(path, opts);
+            parseFile(path);
             return true;
         }
         catch (SyntaxException ex) {
@@ -49,5 +53,9 @@ public class Compiler {
         catch (FileException ex) {
             return false;
         }
+    }
+    public AST parseFile(String path)
+                            throws SyntaxException, FileException {
+        return Parser.parseFile(new File(path));
     }
 }
