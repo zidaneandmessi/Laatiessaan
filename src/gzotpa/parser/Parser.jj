@@ -132,6 +132,7 @@ TOKEN: {
 |   <RETURN: "return">
 |   <BREAK: "break">
 |   <CONTINUE: "continue">
+|   <NEW: "new">
 |   <IDENTIFIER: ["a"-"z", "A"-"Z", "_"] (["a"-"z", "A"-"Z", "_", "0"-"9"])*>
 | 	<INTEGER: ["1"-"9"] (["0"-"9"])* | "0">
 }
@@ -205,13 +206,19 @@ TypeNode type():
 TypeRef typeref():
 {
     TypeRef ref;
+    Token t;
     //ParamTypeRefs params;
 }
 {
     ref=typeref_base()
-    ( "[" "]"
+    ( LOOKAHEAD(2)
+      "[" "]"
         {
             ref = new ArrayTypeRef(ref);
+        }
+    | "[" t=<INTEGER> "]"
+        {
+            ref = new ArrayTypeRef(ref, integerValue(t.image));
         }
     )*
         {
@@ -454,6 +461,7 @@ ExprNode unary():
     | "-" n=term()      { return new UnaryOpNode("-", n); }
     | "!" n=term()      { return new UnaryOpNode("!", n); }
     | "~" n=term()      { return new UnaryOpNode("~", n); }
+	| <NEW> t=type()	{ return new NewTypeNode(t); }
     | n=postfix()       { return n; }
 }
 ExprNode postfix():
