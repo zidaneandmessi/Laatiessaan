@@ -152,12 +152,11 @@ MORE: {
 <IN_STRING> TOKEN: { <STRING: "\""> : DEFAULT }
 Params params():
 {
-    Token t;
+    Token t = new Token();
     Params params;
 }
 {
-      LOOKAHEAD(<VOID> ")")
-      t=<VOID>
+    LOOKAHEAD(")") 
         {
             return new Params(location(t), new ArrayList<Parameter>());
         }

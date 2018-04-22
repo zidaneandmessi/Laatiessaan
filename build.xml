@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="laatiessaan" default="compile" basedir=".">
     <target name="init">
+        <condition property="isWindows">  
+            <os family="windows"/>  
+        </condition>  
+        <condition property="isLinux">  
+            <os family="unix"/>  
+        </condition>  
         <property file="${user.home}/.ant-global.properties" />
         <property file="build.properties" />
     </target>
 
-    <target name="parser" depends="init">	
+    <target name="parser" if="isWindows" depends="init">	
         <javacc target="${src.jj.file}" javacchome="${javacc.dir}" />
     </target>
 
-    <target name="compile" depends="init, parser">
+    <target name="parser-linux" if="isLinux" depends="init">    
+        <javacc target="${src.jj.file}" javacchome="${javacc-linux.dir}" />
+    </target>
+
+    <target name="compile" depends="init, parser, parser-linux">
         <mkdir dir="${build.dir}" />
         <mkdir dir="${build.classes.dir}" />
         <javac destdir="${build.classes.dir}" srcdir="${src.dir}"

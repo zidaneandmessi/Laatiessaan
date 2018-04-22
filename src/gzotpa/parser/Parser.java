@@ -110,10 +110,9 @@ public class Parser implements ParserConstants {
   final public Params params() throws ParseException {
     trace_call("params");
     try {
-    Token t;
+    Token t = new Token();
     Params params;
       if (jj_2_1(2147483647)) {
-        t = jj_consume_token(VOID);
             {if (true) return new Params(location(t), new ArrayList<Parameter>());}
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1403,7 +1402,6 @@ public class Parser implements ParserConstants {
   }
 
   private boolean jj_3_1() {
-    if (jj_scan_token(VOID)) return true;
     if (jj_scan_token(24)) return true;
     return false;
   }
@@ -2204,7 +2202,6 @@ public class Parser implements ParserConstants {
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
     jj_gen++;
-      trace_token(token, " (in getNextToken)");
     return token;
   }
 
