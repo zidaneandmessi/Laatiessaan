@@ -226,6 +226,32 @@ TypeRef typeref():
             return ref;
         }
 }
+TypeNode newtype():
+{ TypeRef newref; }
+{
+    newref=newtyperef() { return new TypeNode(newref); }
+}
+TypeRef newtyperef():
+{
+    TypeRef ref;
+    ExprNode e;
+}
+{
+    ref=typeref_base()
+    ("[" e=expr() "]"
+        {
+            ref = new ArrayTypeRef(ref, e);
+        }
+     ( "[" "]"
+        {
+            ref = new ArrayTypeRef(ref);
+        }
+     )*
+    )
+        {
+            return ref;
+        }
+}
 TypeRef typeref_base():
 {
     Token t;
@@ -464,7 +490,7 @@ ExprNode unary():
     | "-" n=term()      { return new UnaryOpNode("-", n); }
     | "!" n=term()      { return new UnaryOpNode("!", n); }
     | "~" n=term()      { return new UnaryOpNode("~", n); }
-	| <NEW> t=type()	{ return new NewTypeNode(t); }
+	| <NEW> t=newtype()	{ return new NewTypeNode(t); }
     | n=postfix()       { return n; }
 }
 ExprNode postfix():
