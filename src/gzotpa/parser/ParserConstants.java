@@ -23,33 +23,35 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int INT = 6;
   /** RegularExpression Id. */
-  int CLASS = 7;
+  int STR = 7;
   /** RegularExpression Id. */
-  int IF = 8;
+  int CLASS = 8;
   /** RegularExpression Id. */
-  int ELSE = 9;
+  int IF = 9;
   /** RegularExpression Id. */
-  int WHILE = 10;
+  int ELSE = 10;
   /** RegularExpression Id. */
-  int FOR = 11;
+  int WHILE = 11;
   /** RegularExpression Id. */
-  int RETURN = 12;
+  int FOR = 12;
   /** RegularExpression Id. */
-  int BREAK = 13;
+  int RETURN = 13;
   /** RegularExpression Id. */
-  int CONTINUE = 14;
+  int BREAK = 14;
   /** RegularExpression Id. */
-  int NEW = 15;
+  int CONTINUE = 15;
   /** RegularExpression Id. */
-  int IDENTIFIER = 16;
+  int NEW = 16;
   /** RegularExpression Id. */
-  int INTEGER = 17;
+  int IDENTIFIER = 17;
   /** RegularExpression Id. */
-  int SPACES = 18;
+  int INTEGER = 18;
   /** RegularExpression Id. */
-  int LINE_COMMENT = 19;
+  int SPACES = 19;
   /** RegularExpression Id. */
-  int STRING = 24;
+  int LINE_COMMENT = 20;
+  /** RegularExpression Id. */
+  int STRING = 25;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -65,6 +67,7 @@ public interface ParserConstants {
     "\"true\"",
     "\"false\"",
     "\"int\"",
+    "\"string\"",
     "\"class\"",
     "\"if\"",
     "\"else\"",
@@ -79,9 +82,9 @@ public interface ParserConstants {
     "<SPACES>",
     "<LINE_COMMENT>",
     "\"\\\"\"",
-    "<token of kind 21>",
     "<token of kind 22>",
     "<token of kind 23>",
+    "<token of kind 24>",
     "\"\\\"\"",
     "\")\"",
     "\",\"",

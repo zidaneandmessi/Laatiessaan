@@ -124,6 +124,7 @@ TOKEN: {
 |	<TRUE: "true">
 |	<FALSE: "false">
 |   <INT: "int">
+|   <STR: "string">
 |   <CLASS: "class">
 |   <IF: "if">
 |   <ELSE: "else">
@@ -231,7 +232,9 @@ TypeRef typeref_base():
 }
 {
       t=<VOID>          { return new VoidTypeRef(location(t)); }
+    | t=<BOOL>           { return new BooleanTypeRef("bool", location(t)); }
     | t=<INT>           { return IntegerTypeRef.intRef(location(t)); }
+    | t=<STR>           { return new StringTypeRef("string", location(t)); }
 }
 List<StmtNode> stmts():
 {
