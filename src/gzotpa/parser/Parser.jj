@@ -238,16 +238,17 @@ TypeRef newtyperef():
 }
 {
     ref=typeref_base()
-    ("[" e=expr() "]"
+    ( LOOKAHEAD(2)
+    "[" e=expr() "]"
         {
             ref = new ArrayTypeRef(ref, e);
         }
-     ( "[" "]"
+    )*
+    ( "[" "]"
         {
             ref = new ArrayTypeRef(ref);
         }
-     )*
-    )
+    )*
         {
             return ref;
         }
@@ -576,7 +577,30 @@ List<DefinedVariable> defvars():
 			return defs;
 		}
 }
-
+void class_defs():
+{ }
+{
+	(   LOOKAHEAD(typeref() <IDENTIFIER> "(")
+		defun()
+	|   LOOKAHEAD(<IDENTIFIER> "(")
+		deconstruct()
+	|	LOOKAHEAD(3)
+		defvars()
+	)*
+	{ }
+}
+void declass():
+{ }
+{
+	<CLASS> name() "{" class_defs() "}"
+	{ }
+}
+void deconstruct():
+{ }
+{
+	name() "(" params() ")" block()
+	{ }
+}
 DefinedFunction defun():
 {
 	TypeRef ret;
@@ -610,7 +634,9 @@ Declarations top_defs():
 	Constant defconst;
 }
 {
-	( LOOKAHEAD(typeref() <IDENTIFIER> "(")
+	(	LOOKAHEAD(<CLASS>)
+		declass() { }
+	|	LOOKAHEAD(typeref() <IDENTIFIER> "(")
 		defun=defun() { decls.addDefun(defun); }
 	|	LOOKAHEAD(3)
 		defvars=defvars() { decls.addDefvars(defvars); }
