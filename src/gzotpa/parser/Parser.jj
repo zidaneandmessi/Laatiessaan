@@ -551,7 +551,11 @@ ExprNode primary():
     ExprNode n;
 }
 {
-      t=<TRUE>
+	  t=<NULL>
+	  	{
+	  		return new NullNode(location(t));
+	  	}
+  	| t=<TRUE>
         {
             return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(), integerValue("1"));
         }
