@@ -20,9 +20,11 @@ import java.util.HashSet;
 
 public class Parser {
 	private String sourceName;
+    private Set<String> knownTypes;
 	public Parser(Reader s, String name) {
 		this(s);
 		this.sourceName = name;
+		this.knownTypes = new HashSet<String>();
 	}
 	public AST parse() throws SyntaxException {
         try {
@@ -113,6 +115,14 @@ public class Parser {
             return Long.parseLong(s, 10);
         }
     }
+
+    private void addType(String name) {
+        knownTypes.add(name);
+    }
+
+    private boolean isType(String name) {
+        return knownTypes.contains(name);
+    }
 }
 
 PARSER_END(Parser)
@@ -190,11 +200,15 @@ Parameter param():
 BlockNode block():
 {
     Token t;
-    List<DefinedVariable> vars;
-    List<StmtNode> stmts;
+    List<DefinedVariable> var,vars = new ArrayList<DefinedVariable>();
+    StmtNode stmt;
+    List<StmtNode> stmts = new ArrayList<StmtNode>();
 }
 {
-    t="{" vars=defvar_list() stmts=stmts() "}"
+    t="{" (	var=defvars() { vars.addAll(var); }
+    	 |	stmt=stmt()  { stmts.add(stmt); }
+     	  )*
+      "}"
         {
             return new BlockNode(location(t), vars, stmts);
         }
@@ -261,7 +275,9 @@ TypeRef typeref_base():
       t=<VOID>          { return new VoidTypeRef(location(t)); }
     | t=<BOOL>           { return new BooleanTypeRef("bool", location(t)); }
     | t=<INT>           { return IntegerTypeRef.intRef(location(t)); }
-    | t=<STR>           { return new StringTypeRef("string", location(t)); }
+    | t=<STR>           { return new StringTypeRef("string", location(t)); } 
+    | LOOKAHEAD({isType(getToken(1).image)}) t=<IDENTIFIER>
+        { return new UserTypeRef(location(t), t.image); }
 }
 List<StmtNode> stmts():
 {
@@ -590,9 +606,12 @@ void class_defs():
 	{ }
 }
 void declass():
-{ }
 {
-	<CLASS> name() "{" class_defs() "}"
+	String s;
+}
+{
+	<CLASS> s=name() { addType(s); }
+	 "{" class_defs() "}"
 	{ }
 }
 void deconstruct():
@@ -621,7 +640,7 @@ List<DefinedVariable> defvar_list():
 	List<DefinedVariable> vars;
 }
 {
-	( LOOKAHEAD(2) vars=defvars() { result.addAll(vars); } )*
+	( vars=defvars() { result.addAll(vars); } )*
 		{
 			return result;
 		}
