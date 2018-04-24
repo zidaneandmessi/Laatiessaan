@@ -72,6 +72,7 @@ public class Parser {
     private char unescapeSeq(char c) throws ParseException {
         switch (c) {
         case '"': return '"';
+        case '\\': return '\\';
         case '\'': return '\'';
         case 'n': return '\n';
         default:
@@ -144,6 +145,7 @@ TOKEN: {
 |   <BREAK: "break">
 |   <CONTINUE: "continue">
 |   <NEW: "new">
+|   <SIZE: "size">
 |   <IDENTIFIER: ["a"-"z", "A"-"Z", "_"] (["a"-"z", "A"-"Z", "_", "0"-"9"])*>
 | 	<INTEGER: ["1"-"9"] (["0"-"9"])* | "0">
 }
@@ -521,6 +523,8 @@ ExprNode postfix():
     ( "++"                  { expr = new SuffixOpNode("++", expr); }
     | "--"                  { expr = new SuffixOpNode("--", expr); }
     | "[" idx=expr() "]"    { expr = new ArefNode(expr, idx); }
+    | LOOKAHEAD(2)
+    "." <SIZE> "(" ")"    	{ expr = new SizeNode(expr); }
     | "." memb=name()       { expr = new MemberNode(expr, memb); }
     | "(" args=args() ")"   { expr = new FuncallNode(expr, args); }
     )*

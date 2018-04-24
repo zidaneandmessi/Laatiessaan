@@ -61,6 +61,8 @@ Parser Generator: JavaCC (LL)
 
             - SuffixOpNode (i++)
 
+        - SizeNode
+
 - StmtNode
 
     - BlockNode
