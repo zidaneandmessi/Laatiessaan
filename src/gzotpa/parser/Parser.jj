@@ -551,7 +551,15 @@ ExprNode primary():
     ExprNode n;
 }
 {
-      t=<INTEGER>
+      t=<TRUE>
+        {
+            return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(), integerValue("1"));
+        }
+    | t=<FALSE>
+        {
+            return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(), integerValue("0"));
+        }
+    | t=<INTEGER>
         {
             return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(), integerValue(t.image));
         }
