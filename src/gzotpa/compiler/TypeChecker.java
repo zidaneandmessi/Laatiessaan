@@ -168,6 +168,8 @@ class TypeChecker extends Visitor {
 
     public Void visit(BinaryOpNode node) {
         super.visit(node);
+        System.err.println("ll "+node.left().type());
+        System.err.println("rr "+node.right().type());
         if (!node.left().type().isInteger() || !node.right().type().isInteger()) {
             throw new Error("Gzotpa! Binary operator LHS or RHS not integer!");
         }

@@ -10,4 +10,13 @@ public class PointerTypeRef extends TypeRef {
     public TypeRef baseType() {
         return baseType;
     }
+    
+    public boolean equals(Object other) {
+        if (! (other instanceof PointerTypeRef)) return false;
+        return baseType.equals(((PointerTypeRef)other).baseType);
+    }
+
+    public String toString() {
+        return baseType.toString() + "*";
+    }
 }

@@ -14,8 +14,10 @@ public class TypeTable {
 
     public TypeTable() {
         this.table = new HashMap<TypeRef, Type>();
-        put(IntegerTypeRef.charRef(),
-                new IntegerType(charSize, "char"));
+    }
+
+    public void addKnownedTypes() {
+        put(new VoidTypeRef(), new VoidType());
         put(IntegerTypeRef.intRef(),
                 new IntegerType(intSize, "int"));
     }
@@ -32,6 +34,7 @@ public class TypeTable {
     }
 
     public Type get(TypeRef ref) {
+        //System.err.println(table.containsKey(ref));
         Type type = table.get(ref);
         if (type == null) {
             if (ref instanceof UserTypeRef) {

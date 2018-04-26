@@ -15,4 +15,8 @@ public class PointerType extends Type {
     public Type baseType() {
         return baseType;
     }
+    
+    public String toString() {
+        return baseType.toString() + "*";
+    }
 }

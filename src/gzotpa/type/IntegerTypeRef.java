@@ -10,6 +10,10 @@ public class IntegerTypeRef extends TypeRef {
         return new IntegerTypeRef("int");
     }
 
+    static public IntegerTypeRef charRef() {
+        return new IntegerTypeRef("char");
+    }
+
     protected String name;
 
     public IntegerTypeRef(String name) {
@@ -21,11 +25,17 @@ public class IntegerTypeRef extends TypeRef {
         this.name = name;
     }
     
+    public boolean equals(Object other) {
+        if (! (other instanceof IntegerTypeRef)) return false;
+        IntegerTypeRef ref = (IntegerTypeRef)other;
+        return name.equals(ref.name);
+    }
+
     public String name() {
         return name;
     }
 
-    static public IntegerTypeRef charRef() {
-        return new IntegerTypeRef("char");
+    public String toString() {
+        return name;
     }
 }

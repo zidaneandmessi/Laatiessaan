@@ -6,5 +6,7 @@ public class NullType extends Type {
         super();
     }
 
-    public boolean isScalar() { return false; }
+    public String toString() {
+        return "null";
+    }
 }

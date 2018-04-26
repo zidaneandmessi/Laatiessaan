@@ -75,6 +75,7 @@ public class Compiler {
             AST ast = parseFile(path);
             new LocalResolver().resolve(ast);
             TypeTable types = new TypeTable();
+            types.addKnownedTypes();
             new TypeResolver(types).resolve(ast);
             types.semanticCheck();
             //new DereferenceChecker().check(ast);

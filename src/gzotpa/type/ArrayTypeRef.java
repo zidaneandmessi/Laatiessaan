@@ -30,11 +30,6 @@ public class ArrayTypeRef extends TypeRef {
         return true;
     }
 
-    public boolean equals(Object other) {
-        return (other instanceof ArrayTypeRef) &&
-            (length == ((ArrayTypeRef)other).length);
-    }
-
     public TypeRef baseType() {
         return baseType;
     }
@@ -49,6 +44,11 @@ public class ArrayTypeRef extends TypeRef {
 
     public boolean isLengthUndefined() {
         return (length == undefined);
+    }
+    
+    public boolean equals(Object other) {
+        return (other instanceof ArrayTypeRef) &&
+            (length == ((ArrayTypeRef)other).length);
     }
 
     public String toString() {

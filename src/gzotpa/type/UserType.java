@@ -14,5 +14,7 @@ public class UserType extends NamedType {
         return real.type();
     }
 
-    public boolean isScalar() { return realType().isScalar(); }
+    public String toString() {
+        return name;
+    }
 }

@@ -11,4 +11,8 @@ public abstract class TypeRef {
     public Location location() {
         return location;
     }
+
+    public int hashCode() {
+        return toString().hashCode();
+    }
 }

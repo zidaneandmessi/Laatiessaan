@@ -17,4 +17,13 @@ public class ArrayType extends Type {
         this.length = -1;
         this.pointerSize = pointerSize;
     }
+    
+    public String toString() {
+        if (length < 0) {
+            return baseType.toString() + "[]";
+        }
+        else {
+            return baseType.toString() + "[" + length + "]";
+        }
+    }
 }
