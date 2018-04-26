@@ -11,4 +11,8 @@ public class ExprStmtNode extends StmtNode {
     public ExprNode expr() {
         return expr;
     }
+
+    public <S,E> S accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
+    }
 }

@@ -29,7 +29,23 @@ public class FuncallNode extends ExprNode {
         }
     }
 
+    public List<ExprNode> args() {
+        return args;
+    }
+
+    public long numArgs() {
+        return args.size();
+    }
+
+    public void replaceArgs(List<ExprNode> args) {
+        this.args = args;
+    }
+
     public Location location() {
         return expr.location();
+    }
+    
+    public <S,E> E accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
     }
 }

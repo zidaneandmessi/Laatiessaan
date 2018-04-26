@@ -9,4 +9,10 @@ public class UserType extends NamedType {
         super(name, loc);
         this.real = real;
     }
+    
+    public Type realType() {
+        return real.type();
+    }
+
+    public boolean isScalar() { return realType().isScalar(); }
 }

@@ -15,7 +15,11 @@ public class FunctionType extends Type {
         return returnType;
     }
     
-    public ParamTypes paramTypes() {
-        return paramTypes;
+    public List<Type> paramTypes() {
+        return paramTypes.types();
+    }
+
+    public long argc() {
+        return paramTypes.argc();
     }
 }

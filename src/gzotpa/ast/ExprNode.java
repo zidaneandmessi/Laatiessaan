@@ -9,4 +9,8 @@ abstract public class ExprNode extends Node {
     abstract public Type type();
     
     protected Type origType() { return type(); }
+    
+    public boolean isParameter() { return false; }
+    
+    abstract public <S,E> E accept(ASTVisitor<S,E> visitor);
 }

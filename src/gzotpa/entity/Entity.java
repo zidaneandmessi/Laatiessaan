@@ -24,6 +24,8 @@ abstract public class Entity {
         return isPrivate;
     }
     
+    abstract public boolean isDefined();
+
     public boolean isParameter() { return false; }
 
     public TypeNode typeNode() {
@@ -45,4 +47,6 @@ abstract public class Entity {
     public Location location() {
         return typeNode.location();
     }
+    
+    abstract public <T> T accept(EntityVisitor<T> visitor);
 }

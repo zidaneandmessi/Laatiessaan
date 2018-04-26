@@ -23,4 +23,8 @@ public class IfNode extends StmtNode {
     public StmtNode elseBody() {
         return elseBody;
     }
+    
+    public <S,E> S accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
+    }
 }

@@ -18,4 +18,8 @@ public class StringLiteralNode extends LiteralNode {
     public ConstantEntry entry() {
         return entry;
     }
+    
+    public <S,E> E accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
+    }
 }

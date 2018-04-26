@@ -1,0 +1,266 @@
+package gzotpa.compiler;
+import gzotpa.ast.*;
+import gzotpa.entity.*;
+import gzotpa.type.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+class TypeChecker extends Visitor {
+    DefinedFunction currentFunction;
+
+    public TypeChecker() {}
+
+    private void check(StmtNode node) {
+        visitStmt(node);
+    }
+
+    private void check(ExprNode node) {
+        visitExpr(node);
+    }
+
+    public void check(AST ast) {
+        for (DefinedVariable var : ast.definedVariables()) {
+            checkVariable(var);
+        }
+        for (DefinedFunction f : ast.definedFunctions()) {
+            currentFunction = f;System.out.println("func");
+            checkReturnType(f);System.out.println("return");
+            checkParamTypes(f);System.out.println("param");
+            check(f.body());System.out.println("body");
+        }
+    }
+
+    private void checkReturnType(DefinedFunction f) {
+        if (isInvalidReturnType(f.returnType())) {
+            throw new Error("Gzotpa! Return type invalid!");
+        }
+    }
+    private boolean isInvalidReturnType(Type t) {
+        return t.isClass() || t.isArray();
+    }
+    private void checkParamTypes(DefinedFunction f) {
+        for (Parameter param : f.parameters()) {
+            if (isInvalidParameterType(param.type())) {
+                throw new Error("Gzotpa! Parameter type invalid!");
+            }
+        }
+    }
+    private boolean isInvalidParameterType(Type t) {
+        return t.isClass() || t.isVoid() || t.isIncompleteArray();
+    }
+	protected void visitExprs(List<? extends ExprNode> exprs) {
+        for (ExprNode e : exprs) {
+            visitExpr(e);
+        }
+    }
+    protected void visitVariables(List<DefinedVariable> vars) {
+        for (DefinedVariable var : vars)
+            checkVariable(var);
+    }
+    protected void checkVariable(DefinedVariable var) {
+    	if (isInvalidVariableType(var.type())) {
+            throw new Error("Gzotpa! Variable type invalid!");
+        }
+        if (var.hasInitializer()) {
+            if (isInvalidLHSType(var.type())) {
+                throw new Error("Gzotpa! Variable is not a valid LHS type!");
+            }
+            check(var.initializer());
+            if (var.type() != var.initializer().type()) {
+                throw new Error("Gzotpa! Variable cannot be initialized from " + var.type() + "to" + var.initializer().type() + "!");
+            }
+            var.setInitializer(var.initializer());
+        }
+    }
+    private boolean isInvalidVariableType(Type t) {
+        return t.isVoid() || (t.isArray() && ! t.isAllocatedArray());
+    }
+    private boolean isInvalidLHSType(Type t) {
+        return t.isClass() || t.isVoid() || t.isArray();
+    }
+    private boolean isInvalidRHSType(Type t) {
+        return t.isClass() || t.isVoid();
+    }
+    private boolean isInvalidStatementType(Type t) {
+        return t.isClass();
+    }
+    
+	public Void visit(BlockNode node) {
+        visitVariables(node.variables());
+        for (StmtNode n : node.stmts()) {
+            check(n);
+        }
+        return null;
+    }
+
+    public Void visit(ExprStmtNode node) {
+        check(node.expr());
+        if (isInvalidStatementType(node.expr().type())) {
+            throw new Error("Gzotpa! Statement type invalid!");
+        }
+        return null;
+    }
+
+    public Void visit(ForNode node) {
+        super.visit(node);
+        checkCond(node.cond());
+        return null;
+    }
+
+    public Void visit(IfNode node) {
+        super.visit(node);
+        checkCond(node.cond());
+        return null;
+    }
+
+    public Void visit(ReturnNode node) {
+        super.visit(node);
+        if (currentFunction.isVoid()) {
+            if (node.expr() != null) {
+                throw new Error("Gzotpa! Returning value from void function!");
+            }
+        }
+        else {
+            if (node.expr() == null) {
+                throw new Error("Gzotpa! No return value!");
+            }
+            if (node.expr().type().isVoid()) {
+                throw new Error("Gzotpa! Returning void value!");
+            }
+            node.setExpr(node.expr());
+        }
+        return null;
+    }
+
+    public Void visit(WhileNode node) {
+        super.visit(node);
+        checkCond(node.cond());
+        return null;
+    }
+
+    public void checkCond(ExprNode cond) {
+        if (!cond.type().isInteger()) {
+            throw new Error("Gzotpa! Loop condition not int/bool!");
+        }
+    }
+
+
+    public Void visit(AssignNode node) {
+        super.visit(node);
+        if (!node.lhs().isParameter() && isInvalidLHSType(node.lhs().type())) {
+            throw new Error("Gzotpa! Invalid LHS type!");
+        }
+        if (!node.rhs().isParameter() && isInvalidRHSType(node.rhs().type())) {
+            throw new Error("Gzotpa! Invalid RHS type!");
+        }
+        node.setRHS(node.rhs());
+        return null;
+    }
+
+    public Void visit(ArefNode node) {
+        super.visit(node);
+        if (!node.index().type().isInteger()) {
+            throw new Error("Gzotpa! Array index not integer!");
+        }
+        return null;
+    }
+
+    public Void visit(BinaryOpNode node) {
+        super.visit(node);
+        if (!node.left().type().isInteger() || !node.right().type().isInteger()) {
+            throw new Error("Gzotpa! Binary operator LHS or RHS not integer!");
+        }
+        return null;
+    }
+
+    public Void visit(FuncallNode node) {
+        super.visit(node);
+        FunctionType type = node.functionType();
+        if (type.argc() != node.numArgs()) {
+            throw new Error("Gzotpa! Wrong number of function arguments!");
+        }
+        List<ExprNode> newArgs = new ArrayList<ExprNode>();
+        Iterator<ExprNode> args = node.args().iterator();
+        for (Type paramType : type.paramTypes()) {
+            ExprNode arg = args.next();
+            if (arg.type() != paramType){
+                throw new Error("Gzotpa! Parameter type doesn't match!");
+            }
+            newArgs.add(arg);
+        }
+        node.replaceArgs(newArgs);
+        return null;
+    }
+
+    public Void visit(LogicalAndNode node) {
+        super.visit(node);
+        if (!node.left().type().isInteger() || !node.right().type().isInteger()) {
+            throw new Error("Gzotpa! Logical and operator LHS or RHS not integer!");
+        }
+        return null;
+    }
+
+    public Void visit(LogicalOrNode node) {
+        super.visit(node);
+        if (!node.left().type().isInteger() || !node.right().type().isInteger()) {
+            throw new Error("Gzotpa! Logical or operator LHS or RHS not integer!");
+        }
+        return null;
+    }
+
+    public Void visit(NewTypeNode node) {
+        return null;
+    }
+
+    public Void visit(NullNode node) {
+        return null;
+    }
+    
+    public Void visit(OpAssignNode node) {
+        super.visit(node);
+        if (!node.lhs().isParameter() && isInvalidLHSType(node.lhs().type())) {
+            throw new Error("Gzotpa! Invalid LHS type!");
+        }
+        if (!node.rhs().isParameter() && isInvalidRHSType(node.rhs().type())) {
+            throw new Error("Gzotpa! Invalid RHS type!");
+        }
+        if (!node.lhs().type().isInteger()) {
+            throw new Error("Gzotpa! Operator assign LHS not integer!");
+        }
+        if (!node.rhs().type().isInteger()) {
+            throw new Error("Gzotpa! Operator assign RS not integer!");
+        }
+        return null;
+    }
+
+    public Void visit(PrefixOpNode node) {
+        super.visit(node);
+        if (node.expr().isParameter()) {
+            return null;
+        }
+        else if (!node.expr().type().isInteger()) {
+            throw new Error("Gzotpa! Prefix operator LHS not integer!");
+        }
+        return null;
+    }
+
+    public Void visit(SuffixOpNode node) {
+        super.visit(node);
+        if (node.expr().isParameter()) {
+            return null;
+        }
+        else if (!node.expr().type().isInteger()) {
+            throw new Error("Gzotpa! Suffix operator LHS not integer!");
+        }
+        return null;
+    }
+
+    public Void visit(UnaryOpNode node) {
+        super.visit(node);
+        if (!node.expr().type().isInteger()) {
+            throw new Error("Gzotpa! Unary operator LHS not integer!");
+        }
+        return null;
+    }
+}

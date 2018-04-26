@@ -12,4 +12,8 @@ abstract public class Function extends Entity {
     public Type returnType() {
         return type().getFunctionType().returnType();
     }
+    
+    public boolean isVoid() {
+        return returnType().isVoid();
+    }
 }

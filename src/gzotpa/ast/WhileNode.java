@@ -17,4 +17,8 @@ public class WhileNode extends StmtNode {
     public StmtNode body() {
         return body;
     }
+    
+    public <S,E> S accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
+    }
 }

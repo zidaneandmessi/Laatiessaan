@@ -14,4 +14,8 @@ public class NewTypeNode extends ExprNode {
     public Location location() {
         return type.location();
     }
+
+    public <S,E> E accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
+    }
 }

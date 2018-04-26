@@ -6,8 +6,7 @@ public class ForNode extends StmtNode {
     protected StmtNode incr;
     protected StmtNode body;
 
-    public ForNode(Location loc, 
-                   ExprNode init, ExprNode cond, ExprNode incr, StmtNode body) {
+    public ForNode(Location loc, ExprNode init, ExprNode cond, ExprNode incr, StmtNode body) {
         super(loc);
         this.init = new ExprStmtNode(loc, init);
         this.cond = cond;
@@ -29,5 +28,9 @@ public class ForNode extends StmtNode {
 
     public StmtNode body() {
         return body;
+    }
+
+    public <S,E> S accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
     }
 }

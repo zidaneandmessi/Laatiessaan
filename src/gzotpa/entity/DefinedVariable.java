@@ -25,4 +25,24 @@ public class DefinedVariable extends Variable {
         initializer = init;
         sequence = -1;
     }
+
+    public boolean isDefined() {
+        return true;
+    }
+
+    public boolean hasInitializer() {
+        return (initializer != null);
+    }
+
+    public ExprNode initializer() {
+        return initializer;
+    }
+    
+    public void setInitializer(ExprNode expr) {
+        this.initializer = expr;
+    }
+    
+    public <T> T accept(EntityVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

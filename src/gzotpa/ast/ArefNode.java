@@ -9,8 +9,12 @@ public class ArefNode extends LHSNode {
         this.index = index;
     }
 
-    public ExprNode expr() { return expr; }
-    public ExprNode index() { return index; }
+    public ExprNode expr() {
+        return expr;
+    }
+    public ExprNode index() {
+        return index;
+    }
 
     protected Type origType() {
         return expr.origType().baseType();
@@ -18,5 +22,9 @@ public class ArefNode extends LHSNode {
     
     public Location location() {
         return expr.location();
+    }
+    
+    public <S,E> E accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
     }
 }

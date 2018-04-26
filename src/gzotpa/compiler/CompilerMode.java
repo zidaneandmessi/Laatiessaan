@@ -1,10 +1,10 @@
 package gzotpa.compiler;
-
 import java.util.Map;
 import java.util.HashMap;
 
 enum CompilerMode {
     CheckSyntax ("--check-syntax"),
+    CheckSemantic ("--check-semantic"),
     DumpTokens ("--dump-tokens"),
     DumpAST ("--dump-ast"),
     DumpStmt ("--dump-stmt"),
@@ -22,6 +22,7 @@ enum CompilerMode {
     static {
         modes = new HashMap<String, CompilerMode>();
         modes.put("--check-syntax", CheckSyntax);
+        modes.put("--check-semantic", CheckSemantic);
         modes.put("--dump-tokens", DumpTokens);
         modes.put("--dump-ast", DumpAST);
         modes.put("--dump-stmt", DumpStmt);

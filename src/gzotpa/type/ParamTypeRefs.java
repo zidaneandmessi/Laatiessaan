@@ -15,4 +15,12 @@ public class ParamTypeRefs extends ParamSlots<TypeRef> {
     public List<TypeRef> typerefs() {
         return paramDescriptors;
     }
+    
+    public ParamTypes internTypes(TypeTable table) {
+        List<Type> types = new ArrayList<Type>();
+        for (TypeRef ref : paramDescriptors) {
+            types.add(table.getParamType(ref));
+        }
+        return new ParamTypes(location, types, vararg);
+    }
 }

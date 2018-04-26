@@ -9,4 +9,6 @@ public class BooleanType extends Type {
         this.image = image;
         this.name = name;
     }
+    
+    public boolean isScalar() { return true; }
 }

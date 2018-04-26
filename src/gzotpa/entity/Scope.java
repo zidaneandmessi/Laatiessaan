@@ -10,7 +10,13 @@ abstract public class Scope {
         children = new ArrayList<LocalScope>();
     }
 
+    abstract public boolean isToplevel();
+    abstract public ToplevelScope toplevel();
+    abstract public Scope parent();
+
     protected void addChild(LocalScope s) {
         children.add(s);
     }
+    
+    abstract public Entity get(String name) throws SemanticException;
 }

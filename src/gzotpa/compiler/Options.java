@@ -1,5 +1,4 @@
 package gzotpa.compiler;
-import gzotpa.type.TypeTable;
 import gzotpa.exception.*;
 import java.util.List;
 import java.util.ListIterator;

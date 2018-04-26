@@ -1,5 +1,6 @@
 package gzotpa.entity;
 import gzotpa.type.Type;
+import gzotpa.exception.*;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -19,7 +20,29 @@ public class LocalScope extends Scope {
         return this.parent;
     }
 
+    public boolean isToplevel() {
+        return false;
+    }
+
+    public ToplevelScope toplevel() {
+        return parent.toplevel();
+    }
+
     public List<LocalScope> children() {
         return children;
+    }
+
+    public boolean isDefinedLocally(String name) {
+        return variables.containsKey(name);
+    }
+
+    public void defineVariable(DefinedVariable var) {
+        variables.put(var.name(), var);
+    }
+
+    public Entity get(String name) throws SemanticException {
+        DefinedVariable var = variables.get(name);
+        if (var != null) return var;
+        else return parent.get(name);
     }
 }

@@ -38,4 +38,8 @@ public class UnaryOpNode extends ExprNode {
     public Location location() {
         return expr.location();
     }
+    
+    public <S,E> E accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
+    }
 }

@@ -9,4 +9,8 @@ public class SizeNode extends UnaryOpNode {
     public ExprNode expr() {
         return expr;
     }
+    
+    public <S,E> E accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
+    }
 }

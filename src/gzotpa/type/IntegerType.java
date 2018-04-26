@@ -9,4 +9,6 @@ public class IntegerType extends Type {
         this.size = size;
         this.name = name;
     }
+    
+    public boolean isScalar() { return true; }
 }

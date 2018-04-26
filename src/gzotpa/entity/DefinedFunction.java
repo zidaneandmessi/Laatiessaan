@@ -22,11 +22,27 @@ public class DefinedFunction extends Function {
         this.body = body;
     }
 
+    public boolean isDefined() {
+        return true;
+    }
+
     public List<Parameter> parameters() {
         return params.parameters();
     }
 
     public BlockNode body() {
         return body;
+    }
+    
+    public void setScope(LocalScope scope) {
+        this.scope = scope;
+    }
+
+    public LocalScope scope() {
+        return scope;
+    }
+    
+    public <T> T accept(EntityVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

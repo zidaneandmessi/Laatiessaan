@@ -14,6 +14,10 @@ public class TypeNode extends Node {
         super();
         this.type = type;
     }
+
+    public boolean isResolved() {
+        return (type != null);
+    }
     
     public Location location() {
         return typeRef == null ? null : typeRef.location();

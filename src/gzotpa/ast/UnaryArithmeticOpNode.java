@@ -19,4 +19,8 @@ public class UnaryArithmeticOpNode extends UnaryOpNode {
     public void setAmount(long amount) {
         this.amount = amount;
     }
+    
+    public <S,E> E accept(ASTVisitor<S,E> visitor) {
+        return visitor.visit(this);
+    }
 }
