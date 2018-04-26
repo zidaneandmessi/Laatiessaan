@@ -70,6 +70,45 @@ public class ToplevelScope extends Scope {
                                                 lengthparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
                                                                 new ArrayList<StmtNode>())));
+
+        ParamTypes substringtypes = new ParamTypes(new ArrayList<Type>(), false);
+        Params substringparams = new Params(new ArrayList<Parameter>());
+        substringtypes.add(new IntegerType(32, "left"));
+        substringparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("left")), "left"));
+        substringtypes.add(new IntegerType(32, "right"));
+        substringparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("right")), "right"));
+        substringtypes.add(new StringType("", "str"));
+        substringparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
+        entities.put("substring", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "substring"),
+                                                                                substringtypes)),
+                                                "substring",
+                                                substringparams,
+                                                new BlockNode(new ArrayList<DefinedVariable>(),
+                                                                new ArrayList<StmtNode>())));
+
+        ParamTypes parseInttypes = new ParamTypes(new ArrayList<Type>(), false);
+        Params parseIntparams = new Params(new ArrayList<Parameter>());
+        parseInttypes.add(new StringType("", "str"));
+        parseIntparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
+        entities.put("parseInt", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "parseInt"),
+                                                                                parseInttypes)),
+                                                "parseInt",
+                                                parseIntparams,
+                                                new BlockNode(new ArrayList<DefinedVariable>(),
+                                                                new ArrayList<StmtNode>())));
+
+        ParamTypes ordtypes = new ParamTypes(new ArrayList<Type>(), false);
+        Params ordparams = new Params(new ArrayList<Parameter>());
+        ordtypes.add(new IntegerType(32, "pos"));
+        ordparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("pos")), "pos"));
+        ordtypes.add(new StringType("", "str"));
+        ordparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
+        entities.put("ord", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "ord"),
+                                                                                ordtypes)),
+                                                "ord",
+                                                ordparams,
+                                                new BlockNode(new ArrayList<DefinedVariable>(),
+                                                                new ArrayList<StmtNode>())));
     }
 
     public boolean isToplevel() {

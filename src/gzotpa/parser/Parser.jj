@@ -543,7 +543,7 @@ ExprNode postfix():
     | "--"                  { expr = new SuffixOpNode("--", expr); }
     | "[" idx=expr() "]"    { expr = new ArefNode(expr, idx); }
     | LOOKAHEAD(3)
-    t="." membfunc=expr() "(" args=args() ")"
+    t="." membfunc=primary() "(" args=args() ")"
     						{ args.add(expr);
     						  expr = new FuncallNode(membfunc, args); }
     | "." memb=name()       { expr = new MemberNode(expr, memb); }
