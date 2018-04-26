@@ -303,9 +303,27 @@ StmtNode stmt():
     | n=if_stmt()
     | n=while_stmt()
     | n=for_stmt()
+    | n=return_stmt()
+    )
+        {
+            return n;
+        }
+}
+StmtNode loop_stmt():
+{
+    StmtNode n = null;
+    ExprNode e = null;
+}
+{
+    ( ";"
+    | e=expr() ";" { n = new ExprStmtNode(e.location(), e); }
+    | n=block()
+    | n=if_stmt()
+    | n=while_stmt()
+    | n=for_stmt()
+    | n=return_stmt()
     | n=break_stmt()
     | n=continue_stmt()
-    | n=return_stmt()
     )
         {
             return n;
@@ -331,7 +349,7 @@ WhileNode while_stmt():
     StmtNode body;
 }
 {
-    t=<WHILE> "(" cond=expr() ")" body=stmt()
+    t=<WHILE> "(" cond=expr() ")" body=loop_stmt()
         {
             return new WhileNode(location(t), cond, body);
         }
@@ -345,7 +363,7 @@ ForNode for_stmt():
 {
     t=<FOR> "(" [init=expr()] ";"
               [cond=expr()] ";"
-              [incr=expr()] ")" body=stmt()
+              [incr=expr()] ")" body=loop_stmt()
         {
             return new ForNode(location(t), init, cond, incr, body);
         }
