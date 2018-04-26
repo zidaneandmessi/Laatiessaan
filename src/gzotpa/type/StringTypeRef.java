@@ -16,4 +16,12 @@ public class StringTypeRef extends TypeRef {
     public String name() {
         return name;
     }
+    
+    public boolean equals(Object other) {
+        return other instanceof StringTypeRef;
+    }
+
+    public String toString() {
+        return "string";
+    }
 }

@@ -18,8 +18,12 @@ public class TypeTable {
 
     public void addKnownedTypes() {
         put(new VoidTypeRef(), new VoidType());
+        table.put(IntegerTypeRef.charRef(),
+                  new IntegerType(charSize, "char"));
         put(IntegerTypeRef.intRef(),
                 new IntegerType(intSize, "int"));
+        put(new StringTypeRef("string"),
+                new StringType("", "string"));
     }
 
     public boolean isDefined(TypeRef ref) {
@@ -34,8 +38,10 @@ public class TypeTable {
     }
 
     public Type get(TypeRef ref) {
-        //System.err.println(table.containsKey(ref));
+        System.err.println("ref: "+ref);
+        System.err.println("table: "+table.containsKey(ref));
         Type type = table.get(ref);
+        System.err.println("type: "+type);
         if (type == null) {
             if (ref instanceof UserTypeRef) {
                 UserTypeRef uref = (UserTypeRef)ref;
@@ -47,6 +53,12 @@ public class TypeTable {
                                        aref.length(),
                                        pointerSize);
                 table.put(aref, t);
+                return t;
+            }
+            else if (ref instanceof PointerTypeRef) {
+                PointerTypeRef pref = (PointerTypeRef)ref;
+                Type t = new PointerType(pointerSize, get(pref.baseType()));
+                table.put(pref, t);
                 return t;
             }
             else if (ref instanceof FunctionTypeRef) {

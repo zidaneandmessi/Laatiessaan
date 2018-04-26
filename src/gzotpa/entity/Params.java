@@ -9,8 +9,20 @@ public class Params extends ParamSlots<Parameter> {
         super(loc, paramDescs, false);
     }
 
+    public Params(List<Parameter> paramDescs) {
+        super(null, paramDescs, false);
+    }
+
     public List<Parameter> parameters() {
         return paramDescriptors;
+    }
+    
+    public void addParameter(Parameter para) {
+        paramDescriptors.add(para);
+    }
+
+    public long size() {
+        return paramDescriptors.size();
     }
 
     public ParamTypeRefs parametersTypeRef() {

@@ -20,9 +20,11 @@ public abstract class Type {
     public boolean isAllocatedArray() { return false; }
     public boolean isIncompleteArray() { return false; }
     public boolean isScalar() { return false; }
+    
+    abstract public boolean isType(Type type);
 
     public Type baseType() {
-        throw new SemanticError("#baseType called for undereferable type");
+        throw new SemanticError("Gzotpa! BaseType called for undereferable type!");
     }
 
     public IntegerType getIntegerType() { return (IntegerType)this; }

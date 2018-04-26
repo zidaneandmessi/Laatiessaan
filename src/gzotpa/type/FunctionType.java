@@ -18,6 +18,10 @@ public class FunctionType extends Type {
         return returnType;
     }
     
+    public boolean isType(Type type) {
+        return type instanceof FunctionType;
+    }
+
     public List<Type> paramTypes() {
         return paramTypes.types();
     }

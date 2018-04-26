@@ -10,5 +10,9 @@ public class BooleanType extends Type {
         this.name = name;
     }
     
+    public boolean isType(Type type) {
+        return type instanceof BooleanType || type instanceof IntegerType;
+    }
+    
     public boolean isScalar() { return true; }
 }

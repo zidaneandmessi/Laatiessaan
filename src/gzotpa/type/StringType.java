@@ -8,4 +8,16 @@ public class StringType extends Type {
         this.image = image;
         this.name = name;
     }
+
+    public boolean isConstant() {
+        return true;
+    }
+
+    public boolean isType(Type type) {
+        return type instanceof StringType;
+    }
+
+    public String toString() {
+        return name;
+    }
 }

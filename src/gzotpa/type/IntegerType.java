@@ -13,7 +13,11 @@ public class IntegerType extends Type {
     public boolean isInteger() {
         return true;
     }
-    
+
+    public boolean isType(Type type) {
+        return type instanceof BooleanType || type instanceof IntegerType;
+    }
+
     public String toString() {
         return name;
     }

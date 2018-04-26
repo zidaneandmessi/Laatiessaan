@@ -9,4 +9,8 @@ public class NullType extends Type {
     public String toString() {
         return "null";
     }
+
+    public boolean isType(Type type) {
+        return type instanceof NullType;
+    }
 }

@@ -9,6 +9,10 @@ public class VoidType extends Type {
     public boolean equals(Object other) {
         return (other instanceof VoidType);
     }
+
+    public boolean isType(Type type) {
+        return type instanceof VoidType;
+    }
     
     public String toString() {
         return "void";

@@ -10,6 +10,7 @@ public class PointerType extends Type {
     }
 
     public boolean isPointer() { return true; }
+    public boolean isCallable() { return baseType.isFunction(); }
     
     public long size() {
         return size;
@@ -17,6 +18,10 @@ public class PointerType extends Type {
 
     public Type baseType() {
         return baseType;
+    }
+    
+    public boolean isType(Type type) {
+        return type instanceof PointerType;
     }
     
     public String toString() {

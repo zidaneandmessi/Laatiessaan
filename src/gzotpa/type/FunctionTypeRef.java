@@ -12,6 +12,8 @@ public class FunctionTypeRef extends TypeRef {
         this.params = params;
     }
 
+    public boolean isFunction() { return true; }
+
     public TypeRef returnType() {
         return returnType;
     }

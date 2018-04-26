@@ -187,7 +187,8 @@ class TypeChecker extends Visitor {
         Iterator<ExprNode> args = node.args().iterator();
         for (Type paramType : type.paramTypes()) {
             ExprNode arg = args.next();
-            if (arg.type() != paramType){
+            System.err.println(arg.type() + " & " + paramType);
+            if (!arg.type().isType(paramType)) {
                 throw new Error("Gzotpa! Parameter type doesn't match!");
             }
             newArgs.add(arg);

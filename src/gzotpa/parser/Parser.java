@@ -1319,7 +1319,7 @@ public class Parser implements ParserConstants {
       case STRING:
         t = jj_consume_token(STRING);
             {if (true) return new StringLiteralNode(location(t),
-                new PointerTypeRef(IntegerTypeRef.charRef()),
+                new StringTypeRef(stringValue(t.image), location(t)),
                 stringValue(t.image));}
         break;
       case IDENTIFIER:

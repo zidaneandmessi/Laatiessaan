@@ -573,7 +573,7 @@ ExprNode primary():
     | t=<STRING>
         {
             return new StringLiteralNode(location(t),
-                new PointerTypeRef(IntegerTypeRef.charRef()),
+                new StringTypeRef(stringValue(t.image), location(t)),
                 stringValue(t.image));
         }
     | t=<IDENTIFIER>

@@ -17,6 +17,10 @@ public class ArrayType extends Type {
         this.length = -1;
         this.pointerSize = pointerSize;
     }
+
+    public boolean isType(Type type) {
+        return type instanceof ArrayType;
+    }
     
     public String toString() {
         if (length < 0) {
