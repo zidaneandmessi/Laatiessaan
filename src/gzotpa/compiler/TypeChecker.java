@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 class TypeChecker extends Visitor {
+    private final TypeTable typeTable;
     DefinedFunction currentFunction;
 
-    public TypeChecker() {}
+    public TypeChecker(TypeTable typeTable) {
+        this.typeTable = typeTable;
+    }
 
     private void check(StmtNode node) {
         visitStmt(node);
@@ -24,10 +27,10 @@ class TypeChecker extends Visitor {
             checkVariable(var);
         }
         for (DefinedFunction f : ast.definedFunctions()) {
-            currentFunction = f;System.out.println("func");
-            checkReturnType(f);System.out.println("return");
-            checkParamTypes(f);System.out.println("param");
-            check(f.body());System.out.println("body");
+            currentFunction = f;
+            checkReturnType(f);
+            checkParamTypes(f);
+            check(f.body());
         }
     }
 
@@ -168,8 +171,6 @@ class TypeChecker extends Visitor {
 
     public Void visit(BinaryOpNode node) {
         super.visit(node);
-        System.err.println("ll "+node.left().type());
-        System.err.println("rr "+node.right().type());
         if (!node.left().type().isInteger() || !node.right().type().isInteger()) {
             throw new Error("Gzotpa! Binary operator LHS or RHS not integer!");
         }

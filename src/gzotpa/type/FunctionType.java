@@ -11,6 +11,9 @@ public class FunctionType extends Type {
         paramTypes = partypes;
     }
 
+    public boolean isFunction() { return true; }
+    public boolean isCallable() { return true; }
+    
     public Type returnType() {
         return returnType;
     }

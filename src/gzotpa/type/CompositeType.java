@@ -16,6 +16,10 @@ abstract public class CompositeType extends NamedType {
         return fetch(name).type();
     }
     
+    public boolean hasMember(String name) {
+        return (get(name) != null);
+    }
+    
     protected Slot fetch(String name) {
         Slot s = get(name);
         if (s == null) {

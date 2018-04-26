@@ -10,6 +10,9 @@ public class UserType extends NamedType {
         this.real = real;
     }
     
+    public boolean isPointer() { return realType().isPointer(); }
+    public boolean isCallable() { return realType().isCallable(); }
+    
     public Type realType() {
         return real.type();
     }

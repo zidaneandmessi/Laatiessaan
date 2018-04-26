@@ -7,8 +7,13 @@ public class PointerTypeRef extends TypeRef {
         super(baseType.location());
         this.baseType = baseType;
     }
+    
     public TypeRef baseType() {
         return baseType;
+    }
+
+    public boolean isPointer() {
+        return true;
     }
     
     public boolean equals(Object other) {

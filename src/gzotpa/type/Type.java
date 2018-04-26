@@ -14,11 +14,12 @@ public abstract class Type {
     public boolean isClass() { return false; }
     public boolean isUserType() { return false; }
     public boolean isFunction() { return false; }
+    public boolean isPointer() { return false; }
+    public boolean isCallable() { return false; }
 
     public boolean isAllocatedArray() { return false; }
     public boolean isIncompleteArray() { return false; }
     public boolean isScalar() { return false; }
-    public boolean isCallable() { return false; }
 
     public Type baseType() {
         throw new SemanticError("#baseType called for undereferable type");
