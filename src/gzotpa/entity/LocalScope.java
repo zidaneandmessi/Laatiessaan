@@ -7,11 +7,21 @@ import java.util.LinkedHashMap;
 
 public class LocalScope extends Scope {
     protected Scope parent;
+    protected boolean inLoop;
     protected Map<String, DefinedVariable> variables;
 
     public LocalScope(Scope parent) {
         super();
         this.parent = parent;
+        this.inLoop = false;
+        parent.addChild(this);
+        variables = new LinkedHashMap<String, DefinedVariable>();
+    }
+
+    public LocalScope(Scope parent, boolean inLoop) {
+        super();
+        this.parent = parent;
+        this.inLoop = inLoop;
         parent.addChild(this);
         variables = new LinkedHashMap<String, DefinedVariable>();
     }
@@ -22,6 +32,10 @@ public class LocalScope extends Scope {
 
     public boolean isToplevel() {
         return false;
+    }
+
+    public boolean inLoop() {
+        return inLoop;
     }
 
     public ToplevelScope toplevel() {

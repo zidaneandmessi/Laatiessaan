@@ -59,10 +59,25 @@ public class ToplevelScope extends Scope {
                                                 toStringparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
                                                                 new ArrayList<StmtNode>())));
+
+        ParamTypes lengthtypes = new ParamTypes(new ArrayList<Type>(), false);
+        Params lengthparams = new Params(new ArrayList<Parameter>());
+        lengthtypes.add(new StringType("", "str"));
+        lengthparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
+        entities.put("length", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "length"),
+                                                                                lengthtypes)),
+                                                "length",
+                                                lengthparams,
+                                                new BlockNode(new ArrayList<DefinedVariable>(),
+                                                                new ArrayList<StmtNode>())));
     }
 
     public boolean isToplevel() {
         return true;
+    }
+
+    public boolean inLoop() {
+        return false;
     }
 
     public ToplevelScope toplevel() {

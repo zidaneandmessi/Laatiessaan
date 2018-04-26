@@ -15,6 +15,7 @@ abstract public class ExprNode extends Node {
     public boolean isConstant() { return false; }
     public boolean isAssignable() { return false; }
     public boolean isLoadable() { return false; }
+    
     public boolean isCallable() {
         try {
             return type().isCallable();

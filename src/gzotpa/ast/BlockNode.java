@@ -13,6 +13,12 @@ public class BlockNode extends StmtNode {
         this.stmts = stmts;
     }
 
+    public BlockNode(Location loc, List<DefinedVariable> vars, List<StmtNode> stmts, boolean inLoop) {
+        super(loc, inLoop);
+        this.variables = vars;
+        this.stmts = stmts;
+    }
+
     public BlockNode(List<DefinedVariable> vars, List<StmtNode> stmts) {
         super(null);
         this.variables = vars;

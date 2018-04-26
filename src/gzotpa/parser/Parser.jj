@@ -144,7 +144,6 @@ TOKEN: {
 |   <BREAK: "break">
 |   <CONTINUE: "continue">
 |   <NEW: "new">
-|   <SIZE: "size">
 |   <IDENTIFIER: ["a"-"z", "A"-"Z", "_"] (["a"-"z", "A"-"Z", "_", "0"-"9"])*>
 | 	<INTEGER: ["1"-"9"] (["0"-"9"])* | "0">
 }
@@ -223,7 +222,6 @@ TypeRef typeref():
 {
     TypeRef ref;
     Token t;
-    //ParamTypeRefs params;
 }
 {
     ref=typeref_base()
@@ -304,6 +302,8 @@ StmtNode stmt():
     | n=while_stmt()
     | n=for_stmt()
     | n=return_stmt()
+    | n=break_stmt()
+    | n=continue_stmt()
     )
         {
             return n;
@@ -326,6 +326,7 @@ StmtNode loop_stmt():
     | n=continue_stmt()
     )
         {
+          	n.setLoop(true);
             return n;
         }
 }
@@ -531,7 +532,8 @@ ExprNode unary():
 }
 ExprNode postfix():
 {
-    ExprNode expr, idx;
+  	Token t;
+    ExprNode expr, idx, membfunc;
     String memb;
     List<ExprNode> args;
 }
@@ -540,8 +542,10 @@ ExprNode postfix():
     ( "++"                  { expr = new SuffixOpNode("++", expr); }
     | "--"                  { expr = new SuffixOpNode("--", expr); }
     | "[" idx=expr() "]"    { expr = new ArefNode(expr, idx); }
-    | LOOKAHEAD(2)
-    "." <SIZE> "(" ")"    	{ expr = new SizeNode(expr); }
+    | LOOKAHEAD(3)
+    t="." membfunc=expr() "(" args=args() ")"
+    						{ args.add(expr);
+    						  expr = new FuncallNode(membfunc, args); }
     | "." memb=name()       { expr = new MemberNode(expr, memb); }
     | "(" args=args() ")"   { expr = new FuncallNode(expr, args); }
     )*

@@ -7,12 +7,13 @@ abstract public class Visitor implements ASTVisitor<Void, Void> {
     public Visitor() {}
 
     protected void visitStmt(StmtNode stmt) {
-        stmt.accept(this);
+        if (stmt != null) stmt.accept(this);
     }
 
     protected void visitStmts(List<? extends StmtNode> stmts) {
-        for (StmtNode s : stmts) {
-            visitStmt(s);
+        for (StmtNode stmt : stmts) {
+            if (stmt != null)
+                visitStmt(stmt);
         }
     }
 

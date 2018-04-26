@@ -14,8 +14,23 @@ public class ArrayType extends Type {
 
     public ArrayType(Type baseType, long pointerSize) {
         this.baseType = baseType;
-        this.length = -1;
+        this.length = undefined;
         this.pointerSize = pointerSize;
+    }
+
+    public Type baseType() {
+        return baseType;
+    }
+
+    public boolean isPointer() { return true; }
+    public boolean isAllocatedArray() {
+        return length != undefined &&
+            (!baseType.isArray() || baseType.isAllocatedArray());
+    }
+
+    public boolean isIncompleteArray() {
+        if (!baseType.isArray()) return false;
+        return !baseType.isAllocatedArray();
     }
 
     public boolean isType(Type type) {
@@ -29,5 +44,15 @@ public class ArrayType extends Type {
         else {
             return baseType.toString() + "[" + length + "]";
         }
+    }
+
+    public long size() {
+        return pointerSize;
+
+    }
+    public boolean equals(Object other) {
+        if (!(other instanceof ArrayType)) return false;
+        ArrayType type = (ArrayType)other;
+        return (baseType.equals(type.baseType) && length == type.length);
     }
 }

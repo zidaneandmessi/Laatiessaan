@@ -40,11 +40,13 @@ class DereferenceChecker extends Visitor {
     }
 
     private void check(StmtNode node) {
-        node.accept(this);
+        if (node != null)
+            node.accept(this);
     }
 
     private void check(ExprNode node) {
-        node.accept(this);
+        if (node != null)
+            node.accept(this);
     }
 
 
@@ -64,8 +66,8 @@ class DereferenceChecker extends Visitor {
         super.visit(node);
         if (!node.expr().isPointer()) {
             throw new Error("Gzotpa! Indexing non-array/pointer expression!");
-
         }
+        handleImplicitAddress(node);
         return null;
     }
 
@@ -134,7 +136,7 @@ class DereferenceChecker extends Visitor {
     }
 
     private void handleImplicitAddress(LHSNode node) {
-        if (! node.isLoadable()) {
+        if (!node.isLoadable()) {
             Type t = node.type();
             if (t.isArray()) {
                 node.setType(typeTable.pointerTo(t.baseType()));

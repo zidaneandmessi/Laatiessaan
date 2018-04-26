@@ -51,15 +51,43 @@ public class LocalResolver extends Visitor {
         }
     }
 
+    public Void visit(BreakNode node) {
+        if (!currentScope().inLoop())
+            throw new Error("Gzotpa! Unreasonable break statement!");
+        return null;
+    }
+
+    public Void visit(ContinueNode node) {
+        if (!currentScope().inLoop())
+            throw new Error("Gzotpa! Unreasonable continue statement!");
+        return null;
+    }
+    // Not support only break/continue statement like "for(...)if(...)break;".
+
     public Void visit(BlockNode node) {
-        pushScope(node.variables());
+        if (node.inLoop()) {
+            pushScope(node.variables(), true);
+        }
+        else {
+            pushScope(node.variables());
+        }
         super.visit(node);
         node.setScope(popScope());
         return null;
     }
 
     private void pushScope(List<? extends DefinedVariable> vars) {
-        LocalScope scope = new LocalScope(currentScope());
+        LocalScope scope = new LocalScope(currentScope(), currentScope().inLoop());
+        for (DefinedVariable var : vars) {
+            if (scope.isDefinedLocally(var.name()))
+                throw new Error("Gzotpa! Variable multiple declarations!");
+            scope.defineVariable(var);
+        }
+        scopeStack.addLast(scope);
+    }
+
+    private void pushScope(List<? extends DefinedVariable> vars, boolean inLoop) {
+        LocalScope scope = new LocalScope(currentScope(), inLoop);
         for (DefinedVariable var : vars) {
             if (scope.isDefinedLocally(var.name()))
                 throw new Error("Gzotpa! Variable multiple declarations!");

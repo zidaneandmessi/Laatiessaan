@@ -16,6 +16,10 @@ public class ArefNode extends LHSNode {
         return index;
     }
 
+    public boolean isMultiDimension() {
+        return (expr instanceof ArefNode) && !expr.origType().isPointer();
+    }
+
     protected Type origType() {
         return expr.origType().baseType();
     }

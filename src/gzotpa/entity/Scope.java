@@ -11,6 +11,7 @@ abstract public class Scope {
     }
 
     abstract public boolean isToplevel();
+    abstract public boolean inLoop();
     abstract public ToplevelScope toplevel();
     abstract public Scope parent();
 

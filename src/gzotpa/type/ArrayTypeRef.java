@@ -54,7 +54,7 @@ public class ArrayTypeRef extends TypeRef {
     public String toString() {
         return baseType.toString()
                + "["
-               + (length == undefined ? "" : "" + length)
+               + (length == undefined ? "" : length)
                + "]";
     }
 }

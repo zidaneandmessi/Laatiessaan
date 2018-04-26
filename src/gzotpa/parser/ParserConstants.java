@@ -43,17 +43,15 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int NEW = 16;
   /** RegularExpression Id. */
-  int SIZE = 17;
+  int IDENTIFIER = 17;
   /** RegularExpression Id. */
-  int IDENTIFIER = 18;
+  int INTEGER = 18;
   /** RegularExpression Id. */
-  int INTEGER = 19;
+  int SPACES = 19;
   /** RegularExpression Id. */
-  int SPACES = 20;
+  int LINE_COMMENT = 20;
   /** RegularExpression Id. */
-  int LINE_COMMENT = 21;
-  /** RegularExpression Id. */
-  int STRING = 26;
+  int STRING = 25;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -79,15 +77,14 @@ public interface ParserConstants {
     "\"break\"",
     "\"continue\"",
     "\"new\"",
-    "\"size\"",
     "<IDENTIFIER>",
     "<INTEGER>",
     "<SPACES>",
     "<LINE_COMMENT>",
     "\"\\\"\"",
+    "<token of kind 22>",
     "<token of kind 23>",
     "<token of kind 24>",
-    "<token of kind 25>",
     "\"\\\"\"",
     "\")\"",
     "\",\"",
