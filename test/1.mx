@@ -1,9 +1,8 @@
-class xxxxx
-{
+class A {
     int x;
 }
-int main()
-{
-    xxxxx a;
+
+int main() {
+    A a;
     int t=a.x;
 }

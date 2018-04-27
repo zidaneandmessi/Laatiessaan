@@ -10,6 +10,12 @@ public class StringLiteralNode extends LiteralNode {
         super(loc, ref);
         this.value = value;
     }
+
+    public StringLiteralNode(TypeRef ref, String value) {
+        super(null, ref);
+        this.value = value;
+    }
+
     public String value() {
         return value;
     }

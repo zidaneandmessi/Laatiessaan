@@ -18,6 +18,7 @@ public interface ASTVisitor<S, E> {
     public E visit(LogicalAndNode node);
     public E visit(LogicalOrNode node);
     public E visit(MemberNode node);
+    public E visit(MemberFuncNode node);
     public E visit(NewTypeNode node);
     public E visit(NullNode node);
     public E visit(OpAssignNode node);
