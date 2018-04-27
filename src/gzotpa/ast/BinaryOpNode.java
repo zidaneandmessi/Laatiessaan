@@ -1,5 +1,5 @@
 package gzotpa.ast;
-import gzotpa.type.Type;
+import gzotpa.type.*;
 
 public class BinaryOpNode extends ExprNode {
     protected String operator;
@@ -26,7 +26,16 @@ public class BinaryOpNode extends ExprNode {
     }
 
     public Type type() {
-        return (type != null) ? type : left.type();
+        if (type != null)
+            return type;
+        if (operator.equals(">")
+            || operator.equals("<")
+            || operator.equals(">=")
+            || operator.equals("<=")
+            || operator.equals("==")
+            || operator.equals("!="))
+            return new IntegerType(32, "bool");
+        return left.type();
     }
 
     public ExprNode left() {

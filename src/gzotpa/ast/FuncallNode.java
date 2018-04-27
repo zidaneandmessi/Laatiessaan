@@ -8,7 +8,6 @@ public class FuncallNode extends ExprNode {
     protected List<ExprNode> args;
 
     public FuncallNode(ExprNode expr, List<ExprNode> args) {
-        System.err.println(expr);
         this.expr = expr;
         this.args = args;
     }

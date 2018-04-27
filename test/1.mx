@@ -1,8 +1,5 @@
-class A {
-    int x;
-}
-
-int main() {
-    A a;
-    int t=a.x;
+int main()
+{
+    string s="#$%#";
+    int x=s.length();
 }

@@ -40,7 +40,7 @@ class TypeChecker extends Visitor {
         }
     }
     private boolean isInvalidReturnType(Type t) {
-        return t.isClass() || t.isArray();
+        return t.isArray();
     }
     private void checkParamTypes(DefinedFunction f) {
         for (Parameter param : f.parameters()) {
@@ -50,7 +50,7 @@ class TypeChecker extends Visitor {
         }
     }
     private boolean isInvalidParameterType(Type t) {
-        return t.isClass() || t.isVoid() || t.isIncompleteArray();
+        return t.isVoid() || t.isIncompleteArray();
     }
 	protected void visitExprs(List<? extends ExprNode> exprs) {
         for (ExprNode e : exprs) {
@@ -144,7 +144,7 @@ class TypeChecker extends Visitor {
 
     public void checkCond(ExprNode cond) {
         if (!cond.type().isInteger()) {
-            throw new Error("Gzotpa! Loop condition not int/bool!");
+            throw new Error("Gzotpa! Condition not int/bool!");
         }
     }
 

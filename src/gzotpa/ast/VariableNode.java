@@ -28,7 +28,7 @@ public class VariableNode extends LHSNode {
 
     public Entity entity() {
         if (entity == null) {
-            throw new Error("VariableNode.entity == null");
+            throw new Error("Gzotpa! VariableNode.entity == null!");
         }
         return entity;
     }

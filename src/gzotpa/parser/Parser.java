@@ -1263,15 +1263,13 @@ public class Parser implements ParserConstants {
         default:
           jj_la1[30] = jj_gen;
           if (jj_2_11(3)) {
-            /*t="." membfunc=primary() "(" args=args() ")"
-                						{ args.add(expr);
-                						  expr = new FuncallNode(membfunc, args); }*/
-                    t = jj_consume_token(67);
+            t = jj_consume_token(67);
             membfunc = primary();
             jj_consume_token(33);
             args = args();
             jj_consume_token(26);
-                                                          expr = new MemberFuncNode(expr, membfunc, args);
+                                                  args.add(expr);
+                                                  expr = new FuncallNode(membfunc, args);
           } else {
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
             case 67:
