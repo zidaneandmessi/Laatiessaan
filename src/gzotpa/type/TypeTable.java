@@ -38,10 +38,7 @@ public class TypeTable {
     }
 
     public Type get(TypeRef ref) {
-        System.err.println("ref: "+ref);
-        System.err.println("table: "+table.containsKey(ref));
         Type type = table.get(ref);
-        System.err.println("type: "+type);
         if (type == null) {
             if (ref instanceof UserTypeRef) {
                 UserTypeRef uref = (UserTypeRef)ref;

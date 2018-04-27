@@ -1529,6 +1529,9 @@ public class Parser implements ParserConstants {
       ps = params();
       jj_consume_token(26);
       body = block();
+                        if (n.equals("main") && !(ret instanceof IntegerTypeRef)) {
+                                {if (true) throw new Error("Gzotpa! Main function must return integer!");}
+                        }
                         TypeRef t = new FunctionTypeRef(ret, ps.parametersTypeRef());
                         {if (true) return new DefinedFunction(new TypeNode(t), n, ps, body);}
     throw new Error("Missing return statement in function");
@@ -1896,6 +1899,13 @@ public class Parser implements ParserConstants {
     return false;
   }
 
+  private boolean jj_3_19() {
+    if (jj_3R_32()) return true;
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(33)) return true;
+    return false;
+  }
+
   private boolean jj_3R_76() {
     if (jj_scan_token(64)) return true;
     if (jj_3R_40()) return true;
@@ -1936,13 +1946,6 @@ public class Parser implements ParserConstants {
     return false;
   }
 
-  private boolean jj_3_19() {
-    if (jj_3R_32()) return true;
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(33)) return true;
-    return false;
-  }
-
   private boolean jj_3_18() {
     if (jj_scan_token(CLASS)) return true;
     return false;
@@ -1953,19 +1956,37 @@ public class Parser implements ParserConstants {
     return false;
   }
 
+  private boolean jj_3R_34() {
+    if (jj_3R_58()) return true;
+    return false;
+  }
+
   private boolean jj_3R_27() {
     if (jj_3R_40()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_33() {
+    if (jj_3R_65()) return true;
+    return false;
+  }
+
+  private boolean jj_3_17() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_33()) {
+    jj_scanpos = xsp;
+    if (jj_3R_34()) {
+    jj_scanpos = xsp;
+    if (jj_3_20()) return true;
+    }
+    }
     return false;
   }
 
   private boolean jj_3R_139() {
     if (jj_scan_token(62)) return true;
     if (jj_3R_27()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_34() {
-    if (jj_3R_58()) return true;
     return false;
   }
 
@@ -1989,24 +2010,6 @@ public class Parser implements ParserConstants {
     if (jj_3R_138()) {
     jj_scanpos = xsp;
     if (jj_3R_139()) return true;
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_33() {
-    if (jj_3R_65()) return true;
-    return false;
-  }
-
-  private boolean jj_3_17() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_33()) {
-    jj_scanpos = xsp;
-    if (jj_3R_34()) {
-    jj_scanpos = xsp;
-    if (jj_3_20()) return true;
     }
     }
     return false;
@@ -2054,6 +2057,11 @@ public class Parser implements ParserConstants {
     return false;
   }
 
+  private boolean jj_3_16() {
+    if (jj_3R_25()) return true;
+    return false;
+  }
+
   private boolean jj_3R_71() {
     if (jj_3R_93()) return true;
     return false;
@@ -2072,11 +2080,6 @@ public class Parser implements ParserConstants {
 
   private boolean jj_3R_69() {
     if (jj_3R_91()) return true;
-    return false;
-  }
-
-  private boolean jj_3_16() {
-    if (jj_3R_25()) return true;
     return false;
   }
 

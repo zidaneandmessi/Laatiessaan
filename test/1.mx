@@ -1,7 +1,9 @@
-
-bool b;
-
-int main()
-{
-    b=true;
+int a(int x) {
+    int x = x;
+    return x;
 }
+
+int main() {
+    return 0;
+}
+

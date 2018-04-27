@@ -667,6 +667,9 @@ DefinedFunction defun():
 {
 	ret=typeref() n=name() "(" ps=params() ")" body=block()
 		{
+		  	if (n.equals("main") && !(ret instanceof IntegerTypeRef)) {
+		  		throw new Error("Gzotpa! Main function must return integer!");
+		  	}
 			TypeRef t = new FunctionTypeRef(ret, ps.parametersTypeRef());
 			return new DefinedFunction(new TypeNode(t), n, ps, body);
 		}

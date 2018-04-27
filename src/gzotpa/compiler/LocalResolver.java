@@ -7,9 +7,11 @@ import java.util.LinkedList;
 
 public class LocalResolver extends Visitor {
     private final LinkedList<Scope> scopeStack;
+    private boolean inFunc;
 
     public LocalResolver() {
         this.scopeStack = new LinkedList<Scope>();
+        inFunc = false;
     }
 
     private void resolve(StmtNode n) {
@@ -46,8 +48,11 @@ public class LocalResolver extends Visitor {
     private void resolveFunctions(List<DefinedFunction> funcs) {
         for (DefinedFunction func : funcs) {
             pushScope(func.parameters());
+            inFunc = true;
             resolve(func.body());
+            System.err.println(scopeStack.size());
             func.setScope(popScope());
+            inFunc = false;
         }
     }
 
@@ -65,14 +70,27 @@ public class LocalResolver extends Visitor {
     // Not support only break/continue statement like "for(...)if(...)break;".
 
     public Void visit(BlockNode node) {
-        if (node.inLoop()) {
-            pushScope(node.variables(), true);
+        if (inFunc == false) {
+            if (node.inLoop()) {
+                pushScope(node.variables(), true);
+            }
+            else {
+                pushScope(node.variables());
+            }
+            super.visit(node);
+            node.setScope(popScope());
         }
         else {
-            pushScope(node.variables());
+            LocalScope scope = popScope();
+            for (DefinedVariable var : node.variables()) {
+                if (scope.isDefinedLocally(var.name()))
+                    throw new Error("Gzotpa! Variable multiple declarations!");
+                scope.defineVariable(var);
+            }
+            scopeStack.addLast(scope);
+            super.visit(node);
+            node.setScope((LocalScope)currentScope());
         }
-        super.visit(node);
-        node.setScope(popScope());
         return null;
     }
 
