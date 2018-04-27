@@ -50,9 +50,7 @@ public class LocalResolver extends Visitor {
             pushScope(func.parameters());
             inFunc = true;
             resolve(func.body());
-            System.err.println(scopeStack.size());
             func.setScope(popScope());
-            inFunc = false;
         }
     }
 
@@ -88,6 +86,7 @@ public class LocalResolver extends Visitor {
                 scope.defineVariable(var);
             }
             scopeStack.addLast(scope);
+            inFunc = false;
             super.visit(node);
             node.setScope((LocalScope)currentScope());
         }

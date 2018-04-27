@@ -1,9 +1,5 @@
-int a(int x) {
-    int x = x;
+int f(int x)
+{
+int x=x;
     return x;
 }
-
-int main() {
-    return 0;
-}
-
