@@ -315,7 +315,7 @@ StmtNode loop_stmt():
     ExprNode e = null;
 }
 {
-    ( ";"
+    ( ";" { return n; }
     | e=expr() ";" { n = new ExprStmtNode(e.location(), e); }
     | n=block()
     | n=if_stmt()
