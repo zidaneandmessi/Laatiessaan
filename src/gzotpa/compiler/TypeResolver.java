@@ -75,6 +75,11 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>{
         return null;
     }
 
+    public Void visit(NewTypeNode node) {
+        bindType(node.typeNode());
+        return null;
+    }
+
     public Void visit(IntegerLiteralNode node) {
         bindType(node.typeNode());
         return null;

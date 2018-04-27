@@ -70,7 +70,7 @@ class TypeChecker extends Visitor {
                 throw new Error("Gzotpa! Variable is not a valid LHS type!");
             }
             check(var.initializer());
-            if (var.type() != var.initializer().type()) {
+            if (!var.type().isType(var.initializer().type())) {
                 throw new Error("Gzotpa! Variable cannot be initialized from " + var.type() + "to" + var.initializer().type() + "!");
             }
             var.setInitializer(var.initializer());

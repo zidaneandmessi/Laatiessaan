@@ -31,7 +31,7 @@ public class TypeNode extends Node {
         if (type != null) {
             throw new Error("Gzotpa! Type already exists!");
         }
-        type = t;
+        this.type = t;
     }
 
     public Type type() {

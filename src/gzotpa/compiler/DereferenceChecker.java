@@ -111,19 +111,19 @@ class DereferenceChecker extends Visitor {
 
     public Void visit(SuffixOpNode node) {
         super.visit(node);
-        if (! node.expr().isAssignable()) {
+        if (!node.expr().isAssignable()) {
             throw new Error("Gzotpa! Cannot increment/decrement!");
         }
         return null;
     }
 
     private void checkMemberRef(Location loc, Type t, String memb) {
-        if (! t.isCompositeType()) {
+        if (!t.isCompositeType()) {
             throw new Error("Gzotpa! " + "Accessing member `" + memb
                                 + "' for non-class: " + t);
         }
         CompositeType type = t.getCompositeType();
-        if (! type.hasMember(memb)) {
+        if (!type.hasMember(memb)) {
             throw new Error("Gzotpa! " + type.toString()
                                 + " does not have member: " + memb);
         }
