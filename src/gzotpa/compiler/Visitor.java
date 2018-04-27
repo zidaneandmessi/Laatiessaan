@@ -7,7 +7,8 @@ abstract public class Visitor implements ASTVisitor<Void, Void> {
     public Visitor() {}
 
     protected void visitStmt(StmtNode stmt) {
-        if (stmt != null) stmt.accept(this);
+        if (stmt != null)
+            stmt.accept(this);
     }
 
     protected void visitStmts(List<? extends StmtNode> stmts) {
@@ -18,7 +19,8 @@ abstract public class Visitor implements ASTVisitor<Void, Void> {
     }
 
     protected void visitExpr(ExprNode expr) {
-        expr.accept(this);
+        if (expr != null)
+            expr.accept(this);
     }
 
     protected void visitExprs(List<? extends ExprNode> exprs) {

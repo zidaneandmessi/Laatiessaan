@@ -11,6 +11,6 @@ public class NullType extends Type {
     }
 
     public boolean isType(Type type) {
-        return type instanceof NullType;
+        return true;
     }
 }

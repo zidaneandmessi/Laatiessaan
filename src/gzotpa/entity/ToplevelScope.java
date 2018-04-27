@@ -79,7 +79,7 @@ public class ToplevelScope extends Scope {
         substringparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("right")), "right"));
         substringtypes.add(new StringType("", "str"));
         substringparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
-        entities.put("substring", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "substring"),
+        entities.put("substring", new DefinedFunction(new TypeNode(new FunctionType(new StringType("", "substring"),
                                                                                 substringtypes)),
                                                 "substring",
                                                 substringparams,

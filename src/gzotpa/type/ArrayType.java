@@ -34,6 +34,7 @@ public class ArrayType extends Type {
     }
 
     public boolean isType(Type type) {
+        if (type instanceof NullType) return true;
         return type instanceof ArrayType;
     }
     

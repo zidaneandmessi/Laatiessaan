@@ -22,6 +22,7 @@ public class ClassType extends NamedType {
     public boolean isClass() { return true; }
 
     public boolean isType(Type type) {
+        if (type instanceof NullType) return true;
         return type instanceof ClassType && name.equals(((ClassType)type).name());
     }
 

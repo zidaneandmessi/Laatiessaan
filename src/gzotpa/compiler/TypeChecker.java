@@ -63,15 +63,15 @@ class TypeChecker extends Visitor {
     }
     protected void checkVariable(DefinedVariable var) {
     	if (isInvalidVariableType(var.type())) {
-            throw new Error("Gzotpa! Variable type invalid!");
+            throw new Error("Gzotpa! Variable type invalid! " + var.type());
         }
         if (var.hasInitializer()) {
             if (isInvalidLHSType(var.type())) {
-                throw new Error("Gzotpa! Variable is not a valid LHS type!");
+                throw new Error("Gzotpa! Variable is not a valid LHS type! " + var.type());
             }
             check(var.initializer());
             if (!var.type().isType(var.initializer().type())) {
-                throw new Error("Gzotpa! Variable cannot be initialized from " + var.type() + "to" + var.initializer().type() + "!");
+                throw new Error("Gzotpa! Variable cannot be initialized from " + var.type() + " to " + var.initializer().type() + "!");
             }
             var.setInitializer(var.initializer());
         }
@@ -80,13 +80,13 @@ class TypeChecker extends Visitor {
         return t.isVoid() || (t.isArray() && ! t.isAllocatedArray());
     }
     private boolean isInvalidLHSType(Type t) {
-        return t.isClass() || t.isVoid() || t.isArray();
+        return t.isVoid() || t.isArray();
     }
     private boolean isInvalidRHSType(Type t) {
-        return t.isClass() || t.isVoid();
+        return t.isVoid();
     }
     private boolean isInvalidStatementType(Type t) {
-        return t.isClass();
+        return false;
     }
     
 	public Void visit(BlockNode node) {
@@ -99,6 +99,7 @@ class TypeChecker extends Visitor {
 
     public Void visit(ExprStmtNode node) {
         check(node.expr());
+        if (node.expr() == null) return null;
         if (isInvalidStatementType(node.expr().type())) {
             throw new Error("Gzotpa! Statement type invalid!");
         }
@@ -143,6 +144,7 @@ class TypeChecker extends Visitor {
     }
 
     public void checkCond(ExprNode cond) {
+        if (cond == null) return;
         if (!cond.type().isInteger()) {
             throw new Error("Gzotpa! Condition not int/bool!");
         }
@@ -189,6 +191,9 @@ class TypeChecker extends Visitor {
         for (Type paramType : type.paramTypes()) {
             ExprNode arg = args.next();
             if (!arg.type().isType(paramType)) {
+                //System.err.println(arg);
+                //System.err.println(arg.type());
+                //System.err.println(paramType);
                 throw new Error("Gzotpa! Parameter type doesn't match!");
             }
             newArgs.add(arg);
