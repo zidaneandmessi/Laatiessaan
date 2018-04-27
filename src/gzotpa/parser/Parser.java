@@ -352,7 +352,7 @@ public class Parser implements ParserConstants {
         break;
       case BOOL:
         t = jj_consume_token(BOOL);
-                          {if (true) return IntegerTypeRef.intRef(location(t));}
+                          {if (true) return IntegerTypeRef.intRef(location(t), true);}
         break;
       case INT:
         t = jj_consume_token(INT);
@@ -1401,11 +1401,11 @@ public class Parser implements ParserConstants {
         break;
       case TRUE:
         t = jj_consume_token(TRUE);
-            {if (true) return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(), integerValue("1"));}
+            {if (true) return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(true), integerValue("1"));}
         break;
       case FALSE:
         t = jj_consume_token(FALSE);
-            {if (true) return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(), integerValue("0"));}
+            {if (true) return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(true), integerValue("0"));}
         break;
       case INTEGER:
         t = jj_consume_token(INTEGER);

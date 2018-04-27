@@ -22,6 +22,8 @@ public class TypeTable {
                   new IntegerType(charSize, "char"));
         put(IntegerTypeRef.intRef(),
                 new IntegerType(intSize, "int"));
+        put(IntegerTypeRef.intRef(true),
+                new IntegerType(intSize, "int", true));
         put(new StringTypeRef("string"),
                 new StringType("", "string"));
     }

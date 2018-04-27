@@ -46,12 +46,17 @@ public class LocalResolver extends Visitor {
     }
 
     private void resolveFunctions(List<DefinedFunction> funcs) {
+        boolean hasMain = false;
         for (DefinedFunction func : funcs) {
+            if (func.name().equals("main"))
+                hasMain = true;
             pushScope(func.parameters());
             inFunc = true;
             resolve(func.body());
             func.setScope(popScope());
         }
+        if (!hasMain)
+            throw new Error("Gzotpa! No main function!");
     }
 
     public Void visit(BreakNode node) {

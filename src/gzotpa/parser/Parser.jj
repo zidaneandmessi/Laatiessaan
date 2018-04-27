@@ -272,7 +272,7 @@ TypeRef typeref_base():
 }
 {
       t=<VOID>          { return new VoidTypeRef(location(t)); }
-    | t=<BOOL>          { return IntegerTypeRef.intRef(location(t)); }
+    | t=<BOOL>          { return IntegerTypeRef.intRef(location(t), true); }
     | t=<INT>           { return IntegerTypeRef.intRef(location(t)); }
     | t=<STR>           { return new StringTypeRef("string", location(t)); } 
     | LOOKAHEAD({isKnownType(getToken(1).image)}) t=<IDENTIFIER>
@@ -600,11 +600,11 @@ ExprNode primary():
 	  	}
   	| t=<TRUE>
         {
-            return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(), integerValue("1"));
+            return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(true), integerValue("1"));
         }
     | t=<FALSE>
         {
-            return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(), integerValue("0"));
+            return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(true), integerValue("0"));
         }
     | t=<INTEGER>
         {
