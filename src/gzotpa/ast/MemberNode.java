@@ -1,6 +1,5 @@
 package gzotpa.ast;
-import gzotpa.type.Type;
-import gzotpa.type.CompositeType;
+import gzotpa.type.*;
 import gzotpa.exception.*;
 
 public class MemberNode extends LHSNode {
@@ -12,9 +11,9 @@ public class MemberNode extends LHSNode {
         this.member = member;
     }
 
-    public CompositeType baseType() {
+    public ClassType baseType() {
     	try {
-            return expr.type().getCompositeType();
+            return expr.type().getClassType();
         }
         catch (ClassCastException err) {
             throw new SemanticError(err.getMessage());
@@ -30,7 +29,7 @@ public class MemberNode extends LHSNode {
     }
 
     protected Type origType() {
-        return baseType().memberType(member);
+        return baseType().memberVariableType(member);
     }
 
     public Location location() {

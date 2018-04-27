@@ -45,6 +45,12 @@ public class AST extends Node {
         return result;
     }
 
+    public List<TypeDefinitionNode> types() {
+        List<TypeDefinitionNode> result = new ArrayList<TypeDefinitionNode>();
+        result.addAll(declarations.defclasses());
+        return result;
+    }
+
     public Location location() {
         return source;
     }

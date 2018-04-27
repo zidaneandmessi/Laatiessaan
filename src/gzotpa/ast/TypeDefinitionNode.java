@@ -1,16 +1,18 @@
 package gzotpa.ast;
 import gzotpa.type.*;
 
-abstract public class TypeDefinition extends Node {
+abstract public class TypeDefinitionNode extends Node {
     protected String name;
     protected Location location;
     protected TypeNode typeNode;
 
-    public TypeDefinition(Location loc, TypeRef ref, String name) {
+    public TypeDefinitionNode(Location loc, TypeRef ref, String name) {
         this.name = name;
         this.location = loc;
         this.typeNode = new TypeNode(ref);
     }
+
+    abstract public Type definingType();
 
     public String name() {
         return name;
@@ -31,4 +33,6 @@ abstract public class TypeDefinition extends Node {
     public Type type() {
         return typeNode.type();
     }
+
+    abstract public <T> T accept(ClassVisitor<T> visitor);
 }

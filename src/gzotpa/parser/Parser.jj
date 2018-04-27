@@ -120,7 +120,7 @@ public class Parser {
         knownTypes.add(name);
     }
 
-    private boolean isType(String name) {
+    private boolean isKnownType(String name) {
         return knownTypes.contains(name);
     }
 }
@@ -275,8 +275,8 @@ TypeRef typeref_base():
     | t=<BOOL>          { return IntegerTypeRef.intRef(location(t)); }
     | t=<INT>           { return IntegerTypeRef.intRef(location(t)); }
     | t=<STR>           { return new StringTypeRef("string", location(t)); } 
-    | LOOKAHEAD({isType(getToken(1).image)}) t=<IDENTIFIER>
-        { return new UserTypeRef(location(t), t.image); }
+    | LOOKAHEAD({isKnownType(getToken(1).image)}) t=<IDENTIFIER>
+        				{ return new ClassTypeRef(location(t), t.image); }
 }
 List<StmtNode> stmts():
 {
@@ -630,48 +630,67 @@ List<DefinedVariable> defvars():
 			return defs;
 		}
 }
-void class_defs():
-{ }
+Declarations class_defs():
 {
+	Declarations decls = new Declarations();
+	DefinedFunction defun;
+    List<DefinedVariable> defvars;
+}
+{	"{"
 	(   LOOKAHEAD(typeref() <IDENTIFIER> "(")
-		defun()
+		defun=defun()		{ decls.addDefun(defun); }
 	|   LOOKAHEAD(<IDENTIFIER> "(")
-		deconstruct()
+		defun=deconstruct()	{ decls.addDefun(defun); }
 	|	LOOKAHEAD(3)
-		defvars()
+		defvars=defvars()	{ decls.addDefvars(defvars); }
 	)*
-	{ }
+	"}"
+	{
+		return decls;
+	}
 }
-void declass():
+ClassNode defclass():
 {
-	String s;
+    Token t;
+	String n;
+    Declarations decls;
 }
 {
-	<CLASS> s=name() { addType(s); }
-	 "{" class_defs() "}"
-	{ }
+	t=<CLASS>
+	n=name() { addType(n); }
+	decls=class_defs() 
+	{
+		return new ClassNode(location(t), new ClassTypeRef(n), n, decls);
+	}
 }
-void deconstruct():
-{ }
+DefinedFunction deconstruct():
 {
-	name() "(" params() ")" block()
-	{ }
+	Token t;
+	String n;
+	Params params;
+	BlockNode body;
+}
+{
+	n=name() t="(" params=params() ")" body=block()
+	{
+		return new DefinedFunction(new TypeNode(new VoidTypeRef(location(t))), n, params, body);
+	}
 }
 DefinedFunction defun():
 {
 	TypeRef ret;
 	String n;
-	Params ps;
+	Params params;
 	BlockNode body;
 }
 {
-	ret=typeref() n=name() "(" ps=params() ")" body=block()
+	ret=typeref() n=name() "(" params=params() ")" body=block()
 		{
 		  	if (n.equals("main") && !(ret instanceof IntegerTypeRef)) {
 		  		throw new Error("Gzotpa! Main function must return integer!");
 		  	}
-			TypeRef t = new FunctionTypeRef(ret, ps.parametersTypeRef());
-			return new DefinedFunction(new TypeNode(t), n, ps, body);
+			TypeRef t = new FunctionTypeRef(ret, params.parametersTypeRef());
+			return new DefinedFunction(new TypeNode(t), n, params, body);
 		}
 }
 List<DefinedVariable> defvar_list():
@@ -689,11 +708,12 @@ Declarations top_defs():
 {
 	Declarations decls = new Declarations();
 	DefinedFunction defun;
+    ClassNode defclass;
 	List<DefinedVariable> defvars;
 }
 {
 	(	LOOKAHEAD(<CLASS>)
-		declass() { }
+		defclass=defclass() { decls.addDefclass(defclass); }
 	|	LOOKAHEAD(typeref() <IDENTIFIER> "(")
 		defun=defun() { decls.addDefun(defun); }
 	|	LOOKAHEAD(3)

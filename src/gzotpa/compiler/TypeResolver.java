@@ -5,7 +5,7 @@ import gzotpa.type.*;
 import gzotpa.exception.*;
 import java.util.*;
 
-public class TypeResolver extends Visitor implements EntityVisitor<Void>{
+public class TypeResolver extends Visitor implements EntityVisitor<Void>, ClassVisitor<Void> {
     private final TypeTable typeTable;
 
     public TypeResolver(TypeTable typeTable) {
@@ -13,23 +13,23 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>{
     }
 
     public void resolve(AST ast) {
-        //defineTypes(ast.types());
-        //for (TypeDefinition t : ast.types()) {
-        //    t.accept(this);
-        //}
+        defineTypes(ast.types());
+        for (TypeDefinitionNode t : ast.types()) {
+            t.accept(this);
+        }
         for (Entity e : ast.entities()) {
             e.accept(this);
         }
     }
 
-    /*private void defineTypes(List<TypeDefinition> deftypes) {
-        for (TypeDefinition def : deftypes) {
+    private void defineTypes(List<TypeDefinitionNode> deftypes) {
+        for (TypeDefinitionNode def : deftypes) {
             if (typeTable.isDefined(def.typeRef())) {
-                throw new Error("Gzotpa! Multiple type definition " + def.typeRef() + "!")
+                throw new Error("Gzotpa! Multiple type definition " + def.typeRef() + "!");
             }
             typeTable.put(def.typeRef(), def.definingType());
         }
-    }*/
+    }
 
     private void bindType(TypeNode n) {
         if (n.isResolved()) return;
@@ -75,8 +75,14 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>{
         return null;
     }
 
-    public Void visit(NewTypeNode node) {
-        bindType(node.typeNode());
+    public Void visit(ClassNode cl) {
+        ClassType type = (ClassType)typeTable.get(cl.typeRef());
+        for (DefinedVariable v : cl.decls().defvars()) {
+            bindType(v.typeNode());
+        }
+        for (DefinedFunction f : cl.decls().defuns()) {
+            bindType(f.typeNode());
+        }
         return null;
     }
 
@@ -85,9 +91,13 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>{
         return null;
     }
 
-    public Void visit(StringLiteralNode node) {
+    public Void visit(NewTypeNode node) {
         bindType(node.typeNode());
         return null;
     }
 
+    public Void visit(StringLiteralNode node) {
+        bindType(node.typeNode());
+        return null;
+    }
 }

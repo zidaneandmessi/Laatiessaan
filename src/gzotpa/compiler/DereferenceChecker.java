@@ -117,12 +117,12 @@ class DereferenceChecker extends Visitor {
     }
 
     private void checkMemberRef(Location loc, Type t, String memb) {
-        if (!t.isCompositeType()) {
+        if (!t.isClass()) {
             throw new Error("Gzotpa! " + "Accessing member `" + memb
                                 + "' for non-class: " + t);
         }
-        CompositeType type = t.getCompositeType();
-        if (!type.hasMember(memb)) {
+        ClassType type = t.getClassType();
+        if (!type.hasMemberVariable(memb)) {
             throw new Error("Gzotpa! " + type.toString()
                                 + " does not have member: " + memb);
         }

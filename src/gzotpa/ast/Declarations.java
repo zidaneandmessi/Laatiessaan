@@ -11,6 +11,7 @@ public class Declarations {
     Set<DefinedFunction> defuns = new LinkedHashSet<DefinedFunction>();
     Set<UndefinedVariable> vardecls = new LinkedHashSet<UndefinedVariable>();
     Set<UndefinedFunction> funcdecls = new LinkedHashSet<UndefinedFunction>();
+    Set<ClassNode> defclasses = new LinkedHashSet<ClassNode>();
 
     public void addDefvar(DefinedVariable var) {
         defvars.add(var);
@@ -46,5 +47,13 @@ public class Declarations {
 
     public void addFuncdecl(UndefinedFunction func) {
         funcdecls.add(func);
+    }
+
+    public void addDefclass(ClassNode n) {
+        defclasses.add(n);
+    }
+
+    public List<ClassNode> defclasses() {
+        return new ArrayList<ClassNode>(defclasses);
     }
 }

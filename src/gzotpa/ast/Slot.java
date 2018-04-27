@@ -17,9 +17,11 @@ public class Slot extends Node {
     public TypeNode typeNode() {
         return typeNode;
     }
+
     public String name() {
         return name;
     }
+    
     public Location location() {
         return typeNode.location();
     }

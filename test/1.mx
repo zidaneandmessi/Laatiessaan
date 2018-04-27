@@ -1,5 +1,9 @@
-int f(int x)
+class xxxxx
 {
-int x=x;
-    return x;
+    int x;
+}
+int main()
+{
+    xxxxx a;
+    int t=a.x;
 }

@@ -15,7 +15,7 @@ public class IntegerType extends Type {
     }
 
     public boolean isType(Type type) {
-        return type instanceof BooleanType || type instanceof IntegerType;
+        return type instanceof IntegerType;
     }
 
     public String toString() {

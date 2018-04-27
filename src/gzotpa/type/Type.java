@@ -30,6 +30,6 @@ public abstract class Type {
     public IntegerType getIntegerType() { return (IntegerType)this; }
     public PointerType getPointerType() { return (PointerType)this; }
     public FunctionType getFunctionType() { return (FunctionType)this; }
-    public CompositeType getCompositeType() { return (CompositeType)this; }
+    public ClassType getClassType() { return (ClassType)this; }
     public ArrayType getArrayType() { return (ArrayType)this; }
 }
