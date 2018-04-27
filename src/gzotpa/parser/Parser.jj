@@ -318,7 +318,7 @@ StmtNode loop_stmt():
     ( ";" { return n; }
     | e=expr() ";" { n = new ExprStmtNode(e.location(), e); }
     | n=block()
-    | n=if_stmt()
+    | n=if_stmt_loop()
     | n=while_stmt()
     | n=for_stmt()
     | n=return_stmt()
@@ -340,6 +340,22 @@ IfNode if_stmt():
     t=<IF> "(" cond=expr() ")" thenBody=stmt()
             [LOOKAHEAD(1) <ELSE> elseBody=stmt()]
         {
+            return new IfNode(location(t), cond, thenBody, elseBody);
+        }
+}
+IfNode if_stmt_loop():
+{
+    Token t;
+    ExprNode cond;
+    StmtNode thenBody, elseBody = null;
+}
+{
+    t=<IF> "(" cond=expr() ")" thenBody=loop_stmt()
+            [LOOKAHEAD(1) <ELSE> elseBody=loop_stmt()]
+        {
+         	thenBody.setLoop(true);
+         	if (elseBody != null)
+         		elseBody.setLoop(true);
             return new IfNode(location(t), cond, thenBody, elseBody);
         }
 }

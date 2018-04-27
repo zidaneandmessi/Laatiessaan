@@ -65,7 +65,6 @@ public class LocalResolver extends Visitor {
             throw new Error("Gzotpa! Unreasonable continue statement!");
         return null;
     }
-    // Not support only break/continue statement like "for(...)if(...)break;".
 
     public Void visit(BlockNode node) {
         if (inFunc == false) {
