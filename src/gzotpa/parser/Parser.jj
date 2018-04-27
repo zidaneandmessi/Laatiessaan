@@ -272,7 +272,7 @@ TypeRef typeref_base():
 }
 {
       t=<VOID>          { return new VoidTypeRef(location(t)); }
-    | t=<BOOL>           { return new BooleanTypeRef("bool", location(t)); }
+    | t=<BOOL>          { return IntegerTypeRef.intRef(location(t)); }
     | t=<INT>           { return IntegerTypeRef.intRef(location(t)); }
     | t=<STR>           { return new StringTypeRef("string", location(t)); } 
     | LOOKAHEAD({isType(getToken(1).image)}) t=<IDENTIFIER>

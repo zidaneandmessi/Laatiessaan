@@ -352,7 +352,7 @@ public class Parser implements ParserConstants {
         break;
       case BOOL:
         t = jj_consume_token(BOOL);
-                           {if (true) return new BooleanTypeRef("bool", location(t));}
+                          {if (true) return IntegerTypeRef.intRef(location(t));}
         break;
       case INT:
         t = jj_consume_token(INT);
