@@ -132,6 +132,9 @@ class TypeChecker extends Visitor {
             if (node.expr().type().isVoid()) {
                 throw new Error("Gzotpa! Returning void value!");
             }
+            if (!node.expr().type().isType(currentFunction.returnType())){
+                throw new Error("Gzotpa! Wrong return type!");
+            }
             node.setExpr(node.expr());
         }
         return null;
@@ -159,6 +162,8 @@ class TypeChecker extends Visitor {
         if (!node.rhs().isParameter() && isInvalidRHSType(node.rhs().type())) {
             throw new Error("Gzotpa! Invalid RHS type!");
         }
+        if (!node.lhs().type().isType(node.rhs().type()))
+            throw new Error("Gzotpa! Cannot assign from a different type!");
         node.setRHS(node.rhs());
         return null;
     }
@@ -191,9 +196,6 @@ class TypeChecker extends Visitor {
         for (Type paramType : type.paramTypes()) {
             ExprNode arg = args.next();
             if (!arg.type().isType(paramType)) {
-                //System.err.println(arg);
-                //System.err.println(arg.type());
-                //System.err.println(paramType);
                 throw new Error("Gzotpa! Parameter type doesn't match!");
             }
             newArgs.add(arg);
@@ -238,7 +240,7 @@ class TypeChecker extends Visitor {
             throw new Error("Gzotpa! Operator assign LHS not integer!");
         }
         if (!node.rhs().type().isInteger()) {
-            throw new Error("Gzotpa! Operator assign RS not integer!");
+            throw new Error("Gzotpa! Operator assign RHS not integer!");
         }
         return null;
     }
