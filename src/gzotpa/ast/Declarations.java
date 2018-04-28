@@ -33,6 +33,10 @@ public class Declarations {
         return new ArrayList<DefinedFunction>(defuns);
     }
 
+    public List<ClassNode> defclasses() {
+        return new ArrayList<ClassNode>(defclasses);
+    }
+
     public List<UndefinedVariable> vardecls() {
         return new ArrayList<UndefinedVariable>(vardecls);
     }
@@ -51,9 +55,5 @@ public class Declarations {
 
     public void addDefclass(ClassNode n) {
         defclasses.add(n);
-    }
-
-    public List<ClassNode> defclasses() {
-        return new ArrayList<ClassNode>(defclasses);
     }
 }

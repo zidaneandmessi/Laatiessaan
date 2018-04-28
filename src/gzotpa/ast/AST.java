@@ -21,6 +21,10 @@ public class AST extends Node {
     public List<DefinedFunction> definedFunctions() {
         return declarations.defuns();
     }
+
+    public List<ClassNode> definedClasses() {
+        return declarations.defclasses();
+    }
     
     public List<Entity> declarations() {
         List<Entity> result = new ArrayList<Entity>();

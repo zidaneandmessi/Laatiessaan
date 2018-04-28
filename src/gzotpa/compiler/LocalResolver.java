@@ -32,14 +32,17 @@ public class LocalResolver extends Visitor {
         for (Entity def : ast.definitions()) {
             toplevel.defineEntity(def);
         }
+        for (ClassNode cls : ast.definedClasses()) {
+            resolveClass(cls, toplevel);
+        }
         resolveGlobalVarInitializers(ast.definedVariables());
         resolveFunctions(ast.definedFunctions());
         //toplevel.checkReferences();
         ast.setScope(toplevel);
     }
 
-    private void resolveGlobalVarInitializers(List<DefinedVariable> gvars) {
-        for (DefinedVariable v : gvars) {
+    private void resolveGlobalVarInitializers(List<DefinedVariable> vars) {
+        for (DefinedVariable v : vars) {
             if (v.hasInitializer()) {
                 resolve(v.initializer());
             }
@@ -48,16 +51,37 @@ public class LocalResolver extends Visitor {
 
     private void resolveFunctions(List<DefinedFunction> funcs) {
         boolean hasMain = false;
-        for (DefinedFunction func : funcs) {
-            if (func.name().equals("main"))
+        for (DefinedFunction f : funcs) {
+            if (f.name().equals("main"))
                 hasMain = true;
-            pushScope(func.parameters());
+            pushScope(f.parameters());
             inFunc = true;
-            resolve(func.body());
-            func.setScope(popScope());
+            resolve(f.body());
+            f.setScope(popScope());
         }
         if (!hasMain)
             throw new Error("Gzotpa! No main function!");
+    }
+
+    private void resolveClass(ClassNode cl, ToplevelScope toplevel) throws SemanticException {
+        List<DefinedVariable> vars = cl.decls().defvars();
+        List<DefinedFunction> funcs = cl.decls().defuns();
+        for (DefinedVariable v : vars) {
+            if (v.hasInitializer()) {
+                throw new Error("Gzotpa! Class member variable should not have initializer! " + v.name());
+            }
+        }
+        pushScope(vars);
+        for (DefinedFunction f : funcs) {
+            //f.setName(cl.name() + "." + f.name());
+            //f.parameters().add(new Parameter(cl.typeNode(), "class"));
+            toplevel.defineEntity(f);
+            pushScope(f.parameters());
+            inFunc = true;
+            resolve(f.body());
+            f.setScope(popScope());
+        }
+        popScope();
     }
 
     public Void visit(BreakNode node) {
@@ -87,7 +111,7 @@ public class LocalResolver extends Visitor {
             LocalScope scope = popScope();
             for (DefinedVariable var : node.variables()) {
                 if (scope.isDefinedLocally(var.name()))
-                    throw new Error("Gzotpa! Variable multiple declarations!");
+                    throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
                 scope.defineVariable(var);
             }
             scopeStack.addLast(scope);
@@ -102,7 +126,7 @@ public class LocalResolver extends Visitor {
         LocalScope scope = new LocalScope(currentScope(), currentScope().inLoop());
         for (DefinedVariable var : vars) {
             if (scope.isDefinedLocally(var.name()))
-                throw new Error("Gzotpa! Variable multiple declarations!");
+                throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
             scope.defineVariable(var);
         }
         scopeStack.addLast(scope);

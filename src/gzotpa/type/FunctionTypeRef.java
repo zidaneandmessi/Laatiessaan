@@ -18,6 +18,10 @@ public class FunctionTypeRef extends TypeRef {
         return returnType;
     }
 
+    public void addParam(TypeRef param) {
+        params.add(param);
+    }
+
     public ParamTypeRefs params() {
         return params;
     }

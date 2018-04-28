@@ -8,15 +8,13 @@ public class DefinedFunction extends Function {
     protected BlockNode body;
     protected LocalScope scope;
 
-    public DefinedFunction(boolean isPrivate, TypeNode type,
-            String name, Params params, BlockNode body) {
+    public DefinedFunction(boolean isPrivate, TypeNode type, String name, Params params, BlockNode body) {
         super(isPrivate, type, name);
         this.params = params;
         this.body = body;
     }
 
-    public DefinedFunction(TypeNode type,
-            String name, Params params, BlockNode body) {
+    public DefinedFunction(TypeNode type, String name, Params params, BlockNode body) {
         super(false, type, name);
         this.params = params;
         this.body = body;
@@ -24,6 +22,10 @@ public class DefinedFunction extends Function {
 
     public boolean isDefined() {
         return true;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<Parameter> parameters() {

@@ -12,15 +12,13 @@ public class DefinedVariable extends Variable {
         sequence = -1;
     }
 
-    public DefinedVariable(boolean isPrivate, TypeNode type,
-                           String name, ExprNode init) {
+    public DefinedVariable(boolean isPrivate, TypeNode type, String name, ExprNode init) {
         super(isPrivate, type, name);
         initializer = init;
         sequence = -1;
     }
 
-    public DefinedVariable(TypeNode type,
-                           String name, ExprNode init) {
+    public DefinedVariable(TypeNode type, String name, ExprNode init) {
         super(false, type, name);
         initializer = init;
         sequence = -1;

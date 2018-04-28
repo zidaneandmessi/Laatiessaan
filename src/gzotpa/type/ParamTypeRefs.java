@@ -15,6 +15,11 @@ public class ParamTypeRefs extends ParamSlots<TypeRef> {
     public List<TypeRef> typerefs() {
         return paramDescriptors;
     }
+
+    public void add(TypeRef typeRef) {
+        paramDescriptors.add(typeRef);
+    }
+
     public long size() {
         return paramDescriptors.size();
     }

@@ -45,12 +45,16 @@ public class FuncallNode extends ExprNode {
         return args;
     }
 
-    public long numArgs() {
+    public long argc() {
         return args.size();
     }
 
-    public void replaceArgs(List<ExprNode> args) {
-        this.args = args;
+    public void addArg(ExprNode expr) {
+        this.args.add(expr);
+    }
+
+    public void replaceArgs(List<ExprNode> newArgs) {
+        this.args = newArgs;
     }
 
     public Location location() {

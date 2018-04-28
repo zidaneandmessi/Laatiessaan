@@ -1,13 +1,18 @@
 package gzotpa.ast;
 import gzotpa.type.*;
+import gzotpa.entity.*;
 import java.util.*;
-
 
 public class ClassNode extends TypeDefinitionNode {
     Declarations decls;
 
     public ClassNode(Location loc, TypeRef ref, String name, Declarations decls) {
         super(loc, ref, name);
+        for (DefinedFunction f : decls.defuns()) {
+            f.setName(name + "." + f.name());
+            f.parameters().add(new Parameter(this.typeNode(), "class"));
+            ((FunctionTypeRef)(f.typeNode().typeRef())).addParam(ref);
+        }
         this.decls = decls;
     }
 

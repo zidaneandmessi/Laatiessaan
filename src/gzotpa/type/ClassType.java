@@ -11,6 +11,16 @@ public class ClassType extends NamedType {
         this.decls = decls;
     }
 
+    public ClassType(String name, Declarations decls) {
+        super(name, null);
+        this.decls = decls;
+    }
+
+    public ClassType(String name) {
+        super(name, null);
+        this.decls = null;
+    }
+
     public String name() {
         return name;
     }
@@ -67,7 +77,7 @@ public class ClassType extends NamedType {
     }
 
     public String toString() {
-        return "class" + name;
+        return "class " + name;
     }
 
     public String typeName() {
