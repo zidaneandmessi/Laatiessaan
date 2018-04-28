@@ -127,6 +127,15 @@ public class LocalResolver extends Visitor {
 
     public Void visit(VariableNode node) {
         try {
+            if (node.name().indexOf(String.valueOf(".")) != -1)
+            {
+                visit(node.memFuncBase());
+                node.setName(node.memFuncBase().type() + node.name());
+                Entity ent = currentScope().get(node.name());
+                ent.refered();
+                node.setEntity(ent);
+                return null;
+            }
             Entity ent = currentScope().get(node.name());
             ent.refered();
             node.setEntity(ent);

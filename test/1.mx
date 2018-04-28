@@ -1,5 +1,11 @@
+class xx
+{
+    int f()
+    {return 1;}
+}
 int main()
 {
-    println("No main function.");
-    return 0;
+    xx x;
+    int t;
+    t=x.f();
 }

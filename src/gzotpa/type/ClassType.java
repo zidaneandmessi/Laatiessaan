@@ -67,6 +67,6 @@ public class ClassType extends NamedType {
     }
 
     public String toString() {
-        return "class " + name;
+        return name;
     }
 }

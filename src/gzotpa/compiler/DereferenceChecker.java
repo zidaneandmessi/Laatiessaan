@@ -94,11 +94,6 @@ class DereferenceChecker extends Visitor {
         return null;
     }
 
-    public Void visit(MemberFuncNode node) {
-        super.visit(node);
-        return null;
-    }
-
     public Void visit(OpAssignNode node) {
         super.visit(node);
         checkAssignment(node);

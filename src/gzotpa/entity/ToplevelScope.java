@@ -53,9 +53,9 @@ public class ToplevelScope extends Scope {
         Params toStringparams = new Params(new ArrayList<Parameter>());
         toStringtypes.add(new IntegerType(32, "i"));
         toStringparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("i")), "i"));
-        entities.put("toString", new DefinedFunction(new TypeNode(new FunctionType(new StringType("", "toString"),
+        entities.put("int.toString", new DefinedFunction(new TypeNode(new FunctionType(new StringType("", "int.toString"),
                                                                                     toStringtypes)),
-                                                "getString",
+                                                "int.toString",
                                                 toStringparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
                                                                 new ArrayList<StmtNode>())));
@@ -64,9 +64,9 @@ public class ToplevelScope extends Scope {
         Params lengthparams = new Params(new ArrayList<Parameter>());
         lengthtypes.add(new StringType("", "str"));
         lengthparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
-        entities.put("length", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "length"),
+        entities.put("string.length", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "string.length"),
                                                                                 lengthtypes)),
-                                                "length",
+                                                "string.length",
                                                 lengthparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
                                                                 new ArrayList<StmtNode>())));
@@ -79,9 +79,9 @@ public class ToplevelScope extends Scope {
         substringparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("right")), "right"));
         substringtypes.add(new StringType("", "str"));
         substringparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
-        entities.put("substring", new DefinedFunction(new TypeNode(new FunctionType(new StringType("", "substring"),
+        entities.put("string.substring", new DefinedFunction(new TypeNode(new FunctionType(new StringType("", "string.substring"),
                                                                                 substringtypes)),
-                                                "substring",
+                                                "string.substring",
                                                 substringparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
                                                                 new ArrayList<StmtNode>())));
@@ -90,9 +90,9 @@ public class ToplevelScope extends Scope {
         Params parseIntparams = new Params(new ArrayList<Parameter>());
         parseInttypes.add(new StringType("", "str"));
         parseIntparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
-        entities.put("parseInt", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "parseInt"),
+        entities.put("string.parseInt", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "parseInt"),
                                                                                 parseInttypes)),
-                                                "parseInt",
+                                                "string.parseInt",
                                                 parseIntparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
                                                                 new ArrayList<StmtNode>())));
@@ -103,9 +103,9 @@ public class ToplevelScope extends Scope {
         ordparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("pos")), "pos"));
         ordtypes.add(new StringType("", "str"));
         ordparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
-        entities.put("ord", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "ord"),
+        entities.put("string.ord", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "string.ord"),
                                                                                 ordtypes)),
-                                                "ord",
+                                                "string.ord",
                                                 ordparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
                                                                 new ArrayList<StmtNode>())));
@@ -115,9 +115,9 @@ public class ToplevelScope extends Scope {
         Params sizeparams = new Params(new ArrayList<Parameter>());
         sizetypes.add(new ArrayType(new IntegerType(32, "size"), 32));
         sizeparams.addParameter(new Parameter(new TypeNode(new ArrayTypeRef(new IntegerTypeRef("arr"))), "arr"));
-        entities.put("size", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "size"),
+        entities.put("array.size", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "array.size"),
                                                                                 sizetypes)),
-                                                "size",
+                                                "array.size",
                                                 sizeparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
                                                                 new ArrayList<StmtNode>())));

@@ -6,14 +6,26 @@ import java.util.List;
 public class FuncallNode extends ExprNode {
     protected ExprNode expr;
     protected List<ExprNode> args;
+    protected boolean memberFunc;
 
     public FuncallNode(ExprNode expr, List<ExprNode> args) {
         this.expr = expr;
         this.args = args;
+        this.memberFunc = false;
+    }
+
+    public FuncallNode(ExprNode expr, List<ExprNode> args, boolean memberFunc) {
+        this.expr = expr;
+        this.args = args;
+        this.memberFunc = memberFunc;
     }
 
     public ExprNode expr() {
         return expr;
+    }
+
+    public boolean memberFunc() {
+        return memberFunc;
     }
 
     public FunctionType functionType() {

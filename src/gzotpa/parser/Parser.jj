@@ -561,7 +561,9 @@ ExprNode postfix():
     | LOOKAHEAD(3)
     t="." membfunc=primary() "(" args=args() ")"
     						{ args.add(expr);
-    						  expr = new FuncallNode(membfunc, args); }
+    						((VariableNode)membfunc).setName("." + ((VariableNode)membfunc).name());
+    						((VariableNode)membfunc).setMemFuncBase((VariableNode)expr);
+    						  expr = new FuncallNode(membfunc, args, true); }
 	/*t="." membfunc=primary() "(" args=args() ")"
 							{ expr = new MemberFuncNode(expr, membfunc, args); }*/
     | "." memb=name()       { expr = new MemberNode(expr, memb); }

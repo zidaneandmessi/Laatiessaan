@@ -73,11 +73,11 @@ public class Compiler {
     private boolean isValidSemantic(String path, Options opts) {
         try {
             AST ast = parseFile(path);
-            new LocalResolver().resolve(ast);
             TypeTable types = new TypeTable();
             types.addKnownedTypes();
             new TypeResolver(types).resolve(ast);
             types.semanticCheck();
+            new LocalResolver().resolve(ast);
             new DereferenceChecker(types).check(ast);
             new TypeChecker(types).check(ast);
             return true;

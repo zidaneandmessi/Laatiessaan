@@ -136,13 +136,6 @@ abstract public class Visitor implements ASTVisitor<Void, Void> {
         return null;
     }
 
-    public Void visit(MemberFuncNode node) {
-        visitExpr(node.base());
-        //visitExpr(node.expr());
-        visitExprs(node.args());
-        return null;
-    }
-
     public Void visit(NewTypeNode node) {
         return null;
     }
