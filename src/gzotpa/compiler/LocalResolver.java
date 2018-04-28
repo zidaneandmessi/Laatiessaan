@@ -151,6 +151,9 @@ public class LocalResolver extends Visitor {
                 else if (node.memFuncBase() instanceof StringLiteralNode) {
                     node.setName("string" + node.name());
                 }
+                else if (node.memFuncBase() instanceof ArefNode) {
+                    node.setName("array" + node.name());
+                }
             }
             Entity ent = currentScope().get(node.name());
             ent.refered();
