@@ -539,7 +539,7 @@ ExprNode unary():
 ExprNode postfix():
 {
   	Token t;
-    ExprNode expr, idx, membfunc;
+    ExprNode expr, idx, membfunc;	
     String memb;
     List<ExprNode> args;
 }
@@ -681,7 +681,8 @@ DefinedFunction deconstruct():
 {
 	n=name() t="(" params=params() ")" body=block()
 	{
-		return new DefinedFunction(new TypeNode(new VoidTypeRef(location(t))), n, params, body);
+		TypeRef tr = new FunctionTypeRef(new VoidTypeRef(location(t)), params.parametersTypeRef());
+		return new DefinedFunction(new TypeNode(tr), n, params, body);
 	}
 }
 DefinedFunction defun():

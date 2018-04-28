@@ -87,6 +87,7 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>, ClassV
                 if (!param.typeNode().isResolved())
                     param.typeNode().setType(t);
             }
+            visit(f.body());
         }
         return null;
     }

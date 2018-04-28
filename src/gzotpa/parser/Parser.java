@@ -1589,7 +1589,8 @@ public class Parser implements ParserConstants {
       params = params();
       jj_consume_token(26);
       body = block();
-                {if (true) return new DefinedFunction(new TypeNode(new VoidTypeRef(location(t))), n, params, body);}
+                TypeRef tr = new FunctionTypeRef(new VoidTypeRef(location(t)), params.parametersTypeRef());
+                {if (true) return new DefinedFunction(new TypeNode(tr), n, params, body);}
     throw new Error("Missing return statement in function");
     } finally {
       trace_return("deconstruct");

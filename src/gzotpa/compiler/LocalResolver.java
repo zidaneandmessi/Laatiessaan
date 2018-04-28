@@ -153,37 +153,30 @@ public class LocalResolver extends Visitor {
 
     public Void visit(FuncallNode node) {
         super.visit(node);
-        if (node.expr() instanceof VariableNode)
-            visit((VariableNode)(node.expr()));
-        else if (node.expr() instanceof FuncallNode)
-            visit((FuncallNode)(node.expr()));
+        node.expr().accept(this);
+        for (ExprNode e : node.args()) {
+            e.accept(this);
+        }
         return null;
     }
 
     public Void visit(MemberNode node) {
         super.visit(node);
-        if (node.expr() instanceof VariableNode) {
-            visit((VariableNode)(node.expr()));
-        }
-        else if (node.expr() instanceof FuncallNode) {
-            visit((FuncallNode)(node.expr()));
-        }
-        else if (node.expr() instanceof MemberNode) 
-            visit((MemberNode)(node.expr()));
+        node.expr().accept(this);
         return null;
     }
 
     public Void visit(VariableNode node) {
+        System.err.println(node.name());
         super.visit(node);
         try {
             if (node.name().charAt(0) == '.')
             {
+                node.memFuncBase().accept(this);
                 if (node.memFuncBase() instanceof VariableNode) {
-                    visit((VariableNode)(node.memFuncBase()));
                     node.setName(node.memFuncBase().type().typeName() + node.name());
                 }
                 else if (node.memFuncBase() instanceof FuncallNode) {
-                    visit((FuncallNode)(node.memFuncBase()));
                     node.setName(((FunctionType)(((FuncallNode)(node.memFuncBase())).expr().type())).returnType().typeName() + node.name());
                 }
                 else if (node.memFuncBase() instanceof StringLiteralNode) {
@@ -193,7 +186,6 @@ public class LocalResolver extends Visitor {
                     node.setName("array" + node.name());
                 }
                 else if (node.memFuncBase() instanceof MemberNode) {
-                    visit((MemberNode)(node.memFuncBase()));
                     node.setName(((MemberNode)(node.memFuncBase())).type().typeName() + node.name());
                 }
             }
