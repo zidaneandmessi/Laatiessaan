@@ -45,6 +45,10 @@ public class BinaryOpNode extends ExprNode {
     public ExprNode right() {
         return right;
     }
+
+    public boolean isConstant() {
+        return left.isConstant() && right.isConstant();
+    }
     
     public Location location() {
         return left.location();

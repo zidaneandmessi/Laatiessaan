@@ -35,6 +35,10 @@ public class UnaryOpNode extends ExprNode {
         this.expr = expr;
     }
 
+    public boolean isConstant() {
+        return expr.isConstant();
+    }
+
     public Location location() {
         return expr.location();
     }

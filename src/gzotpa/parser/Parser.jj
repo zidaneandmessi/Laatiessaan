@@ -20,14 +20,13 @@ import java.util.HashSet;
 
 public class Parser {
 	private String sourceName;
-    private Set<String> knownTypes;
 	public Parser(Reader s, String name) {
 		this(s);
 		this.sourceName = name;
-		this.knownTypes = new HashSet<String>();
 	}
 	public AST parse() throws SyntaxException {
         try {
+          	compilation_unit();
             return compilation_unit();
         }
         catch (TokenMgrError err) {
@@ -115,14 +114,6 @@ public class Parser {
             return Long.parseLong(s, 10);
         }
     }
-
-    private void addType(String name) {
-        knownTypes.add(name);
-    }
-
-    private boolean isKnownType(String name) {
-        return knownTypes.contains(name);
-    }
 }
 
 PARSER_END(Parser)
@@ -205,7 +196,8 @@ BlockNode block():
     List<StmtNode> stmts = new ArrayList<StmtNode>();
 }
 {
-    t="{" (	var=defvars() { vars.addAll(var); }
+    t="{" ( LOOKAHEAD(defvars())
+      		var=defvars() { vars.addAll(var); }
     	 |	stmt=stmt()  { stmts.add(stmt); }
      	  )*
       "}"
@@ -275,8 +267,7 @@ TypeRef typeref_base():
     | t=<BOOL>          { return IntegerTypeRef.intRef(location(t), true); }
     | t=<INT>           { return IntegerTypeRef.intRef(location(t)); }
     | t=<STR>           { return new StringTypeRef("string", location(t)); } 
-    | LOOKAHEAD({isKnownType(getToken(1).image)}) t=<IDENTIFIER>
-        				{ return new ClassTypeRef(location(t), t.image); }
+    | t=<IDENTIFIER>	{ return new ClassTypeRef(location(t), t.image); }
 }
 List<StmtNode> stmts():
 {
@@ -675,7 +666,7 @@ ClassNode defclass():
 }
 {
 	t=<CLASS>
-	n=name() { addType(n); }
+	n=name()
 	decls=class_defs() 
 	{
 		return new ClassNode(location(t), new ClassTypeRef(n), n, decls);
