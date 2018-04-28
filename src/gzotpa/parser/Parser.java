@@ -19,7 +19,6 @@ public class Parser implements ParserConstants {
         }
         public AST parse() throws SyntaxException {
         try {
-                compilation_unit();
             return compilation_unit();
         }
         catch (TokenMgrError err) {
@@ -1813,6 +1812,11 @@ public class Parser implements ParserConstants {
     finally { jj_save(14, xla); }
   }
 
+  private boolean jj_3R_30() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
   private boolean jj_3_2() {
     if (jj_scan_token(27)) return true;
     if (jj_3R_22()) return true;
@@ -2515,6 +2519,11 @@ public class Parser implements ParserConstants {
     return false;
   }
 
+  private boolean jj_3_3() {
+    if (jj_3R_23()) return true;
+    return false;
+  }
+
   private boolean jj_3R_34() {
     if (jj_3R_25()) return true;
     if (jj_3R_26()) return true;
@@ -2534,11 +2543,6 @@ public class Parser implements ParserConstants {
       xsp = jj_scanpos;
       if (jj_3R_55()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3_3() {
-    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -2638,11 +2642,6 @@ public class Parser implements ParserConstants {
 
   private boolean jj_3R_22() {
     if (jj_3R_29()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_30() {
-    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
