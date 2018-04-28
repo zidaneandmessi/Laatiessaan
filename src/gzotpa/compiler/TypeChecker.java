@@ -178,9 +178,9 @@ class TypeChecker extends Visitor {
 
     public Void visit(BinaryOpNode node) {
         super.visit(node);
-
         if (!node.left().type().isType(node.right().type())
-            || node.left().type() instanceof ClassType
+            || node.left().type() instanceof ClassType && !(node.right().type() instanceof NullType)
+            || node.left().type() instanceof ArrayType && !(node.right().type() instanceof NullType)
             || node.left().type() instanceof NullType) {
             throw new Error("Gzotpa! Binary operator LHS or RHS type wrong!");
         }

@@ -167,7 +167,6 @@ public class LocalResolver extends Visitor {
     }
 
     public Void visit(VariableNode node) {
-        System.err.println(node.name());
         super.visit(node);
         try {
             if (node.name().charAt(0) == '.')
