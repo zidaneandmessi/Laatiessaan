@@ -9,6 +9,7 @@ import java.util.LinkedList;
 public class LocalResolver extends Visitor {
     private final LinkedList<Scope> scopeStack;
     private boolean inFunc;
+    private String currentClass;
 
     public LocalResolver() {
         this.scopeStack = new LinkedList<Scope>();
@@ -33,7 +34,9 @@ public class LocalResolver extends Visitor {
             toplevel.defineEntity(def);
         }
         for (ClassNode cls : ast.definedClasses()) {
+            currentClass = cls.name();
             resolveClass(cls, toplevel);
+            currentClass = null;
         }
         resolveGlobalVarInitializers(ast.definedVariables());
         resolveFunctions(ast.definedFunctions());
@@ -50,17 +53,12 @@ public class LocalResolver extends Visitor {
     }
 
     private void resolveFunctions(List<DefinedFunction> funcs) {
-        boolean hasMain = false;
         for (DefinedFunction f : funcs) {
-            if (f.name().equals("main"))
-                hasMain = true;
             pushScope(f.parameters());
             inFunc = true;
             resolve(f.body());
             f.setScope(popScope());
         }
-        if (!hasMain)
-            throw new Error("Gzotpa! No main function!");
     }
 
     private void resolveClass(ClassNode cl, ToplevelScope toplevel) throws SemanticException {
@@ -187,6 +185,9 @@ public class LocalResolver extends Visitor {
                 else if (node.memFuncBase() instanceof MemberNode) {
                     node.setName(((MemberNode)(node.memFuncBase())).type().typeName() + node.name());
                 }
+            }
+            if (!currentScope().has(node.name())) {
+                node.setName(currentClass + "." + node.name());
             }
             Entity ent = currentScope().get(node.name());
             ent.refered();

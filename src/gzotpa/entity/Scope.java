@@ -19,5 +19,6 @@ abstract public class Scope {
         children.add(s);
     }
     
+    abstract public boolean has(String name);
     abstract public Entity get(String name) throws SemanticException;
 }

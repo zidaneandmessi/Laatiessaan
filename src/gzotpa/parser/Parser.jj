@@ -20,9 +20,11 @@ import java.util.HashSet;
 
 public class Parser {
 	private String sourceName;
+	private boolean mainFunc;
 	public Parser(Reader s, String name) {
 		this(s);
 		this.sourceName = name;
+		this.mainFunc = false;
 	}
 	public AST parse() throws SyntaxException {
         try {
@@ -56,7 +58,7 @@ public class Parser {
 			throw new FileException(ex.getMessage());
 		}
 		catch (UnsupportedEncodingException ex) {
-			throw new Error("UTF-8 is not supported??: " + ex.getMessage());
+			throw new Error("Gzotpa! UTF-8 is not supported??: " + ex.getMessage());
 		}
 	}
 	protected Location location(Token t) {
@@ -724,9 +726,10 @@ Declarations top_defs():
 	(	LOOKAHEAD(<CLASS>)
 		defclass=defclass() { decls.addDefclass(defclass); }
 	|	LOOKAHEAD(typeref() <IDENTIFIER> "(")
-		defun=defun() { decls.addDefun(defun); }
+		defun=defun() { if (defun.name().equals("main")) mainFunc = true;
+						decls.addDefun(defun); }
 	|	LOOKAHEAD(3)
-		defvars=defvars() { decls.addDefvars(defvars); }
+		defvars=defvars() { if (!mainFunc) decls.addDefvars(defvars); }
 	)*
 		{
 			return decls;
@@ -743,6 +746,7 @@ AST compilation_unit():
 	}
 	decls=top_defs() <EOF>
 		{
+		  	if (!mainFunc) throw new ParseException("Gzotpa! No main function!");
 			return new AST(location(t), decls);
 		}
 }

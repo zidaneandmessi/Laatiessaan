@@ -13,9 +13,11 @@ import java.util.HashSet;
 
 public class Parser implements ParserConstants {
         private String sourceName;
+        private boolean mainFunc;
         public Parser(Reader s, String name) {
                 this(s);
                 this.sourceName = name;
+                this.mainFunc = false;
         }
         public AST parse() throws SyntaxException {
         try {
@@ -49,7 +51,7 @@ public class Parser implements ParserConstants {
                         throw new FileException(ex.getMessage());
                 }
                 catch (UnsupportedEncodingException ex) {
-                        throw new Error("UTF-8 is not supported??: " + ex.getMessage());
+                        throw new Error("Gzotpa! UTF-8 is not supported??: " + ex.getMessage());
                 }
         }
         protected Location location(Token t) {
@@ -1677,10 +1679,11 @@ public class Parser implements ParserConstants {
                                       decls.addDefclass(defclass);
         } else if (jj_2_14(2147483647)) {
           defun = defun();
-                                decls.addDefun(defun);
+                                if (defun.name().equals("main")) mainFunc = true;
+                                                decls.addDefun(defun);
         } else if (jj_2_15(3)) {
           defvars = defvars();
-                                    decls.addDefvars(defvars);
+                                    if (!mainFunc) decls.addDefvars(defvars);
         } else {
           jj_consume_token(-1);
           throw new ParseException();
@@ -1701,6 +1704,7 @@ public class Parser implements ParserConstants {
                 t = getToken(1);
       decls = top_defs();
       jj_consume_token(0);
+                        if (!mainFunc) {if (true) throw new ParseException("Gzotpa! No main function!");}
                         {if (true) return new AST(location(t), decls);}
     throw new Error("Missing return statement in function");
     } finally {
@@ -1811,11 +1815,6 @@ public class Parser implements ParserConstants {
     try { return !jj_3_15(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(14, xla); }
-  }
-
-  private boolean jj_3R_30() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
   }
 
   private boolean jj_3_2() {
@@ -2643,6 +2642,11 @@ public class Parser implements ParserConstants {
 
   private boolean jj_3R_22() {
     if (jj_3R_29()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_30() {
+    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 

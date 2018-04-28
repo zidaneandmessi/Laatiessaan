@@ -54,6 +54,12 @@ public class LocalScope extends Scope {
         variables.put(var.name(), var);
     }
 
+    public boolean has(String name) {
+        DefinedVariable var = variables.get(name);
+        if (var != null) return true;
+        else return parent.has(name);
+    }
+
     public Entity get(String name) throws SemanticException {
         DefinedVariable var = variables.get(name);
         if (var != null) return var;

@@ -159,6 +159,11 @@ public class ToplevelScope extends Scope {
         entities.put(entity.name(), entity);
     }
 
+    public boolean has(String name) {
+        Entity ent = entities.get(name);
+        return ent != null;
+    }
+
     public Entity get(String name) throws SemanticException {
         Entity ent = entities.get(name);
         if (ent == null) {
