@@ -33,6 +33,9 @@ public class LocalResolver extends Visitor {
         for (Entity def : ast.definitions()) {
             toplevel.defineEntity(def);
         }
+        for (Entity decl : ast.unusedVariables()) {
+            toplevel.declareEntity(decl);
+        }
         for (ClassNode cls : ast.definedClasses()) {
             currentClass = cls.name();
             resolveClass(cls, toplevel);

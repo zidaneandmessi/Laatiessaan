@@ -1684,6 +1684,7 @@ public class Parser implements ParserConstants {
         } else if (jj_2_15(3)) {
           defvars = defvars();
                                     if (!mainFunc) decls.addDefvars(defvars);
+                                                        else decls.addDefvarsaftermain(defvars);
         } else {
           jj_consume_token(-1);
           throw new ParseException();

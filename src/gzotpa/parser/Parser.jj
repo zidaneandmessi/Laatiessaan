@@ -729,7 +729,8 @@ Declarations top_defs():
 		defun=defun() { if (defun.name().equals("main")) mainFunc = true;
 						decls.addDefun(defun); }
 	|	LOOKAHEAD(3)
-		defvars=defvars() { if (!mainFunc) decls.addDefvars(defvars); }
+		defvars=defvars() { if (!mainFunc) decls.addDefvars(defvars);
+							else decls.addDefvarsaftermain(defvars); }
 	)*
 		{
 			return decls;

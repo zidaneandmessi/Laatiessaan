@@ -26,6 +26,10 @@ public class AST extends Node {
         return declarations.defclasses();
     }
     
+    public List<DefinedVariable> unusedVariables() {
+        return declarations.defvarsaftermain();
+    }
+
     public List<Entity> declarations() {
         List<Entity> result = new ArrayList<Entity>();
         result.addAll(declarations.funcdecls());
