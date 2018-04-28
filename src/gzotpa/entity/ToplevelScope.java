@@ -53,9 +53,9 @@ public class ToplevelScope extends Scope {
         Params toStringparams = new Params(new ArrayList<Parameter>());
         toStringtypes.add(new IntegerType(32, "i"));
         toStringparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("i")), "i"));
-        entities.put("int.toString", new DefinedFunction(new TypeNode(new FunctionType(new StringType("", "int.toString"),
+        entities.put("toString", new DefinedFunction(new TypeNode(new FunctionType(new StringType("", "toString"),
                                                                                     toStringtypes)),
-                                                "int.toString",
+                                                "toString",
                                                 toStringparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
                                                                 new ArrayList<StmtNode>())));
