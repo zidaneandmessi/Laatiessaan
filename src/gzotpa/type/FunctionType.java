@@ -26,6 +26,10 @@ public class FunctionType extends Type {
         return paramTypes.types();
     }
 
+    public PointerType getPointerType() {
+        return new PointerType(32, returnType);
+    }
+
     public long argc() {
         return paramTypes.argc();
     }
