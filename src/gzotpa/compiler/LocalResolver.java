@@ -71,6 +71,7 @@ public class LocalResolver extends Visitor {
                 throw new Error("Gzotpa! Class member variable should not have initializer! " + v.name());
             }
         }
+        vars.add(new DefinedVariable(cl.typeNode(), "this"));
         pushScope(vars);
         for (DefinedFunction f : funcs) {
             //f.setName(cl.name() + "." + f.name());
@@ -159,6 +160,19 @@ public class LocalResolver extends Visitor {
         return null;
     }
 
+    public Void visit(MemberNode node) {
+        super.visit(node);
+        if (node.expr() instanceof VariableNode) {
+            visit((VariableNode)(node.expr()));
+        }
+        else if (node.expr() instanceof FuncallNode) {
+            visit((FuncallNode)(node.expr()));
+        }
+        else if (node.expr() instanceof MemberNode) 
+            visit((MemberNode)(node.expr()));
+        return null;
+    }
+
     public Void visit(VariableNode node) {
         super.visit(node);
         try {
@@ -177,6 +191,10 @@ public class LocalResolver extends Visitor {
                 }
                 else if (node.memFuncBase() instanceof ArefNode) {
                     node.setName("array" + node.name());
+                }
+                else if (node.memFuncBase() instanceof MemberNode) {
+                    visit((MemberNode)(node.memFuncBase()));
+                    node.setName(((MemberNode)(node.memFuncBase())).type().typeName() + node.name());
                 }
             }
             Entity ent = currentScope().get(node.name());

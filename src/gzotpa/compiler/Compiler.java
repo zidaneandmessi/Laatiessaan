@@ -78,8 +78,8 @@ public class Compiler {
             new TypeResolver(types).resolve(ast);
             types.semanticCheck();
             new LocalResolver().resolve(ast);
-            new DereferenceChecker(types).check(ast);
-            new TypeChecker(types).check(ast);
+            // new DereferenceChecker(types).check(ast);
+            // new TypeChecker(types).check(ast);
             return true;
         }
         catch (SemanticException ex) {

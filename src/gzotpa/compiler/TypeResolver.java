@@ -82,6 +82,11 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>, ClassV
         }
         for (DefinedFunction f : cl.decls().defuns()) {
             bindType(f.typeNode());
+            for (Parameter param : f.parameters()) {
+                Type t = typeTable.getParamType(param.typeNode().typeRef());
+                if (!param.typeNode().isResolved())
+                    param.typeNode().setType(t);
+            }
         }
         return null;
     }

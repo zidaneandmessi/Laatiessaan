@@ -28,7 +28,7 @@ public class MemberNode extends LHSNode {
         return member;
     }
 
-    protected Type origType() {
+    public Type origType() {
         return baseType().memberVariableType(member);
     }
 
