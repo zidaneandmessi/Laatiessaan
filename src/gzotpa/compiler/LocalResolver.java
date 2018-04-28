@@ -148,6 +148,9 @@ public class LocalResolver extends Visitor {
                     visit((FuncallNode)(node.memFuncBase()));
                     node.setName(((FunctionType)(((FuncallNode)(node.memFuncBase())).expr().type())).returnType().typeName() + node.name());
                 }
+                else if (node.memFuncBase() instanceof StringLiteralNode) {
+                    node.setName("string" + node.name());
+                }
             }
             Entity ent = currentScope().get(node.name());
             ent.refered();
