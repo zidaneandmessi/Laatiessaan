@@ -562,10 +562,8 @@ ExprNode postfix():
     t="." membfunc=primary() "(" args=args() ")"
     						{ args.add(expr);
     						((VariableNode)membfunc).setName("." + ((VariableNode)membfunc).name());
-    						((VariableNode)membfunc).setMemFuncBase((VariableNode)expr);
+    						((VariableNode)membfunc).setMemFuncBase(expr);
     						  expr = new FuncallNode(membfunc, args, true); }
-	/*t="." membfunc=primary() "(" args=args() ")"
-							{ expr = new MemberFuncNode(expr, membfunc, args); }*/
     | "." memb=name()       { expr = new MemberNode(expr, memb); }
     | "(" args=args() ")"   { expr = new FuncallNode(expr, args); }
     )*

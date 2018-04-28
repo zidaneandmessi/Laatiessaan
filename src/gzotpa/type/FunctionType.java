@@ -43,4 +43,8 @@ public class FunctionType extends Type {
         buf.append(")");
         return buf.toString();
     }
+
+    public String typeName() {
+        return "function";
+    }
 }

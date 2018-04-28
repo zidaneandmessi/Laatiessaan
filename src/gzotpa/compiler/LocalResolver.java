@@ -2,6 +2,7 @@ package gzotpa.compiler;
 import gzotpa.ast.*;
 import gzotpa.entity.*;
 import gzotpa.exception.*;
+import gzotpa.type.*;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -125,16 +126,28 @@ public class LocalResolver extends Visitor {
         return scopeStack.getLast();
     }
 
+    public Void visit(FuncallNode node) {
+        super.visit(node);
+        if (node.expr() instanceof VariableNode)
+            visit((VariableNode)(node.expr()));
+        else if (node.expr() instanceof FuncallNode)
+            visit((FuncallNode)(node.expr()));
+        return null;
+    }
+
     public Void visit(VariableNode node) {
+        super.visit(node);
         try {
-            if (node.name().indexOf(String.valueOf(".")) != -1)
+            if (node.name().charAt(0) == '.')
             {
-                visit(node.memFuncBase());
-                node.setName(node.memFuncBase().type() + node.name());
-                Entity ent = currentScope().get(node.name());
-                ent.refered();
-                node.setEntity(ent);
-                return null;
+                if (node.memFuncBase() instanceof VariableNode) {
+                    visit((VariableNode)(node.memFuncBase()));
+                    node.setName(node.memFuncBase().type().typeName() + node.name());
+                }
+                else if (node.memFuncBase() instanceof FuncallNode) {
+                    visit((FuncallNode)(node.memFuncBase()));
+                    node.setName(((FunctionType)(((FuncallNode)(node.memFuncBase())).expr().type())).returnType().typeName() + node.name());
+                }
             }
             Entity ent = currentScope().get(node.name());
             ent.refered();

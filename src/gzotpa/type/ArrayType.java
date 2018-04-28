@@ -39,12 +39,15 @@ public class ArrayType extends Type {
     }
     
     public String toString() {
-        /*if (length < 0) {
+        if (length < 0) {
             return baseType.toString() + "[]";
         }
         else {
             return baseType.toString() + "[" + length + "]";
-        }*/
+        }
+    }
+
+    public String typeName() {
         return "array";
     }
 

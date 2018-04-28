@@ -32,4 +32,6 @@ public abstract class Type {
     public FunctionType getFunctionType() { return (FunctionType)this; }
     public ClassType getClassType() { return (ClassType)this; }
     public ArrayType getArrayType() { return (ArrayType)this; }
+
+    abstract public String typeName();
 }

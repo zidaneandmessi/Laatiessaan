@@ -20,4 +20,8 @@ public class StringType extends Type {
     public String toString() {
         return name;
     }
+
+    public String typeName() {
+        return "string";
+    }
 }

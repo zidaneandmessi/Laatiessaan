@@ -13,4 +13,8 @@ public class NullType extends Type {
     public boolean isType(Type type) {
         return true;
     }
+
+    public String typeName() {
+        return "null";
+    }
 }

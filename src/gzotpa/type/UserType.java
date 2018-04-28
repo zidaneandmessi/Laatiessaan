@@ -24,4 +24,8 @@ public class UserType extends NamedType {
     public boolean isType(Type type) {
         return type instanceof UserType;
     }
+
+    public String typeName() {
+        return "user";
+    }
 }

@@ -34,4 +34,8 @@ public class IntegerType extends Type {
     public String toString() {
         return name;
     }
+
+    public String typeName() {
+        return "int";
+    }
 }

@@ -7,7 +7,7 @@ public class VariableNode extends LHSNode {
     private Location location;
     private String name;
     private Entity entity;
-    private VariableNode memFuncBase;
+    private ExprNode memFuncBase;
 
     public VariableNode(Location loc, String name) {
         this.location = loc;
@@ -29,11 +29,11 @@ public class VariableNode extends LHSNode {
         this.name = name;
     }
 
-    public void setMemFuncBase(VariableNode expr) {
+    public void setMemFuncBase(ExprNode expr) {
         this.memFuncBase = expr;
     }
 
-    public VariableNode memFuncBase() {
+    public ExprNode memFuncBase() {
         return memFuncBase;
     }
 

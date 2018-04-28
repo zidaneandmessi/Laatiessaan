@@ -67,6 +67,10 @@ public class ClassType extends NamedType {
     }
 
     public String toString() {
+        return "class" + name;
+    }
+
+    public String typeName() {
         return name;
     }
 }
