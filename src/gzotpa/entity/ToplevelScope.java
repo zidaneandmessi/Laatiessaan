@@ -127,10 +127,6 @@ public class ToplevelScope extends Scope {
         return true;
     }
 
-    public boolean inLoop() {
-        return false;
-    }
-
     public ToplevelScope toplevel() {
         return this;
     }

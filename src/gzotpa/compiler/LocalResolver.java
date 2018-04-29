@@ -9,11 +9,13 @@ import java.util.LinkedList;
 public class LocalResolver extends Visitor {
     private final LinkedList<Scope> scopeStack;
     private boolean inFunc;
+    private boolean inLoop;
     private String currentClass;
 
     public LocalResolver() {
         this.scopeStack = new LinkedList<Scope>();
         inFunc = false;
+        inLoop = false;
     }
 
     private void resolve(StmtNode n) {
@@ -87,25 +89,34 @@ public class LocalResolver extends Visitor {
     }
 
     public Void visit(BreakNode node) {
-        if (!currentScope().inLoop())
+        if (!inLoop)
             throw new Error("Gzotpa! Unreasonable break statement!");
         return null;
     }
 
     public Void visit(ContinueNode node) {
-        if (!currentScope().inLoop())
+        if (!inLoop)
             throw new Error("Gzotpa! Unreasonable continue statement!");
+        return null;
+    }
+
+    public Void visit(ForNode node) {
+        inLoop = true;
+        super.visit(node);
+        inLoop = false;
+        return null;
+    }
+
+    public Void visit(WhileNode node) {
+        inLoop = true;
+        super.visit(node);
+        inLoop = false;
         return null;
     }
 
     public Void visit(BlockNode node) {
         if (inFunc == false) {
-            if (node.inLoop()) {
-                pushScope(node.variables(), true);
-            }
-            else {
-                pushScope(node.variables());
-            }
+            pushScope(node.variables());
             super.visit(node);
             node.setScope(popScope());
         }
@@ -125,20 +136,10 @@ public class LocalResolver extends Visitor {
     }
 
     private void pushScope(List<? extends DefinedVariable> vars) {
-        LocalScope scope = new LocalScope(currentScope(), currentScope().inLoop());
+        LocalScope scope = new LocalScope(currentScope());
         for (DefinedVariable var : vars) {
             if (scope.isDefinedLocally(var.name()))
                 throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
-            scope.defineVariable(var);
-        }
-        scopeStack.addLast(scope);
-    }
-
-    private void pushScope(List<? extends DefinedVariable> vars, boolean inLoop) {
-        LocalScope scope = new LocalScope(currentScope(), inLoop);
-        for (DefinedVariable var : vars) {
-            if (scope.isDefinedLocally(var.name()))
-                throw new Error("Gzotpa! Variable multiple declarations!");
             scope.defineVariable(var);
         }
         scopeStack.addLast(scope);

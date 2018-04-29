@@ -566,7 +566,8 @@ ExprNode postfix():
 String name():
 { Token t; }
 {
-    t=<IDENTIFIER> { return t.image; }
+    t=<IDENTIFIER> { if (t.image.equals("this")) throw new Error("Gzotpa! Variable name cannot be \"this\"!");
+    				return t.image; }
 }
 List<ExprNode> args():
 {
@@ -747,7 +748,7 @@ AST compilation_unit():
 	}
 	decls=top_defs() <EOF>
 		{
-		  	if (!mainFunc) throw new ParseException("Gzotpa! No main function!");
+		  	if (!mainFunc) throw new Error("Gzotpa! No main function!");
 			return new AST(location(t), decls);
 		}
 }
