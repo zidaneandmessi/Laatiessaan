@@ -42,11 +42,7 @@ public class TypeTable {
     public Type get(TypeRef ref) {
         Type type = table.get(ref);
         if (type == null) {
-            if (ref instanceof UserTypeRef) {
-                UserTypeRef uref = (UserTypeRef)ref;
-                throw new Error("Gzotpa! Undefined type: " + uref.name() + "!");
-            }
-            else if (ref instanceof ArrayTypeRef) {
+            if (ref instanceof ArrayTypeRef) {
                 ArrayTypeRef aref = (ArrayTypeRef)ref;
                 Type t = new ArrayType(get(aref.baseType()),
                                        aref.length(),

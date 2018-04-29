@@ -22,7 +22,8 @@ public class ToplevelScope extends Scope {
                                                 "print",
                                                 printparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
-                                                                new ArrayList<StmtNode>())));
+                                                                new ArrayList<StmtNode>(),
+                                                                new ArrayList<Boolean>())));
 
         ParamTypes printlntypes = new ParamTypes(new ArrayList<Type>(), false);
         Params printlnparams = new Params(new ArrayList<Parameter>());
@@ -33,21 +34,24 @@ public class ToplevelScope extends Scope {
                                                 "println",
                                                 printlnparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
-                                                                new ArrayList<StmtNode>())));
+                                                                new ArrayList<StmtNode>(),
+                                                                new ArrayList<Boolean>())));
 
         entities.put("getString", new DefinedFunction(new TypeNode(new FunctionType(new StringType("", "getString"),
                                                                                     new ParamTypes(new ArrayList<Type>(), false))),
                                                 "getString",
                                                 new Params(new ArrayList<Parameter>()),
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
-                                                                new ArrayList<StmtNode>())));
+                                                                new ArrayList<StmtNode>(),
+                                                                new ArrayList<Boolean>())));
 
         entities.put("getInt", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "getInt"),
                                                                                     new ParamTypes(new ArrayList<Type>(), false))),
                                                 "getInt",
                                                 new Params(new ArrayList<Parameter>()),
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
-                                                                new ArrayList<StmtNode>())));
+                                                                new ArrayList<StmtNode>(),
+                                                                new ArrayList<Boolean>())));
 
         ParamTypes toStringtypes = new ParamTypes(new ArrayList<Type>(), false);
         Params toStringparams = new Params(new ArrayList<Parameter>());
@@ -58,7 +62,8 @@ public class ToplevelScope extends Scope {
                                                 "toString",
                                                 toStringparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
-                                                                new ArrayList<StmtNode>())));
+                                                                new ArrayList<StmtNode>(),
+                                                                new ArrayList<Boolean>())));
 
         ParamTypes lengthtypes = new ParamTypes(new ArrayList<Type>(), false);
         Params lengthparams = new Params(new ArrayList<Parameter>());
@@ -69,7 +74,8 @@ public class ToplevelScope extends Scope {
                                                 "string.length",
                                                 lengthparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
-                                                                new ArrayList<StmtNode>())));
+                                                                new ArrayList<StmtNode>(),
+                                                                new ArrayList<Boolean>())));
 
         ParamTypes substringtypes = new ParamTypes(new ArrayList<Type>(), false);
         Params substringparams = new Params(new ArrayList<Parameter>());
@@ -84,7 +90,8 @@ public class ToplevelScope extends Scope {
                                                 "string.substring",
                                                 substringparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
-                                                                new ArrayList<StmtNode>())));
+                                                                new ArrayList<StmtNode>(),
+                                                                new ArrayList<Boolean>())));
 
         ParamTypes parseInttypes = new ParamTypes(new ArrayList<Type>(), false);
         Params parseIntparams = new Params(new ArrayList<Parameter>());
@@ -95,7 +102,8 @@ public class ToplevelScope extends Scope {
                                                 "string.parseInt",
                                                 parseIntparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
-                                                                new ArrayList<StmtNode>())));
+                                                                new ArrayList<StmtNode>(),
+                                                                new ArrayList<Boolean>())));
 
         ParamTypes ordtypes = new ParamTypes(new ArrayList<Type>(), false);
         Params ordparams = new Params(new ArrayList<Parameter>());
@@ -108,7 +116,8 @@ public class ToplevelScope extends Scope {
                                                 "string.ord",
                                                 ordparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
-                                                                new ArrayList<StmtNode>())));
+                                                                new ArrayList<StmtNode>(),
+                                                                new ArrayList<Boolean>())));
 
 
         ParamTypes sizetypes = new ParamTypes(new ArrayList<Type>(), false);
@@ -120,7 +129,8 @@ public class ToplevelScope extends Scope {
                                                 "array.size",
                                                 sizeparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
-                                                                new ArrayList<StmtNode>())));
+                                                                new ArrayList<StmtNode>(),
+                                                                new ArrayList<Boolean>())));
     }
 
     public boolean isToplevel() {

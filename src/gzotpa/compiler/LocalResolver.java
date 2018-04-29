@@ -5,17 +5,18 @@ import gzotpa.exception.*;
 import gzotpa.type.*;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Iterator;
 
 public class LocalResolver extends Visitor {
     private final LinkedList<Scope> scopeStack;
     private boolean inFunc;
-    private boolean inLoop;
+    private int inLoop;
     private String currentClass;
 
     public LocalResolver() {
         this.scopeStack = new LinkedList<Scope>();
         inFunc = false;
-        inLoop = false;
+        inLoop = 0;
     }
 
     private void resolve(StmtNode n) {
@@ -89,28 +90,28 @@ public class LocalResolver extends Visitor {
     }
 
     public Void visit(BreakNode node) {
-        if (!inLoop)
+        if (inLoop == 0)
             throw new Error("Gzotpa! Unreasonable break statement!");
         return null;
     }
 
     public Void visit(ContinueNode node) {
-        if (!inLoop)
+        if (inLoop == 0)
             throw new Error("Gzotpa! Unreasonable continue statement!");
         return null;
     }
 
     public Void visit(ForNode node) {
-        inLoop = true;
+        inLoop++;
         super.visit(node);
-        inLoop = false;
+        inLoop--;
         return null;
     }
 
     public Void visit(WhileNode node) {
-        inLoop = true;
+        inLoop++;
         super.visit(node);
-        inLoop = false;
+        inLoop--;
         return null;
     }
 

@@ -204,7 +204,7 @@ BlockNode block():
      	  )*
       "}"
         {
-            return new BlockNode(location(t), vars, stmts);
+            return new BlockNode(location(t), vars, stmts, order);
         }
 }
 TypeNode type():

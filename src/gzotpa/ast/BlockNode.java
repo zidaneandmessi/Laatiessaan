@@ -8,16 +8,18 @@ public class BlockNode extends StmtNode {
     protected List<Boolean> order;
     protected LocalScope scope;
 
-    public BlockNode(Location loc, List<DefinedVariable> vars, List<StmtNode> stmts) {
+    public BlockNode(Location loc, List<DefinedVariable> vars, List<StmtNode> stmts, List<Boolean> order) {
         super(loc);
         this.variables = vars;
         this.stmts = stmts;
+        this.order = order;
     }
 
-    public BlockNode(List<DefinedVariable> vars, List<StmtNode> stmts) {
+    public BlockNode(List<DefinedVariable> vars, List<StmtNode> stmts, List<Boolean> order) {
         super(null);
         this.variables = vars;
         this.stmts = stmts;
+        this.order = order;
     }
 
     public List<DefinedVariable> variables() {

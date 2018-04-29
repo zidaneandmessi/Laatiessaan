@@ -259,7 +259,7 @@ public class Parser implements ParserConstants {
         }
       }
       jj_consume_token(29);
-            {if (true) return new BlockNode(location(t), vars, stmts);}
+            {if (true) return new BlockNode(location(t), vars, stmts, order);}
     throw new Error("Missing return statement in function");
     } finally {
       trace_return("block");
