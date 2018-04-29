@@ -22,6 +22,10 @@ public class Declarations {
         defvars.addAll(vars);
     }
 
+    public void addDefvaraftermain(DefinedVariable var) {
+        defvarsaftermain.add(var);
+    }
+
     public void addDefvarsaftermain(List<DefinedVariable> vars) {
         defvarsaftermain.addAll(vars);
     }

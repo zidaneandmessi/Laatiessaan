@@ -2,6 +2,7 @@ package gzotpa.compiler;
 import gzotpa.ast.*;
 import gzotpa.entity.*;
 import java.util.List;
+import java.util.Iterator;
 
 abstract public class Visitor implements ASTVisitor<Void, Void> {
     public Visitor() {}
@@ -28,6 +29,10 @@ abstract public class Visitor implements ASTVisitor<Void, Void> {
             visitExpr(e);
         }
     }
+    protected void visitVariable(DefinedVariable var) {
+        if (var.hasInitializer())
+            visitExpr(var.initializer());
+    }
     protected void visitVariables(List<DefinedVariable> vars) {
         for (DefinedVariable var : vars)
             if (var.hasInitializer()) {
@@ -36,8 +41,18 @@ abstract public class Visitor implements ASTVisitor<Void, Void> {
     }
 
     public Void visit(BlockNode node) {
-        visitVariables(node.variables());
-        visitStmts(node.stmts());
+        Iterator<DefinedVariable> vars = node.variables().iterator();
+        Iterator<StmtNode> stmts = node.stmts().iterator();
+        for (Boolean b : node.order()) {
+            if (b == true) {
+                DefinedVariable var = vars.next();
+                visitVariable(var);
+            }
+            else if(b == false) {
+                StmtNode stmt = stmts.next();
+                visitStmt(stmt);
+            }
+        }
         return null;
     }
 

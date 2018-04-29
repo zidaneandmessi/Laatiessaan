@@ -192,14 +192,15 @@ Parameter param():
 BlockNode block():
 {
     Token t;
-    List<DefinedVariable> var,vars = new ArrayList<DefinedVariable>();
+    DefinedVariable var;
+    List<DefinedVariable> vars = new ArrayList<DefinedVariable>();
     StmtNode stmt;
     List<StmtNode> stmts = new ArrayList<StmtNode>();
     List<Boolean> order = new ArrayList<Boolean>();
 }
 {
-    t="{" (	LOOKAHEAD(defvars())
-    		var=defvars() { vars.addAll(var); order.add(true); } // true: var
+    t="{" (	LOOKAHEAD(defvar())
+    		var=defvar() { vars.add(var); order.add(true); } // true: var
     	 |	stmt=stmt()  { stmts.add(stmt); order.add(false); } // false: stmt
      	  )*
       "}"
@@ -582,9 +583,9 @@ ExprNode primary():
             return n;
         }
 }
-List<DefinedVariable> defvars():
+DefinedVariable defvar():
 {
-	List<DefinedVariable> defs = new ArrayList<DefinedVariable>();
+	DefinedVariable var;
 	TypeNode type;
 	String name;
 	ExprNode init = null;
@@ -592,24 +593,18 @@ List<DefinedVariable> defvars():
 {
 	 type=type() name=name() ["=" init=expr()]
 		{
-			defs.add(new DefinedVariable(type, name, init));
+			var = new DefinedVariable(type, name, init);
 			init = null;
-		}
-	( "," name=name() ["=" init=expr()]
+		} ";"
 		{
-			defs.add(new DefinedVariable(type, name, init));
-			init = null;
-		}
-	)* ";"
-		{
-			return defs;
+			return var;
 		}
 }
 Declarations class_defs():
 {
 	Declarations decls = new Declarations();
 	DefinedFunction defun;
-    List<DefinedVariable> defvars;
+    DefinedVariable defvar;
 }
 {	"{"
 	(   LOOKAHEAD(typeref() <IDENTIFIER> "(")
@@ -617,7 +612,7 @@ Declarations class_defs():
 	|   LOOKAHEAD(<IDENTIFIER> "(")
 		defun=deconstruct()	{ decls.addDefun(defun); }
 	|	LOOKAHEAD(3)
-		defvars=defvars()	{ decls.addDefvars(defvars); }
+		defvar=defvar()	{ decls.addDefvar(defvar); }
 	)*
 	"}"
 	{
@@ -669,23 +664,12 @@ DefinedFunction defun():
 			return new DefinedFunction(new TypeNode(t), n, params, body);
 		}
 }
-List<DefinedVariable> defvar_list():
-{
-	List<DefinedVariable> result = new ArrayList<DefinedVariable>();
-	List<DefinedVariable> vars;
-}
-{
-	( vars=defvars() { result.addAll(vars); } )*
-		{
-			return result;
-		}
-}
 Declarations top_defs():
 {
 	Declarations decls = new Declarations();
 	DefinedFunction defun;
     ClassNode defclass;
-	List<DefinedVariable> defvars;
+	DefinedVariable defvar;
 }
 {
 	(	LOOKAHEAD(<CLASS>)
@@ -694,8 +678,8 @@ Declarations top_defs():
 		defun=defun() { if (defun.name().equals("main")) mainFunc = true;
 						decls.addDefun(defun); }
 	|	LOOKAHEAD(3)
-		defvars=defvars() { if (!mainFunc) decls.addDefvars(defvars);
-							else decls.addDefvarsaftermain(defvars); }
+		defvar=defvar() { if (!mainFunc) decls.addDefvar(defvar);
+							else decls.addDefvaraftermain(defvar); }
 	)*
 		{
 			return decls;

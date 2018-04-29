@@ -117,19 +117,50 @@ public class LocalResolver extends Visitor {
 
     public Void visit(BlockNode node) {
         if (inFunc == false) {
-            pushScope(node.variables());
-            super.visit(node);
+            LocalScope scope = new LocalScope(currentScope());
+            Iterator<DefinedVariable> vars = node.variables().iterator();
+            Iterator<StmtNode> stmts = node.stmts().iterator();
+            for (Boolean b : node.order()) {
+                if (b == true) {
+                    DefinedVariable var = vars.next();
+                    if (scope.isDefinedLocally(var.name()))
+                        throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
+                    scope.defineVariable(var);
+                    super.visitVariable(var);
+                }
+                else if(b == false) {
+                    scopeStack.addLast(scope);
+                    StmtNode stmt = stmts.next();
+                    if (stmt != null)
+                        super.visitStmt(stmt);
+                    scope = popScope();
+                }
+            }
+            scopeStack.addLast(scope);
             node.setScope(popScope());
         }
         else {
-            LocalScope scope = popScope();
-            for (DefinedVariable var : node.variables()) {
-                if (scope.isDefinedLocally(var.name()))
-                    throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
-                scope.defineVariable(var);
+            LocalScope scope;
+            Iterator<DefinedVariable> vars = node.variables().iterator();
+            Iterator<StmtNode> stmts = node.stmts().iterator();
+            for (Boolean b : node.order()) {
+                if (b == true) {
+                    inFunc = true;
+                    scope = popScope();
+                    DefinedVariable var = vars.next();
+                    if (scope.isDefinedLocally(var.name()))
+                        throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
+                    scope.defineVariable(var);
+                    super.visitVariable(var);
+                    scopeStack.addLast(scope);
+                    inFunc = false;
+                }
+                else if(b == false) {
+                    StmtNode stmt = stmts.next();
+                    if (stmt != null)
+                        super.visitStmt(stmt);
+                }
             }
-            scopeStack.addLast(scope);
-            inFunc = false;
             super.visit(node);
             node.setScope((LocalScope)currentScope());
         }
@@ -155,7 +186,6 @@ public class LocalResolver extends Visitor {
     }
 
     public Void visit(FuncallNode node) {
-        super.visit(node);
         node.expr().accept(this);
         for (ExprNode e : node.args()) {
             e.accept(this);

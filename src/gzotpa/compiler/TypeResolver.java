@@ -68,10 +68,19 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>, ClassV
     }
 
     public Void visit(BlockNode node) {
-        for (DefinedVariable var : node.variables()) {
-            var.accept(this);
+        Iterator<DefinedVariable> vars = node.variables().iterator();
+        Iterator<StmtNode> stmts = node.stmts().iterator();
+        for (Boolean b : node.order()) {
+            if (b == true) {
+                DefinedVariable var = vars.next();
+                var.accept(this);
+            }
+            else if(b == false) {
+                StmtNode stmt = stmts.next();
+                if (stmt != null)
+                    stmt.accept(this);
+            }
         }
-        visitStmts(node.stmts());
         return null;
     }
 
