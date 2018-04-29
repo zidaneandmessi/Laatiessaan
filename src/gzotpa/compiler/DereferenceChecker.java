@@ -19,6 +19,11 @@ class DereferenceChecker extends Visitor {
         for (DefinedFunction func : ast.definedFunctions()) {
             check(func.body());
         }
+        for (ClassNode cls : ast.definedClasses()) {
+            for (DefinedFunction func : cls.decls().defuns()) {
+                check(func.body());
+            }
+        }
     }
 
     private void checkToplevelVariable(DefinedVariable var) {

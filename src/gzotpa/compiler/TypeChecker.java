@@ -26,11 +26,22 @@ class TypeChecker extends Visitor {
         for (DefinedVariable var : ast.definedVariables()) {
             checkVariable(var);
         }
-        for (DefinedFunction f : ast.definedFunctions()) {
-            currentFunction = f;
-            checkReturnType(f);
-            checkParamTypes(f);
-            check(f.body());
+        for (DefinedFunction func : ast.definedFunctions()) {
+            currentFunction = func;
+            checkReturnType(func);
+            checkParamTypes(func);
+            check(func.body());
+        }
+        for (ClassNode cls : ast.definedClasses()) {
+            for (DefinedVariable var : cls.decls().defvars()) {
+                checkVariable(var);
+            }
+            for (DefinedFunction func : cls.decls().defuns()) {
+                currentFunction = func;
+                checkReturnType(func);
+                checkParamTypes(func);
+                check(func.body());
+            }
         }
     }
 
