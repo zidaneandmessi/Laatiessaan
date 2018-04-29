@@ -1,9 +1,21 @@
-A get() { return new A; } // this is valid
-
-class A {
-    A() {
-        return get(); // cannot return any value in a constructor
-    }
+int x = 1;
+bool b(bool x){
+    return x;
 }
-
-int main() { return 0; }
+class C{
+    C(){
+        x();
+        {int x;}
+    }
+    void x(){}
+}
+int main(){
+    string x = "789dcbadcba\n";
+    int y;
+    C c;
+    c.x();
+    b(true);
+    {y = x.parseInt();
+    int x = y;}
+    return y;
+}

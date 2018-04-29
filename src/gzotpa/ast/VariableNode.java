@@ -8,17 +8,27 @@ public class VariableNode extends LHSNode {
     private String name;
     private Entity entity;
     private ExprNode memFuncBase;
+    private boolean implicitThis;
 
     public VariableNode(Location loc, String name) {
         this.location = loc;
         this.name = name;
         this.memFuncBase = null;
+        this.implicitThis = false;
+    }
+
+    public VariableNode(String name) {
+        this.location = null;
+        this.name = name;
+        this.memFuncBase = null;
+        this.implicitThis = false;
     }
 
     public VariableNode(DefinedVariable var) {
         this.entity = var;
         this.name = var.name();
         this.memFuncBase = null;
+        this.implicitThis = false;
     }
 
     public String name() {
@@ -35,6 +45,14 @@ public class VariableNode extends LHSNode {
 
     public ExprNode memFuncBase() {
         return memFuncBase;
+    }
+
+    public void setImplicitThis(boolean b) {
+        this.implicitThis = b;
+    }
+
+    public boolean implicitThis() {
+        return implicitThis;
     }
 
     public boolean isResolved() {

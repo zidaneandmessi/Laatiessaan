@@ -11,7 +11,7 @@ public class LocalResolver extends Visitor {
     private final LinkedList<Scope> scopeStack;
     private boolean inFunc;
     private int inLoop;
-    private String currentClass;
+    private ClassNode currentClass;
 
     public LocalResolver() {
         this.scopeStack = new LinkedList<Scope>();
@@ -40,7 +40,7 @@ public class LocalResolver extends Visitor {
             toplevel.declareEntity(decl);
         }
         for (ClassNode cls : ast.definedClasses()) {
-            currentClass = cls.name();
+            currentClass = cls;
             resolveClass(cls, toplevel);
             currentClass = null;
         }
@@ -77,14 +77,14 @@ public class LocalResolver extends Visitor {
         }
         vars.add(new DefinedVariable(cl.typeNode(), "this"));
         pushScope(vars);
-        for (DefinedFunction f : funcs) {
-            //f.setName(cl.name() + "." + f.name());
-            //f.parameters().add(new Parameter(cl.typeNode(), "class"));
-            toplevel.defineEntity(f);
-            pushScope(f.parameters());
+        for (DefinedFunction func : funcs) {
+            toplevel.defineEntity(func);
+        }
+        for (DefinedFunction func : funcs) {
+            pushScope(func.parameters());
             inFunc = true;
-            resolve(f.body());
-            f.setScope(popScope());
+            resolve(func.body());
+            func.setScope(popScope());
         }
         popScope();
     }
@@ -187,6 +187,13 @@ public class LocalResolver extends Visitor {
 
     public Void visit(FuncallNode node) {
         node.expr().accept(this);
+        if (node.expr() instanceof VariableNode) {
+            VariableNode var = (VariableNode)node.expr();
+            if (var.implicitThis()) {
+                node.addArg(new VariableNode("this"));
+                var.setImplicitThis(false);
+            }
+        }
         for (ExprNode e : node.args()) {
             e.accept(this);
         }
@@ -221,8 +228,9 @@ public class LocalResolver extends Visitor {
                     node.setName(((MemberNode)(node.memFuncBase())).type().typeName() + node.name());
                 }
             }
-            if (!currentScope().has(node.name())) {
-                node.setName(currentClass + "." + node.name());
+            if (currentClass != null && currentScope().has(currentClass.name() + "." + node.name())) {
+                node.setName(currentClass.name() + "." + node.name());
+                node.setImplicitThis(true);
             }
             Entity ent = currentScope().get(node.name());
             ent.refered();
