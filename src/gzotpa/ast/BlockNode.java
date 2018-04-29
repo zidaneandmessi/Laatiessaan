@@ -5,16 +5,11 @@ import java.util.List;
 public class BlockNode extends StmtNode {
     protected List<DefinedVariable> variables;
     protected List<StmtNode> stmts;
+    protected List<Boolean> order;
     protected LocalScope scope;
 
     public BlockNode(Location loc, List<DefinedVariable> vars, List<StmtNode> stmts) {
         super(loc);
-        this.variables = vars;
-        this.stmts = stmts;
-    }
-
-    public BlockNode(Location loc, List<DefinedVariable> vars, List<StmtNode> stmts, boolean inLoop) {
-        super(loc, inLoop);
         this.variables = vars;
         this.stmts = stmts;
     }
@@ -31,6 +26,10 @@ public class BlockNode extends StmtNode {
 
     public List<StmtNode> stmts() {
         return stmts;
+    }
+
+    public List<Boolean> order() {
+        return order;
     }
     
     public <S,E> S accept(ASTVisitor<S,E> visitor) {

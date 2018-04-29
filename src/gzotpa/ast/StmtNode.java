@@ -6,20 +6,10 @@ abstract public class StmtNode extends Node {
 
     public StmtNode(Location loc) {
         this.location = loc;
-        this.inLoop = false;
     }
 
     public StmtNode(Location loc, boolean inLoop) {
         this.location = loc;
-        this.inLoop = inLoop;
-    }
-
-    public void setLoop(boolean inLoop) {
-        this.inLoop = inLoop;
-    }
-
-    public boolean inLoop() {
-        return inLoop;
     }
 
     public Location location() {

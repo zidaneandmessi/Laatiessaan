@@ -195,11 +195,12 @@ BlockNode block():
     List<DefinedVariable> var,vars = new ArrayList<DefinedVariable>();
     StmtNode stmt;
     List<StmtNode> stmts = new ArrayList<StmtNode>();
+    List<Boolean> order = new ArrayList<Boolean>();
 }
 {
     t="{" (	LOOKAHEAD(defvars())
-    		var=defvars() { vars.addAll(var); }
-    	 |	stmt=stmt()  { stmts.add(stmt); }
+    		var=defvars() { vars.addAll(var); order.add(true); } // true: var
+    	 |	stmt=stmt()  { stmts.add(stmt); order.add(false); } // false: stmt
      	  )*
       "}"
         {
@@ -301,27 +302,6 @@ StmtNode stmt():
             return n;
         }
 }
-StmtNode loop_stmt():
-{
-    StmtNode n = null;
-    ExprNode e = null;
-}
-{
-    ( ";" { return n; }
-    | e=expr() ";" { n = new ExprStmtNode(e.location(), e); }
-    | n=block()
-    | n=if_stmt_loop()
-    | n=while_stmt()
-    | n=for_stmt()
-    | n=return_stmt()
-    | n=break_stmt()
-    | n=continue_stmt()
-    )
-        {
-          	n.setLoop(true);
-            return n;
-        }
-}
 IfNode if_stmt():
 {
     Token t;
@@ -335,22 +315,6 @@ IfNode if_stmt():
             return new IfNode(location(t), cond, thenBody, elseBody);
         }
 }
-IfNode if_stmt_loop():
-{
-    Token t;
-    ExprNode cond;
-    StmtNode thenBody, elseBody = null;
-}
-{
-    t=<IF> "(" cond=expr() ")" thenBody=loop_stmt()
-            [LOOKAHEAD(1) <ELSE> elseBody=loop_stmt()]
-        {
-         	thenBody.setLoop(true);
-         	if (elseBody != null)
-         		elseBody.setLoop(true);
-            return new IfNode(location(t), cond, thenBody, elseBody);
-        }
-}
 WhileNode while_stmt():
 {
     Token t;
@@ -358,7 +322,7 @@ WhileNode while_stmt():
     StmtNode body;
 }
 {
-    t=<WHILE> "(" cond=expr() ")" body=loop_stmt()
+    t=<WHILE> "(" cond=expr() ")" body=stmt()
         {
             return new WhileNode(location(t), cond, body);
         }
@@ -372,7 +336,7 @@ ForNode for_stmt():
 {
     t=<FOR> "(" [init=expr()] ";"
               [cond=expr()] ";"
-              [incr=expr()] ")" body=loop_stmt()
+              [incr=expr()] ")" body=stmt()
         {
             return new ForNode(location(t), init, cond, incr, body);
         }
@@ -566,7 +530,7 @@ ExprNode postfix():
 String name():
 { Token t; }
 {
-    t=<IDENTIFIER> { if (t.image.equals("this")) throw new Error("Gzotpa! Variable name cannot be \"this\"!");
+    t=<IDENTIFIER> { if (t.image.equals("this")) throw new Error("Gzotpa! Variable/function name cannot be \"this\"!");
     				return t.image; }
 }
 List<ExprNode> args():
