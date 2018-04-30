@@ -33,10 +33,15 @@ public class ArrayType extends Type {
         return !baseType.isAllocatedArray();
     }
 
-    public boolean isType(Type type) {
+    public boolean isType(Type type) { // is array
+        if (type instanceof NullType) return true;
+        return type instanceof ArrayType;
+    }
+
+    public boolean isEqualType(Type type) { // is array with same dimension
         if (type instanceof NullType) return true;
         if (!(type instanceof ArrayType)) return false;
-        return baseType.isType(((ArrayType)type).baseType());
+        return baseType.isEqualType(((ArrayType)type).baseType());
     }
     
     public String toString() {

@@ -22,6 +22,7 @@ public abstract class Type {
     public boolean isScalar() { return false; }
     
     abstract public boolean isType(Type type);
+    abstract public boolean isEqualType(Type type);
 
     public Type baseType() {
         throw new SemanticError("Gzotpa! BaseType called for undereferable type!");

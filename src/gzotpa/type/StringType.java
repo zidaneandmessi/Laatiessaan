@@ -16,6 +16,9 @@ public class StringType extends Type {
     public boolean isType(Type type) {
         return type instanceof StringType;
     }
+    public boolean isEqualType(Type type) {
+        return isType(type);
+    }
 
     public String toString() {
         return name;

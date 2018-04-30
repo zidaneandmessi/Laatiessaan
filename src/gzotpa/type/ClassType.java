@@ -35,6 +35,9 @@ public class ClassType extends NamedType {
         if (type instanceof NullType) return true;
         return type instanceof ClassType && name.equals(((ClassType)type).name());
     }
+    public boolean isEqualType(Type type) {
+        return isType(type);
+    }
 
     public DefinedVariable getMemberVariable(String name) {
         for (DefinedVariable var : decls.defvars()) {

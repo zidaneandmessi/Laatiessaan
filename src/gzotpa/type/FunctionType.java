@@ -21,6 +21,9 @@ public class FunctionType extends Type {
     public boolean isType(Type type) {
         return type instanceof FunctionType;
     }
+    public boolean isEqualType(Type type) {
+        return isType(type);
+    }
 
     public List<Type> paramTypes() {
         return paramTypes.types();

@@ -30,6 +30,9 @@ public class IntegerType extends Type {
     public boolean isType(Type type) {
         return type instanceof IntegerType;
     }
+    public boolean isEqualType(Type type) {
+        return isType(type);
+    }
 
     public String toString() {
         return name;

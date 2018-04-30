@@ -173,10 +173,9 @@ class TypeChecker extends Visitor {
         if (!node.rhs().isParameter() && isInvalidRHSType(node.rhs().type())) {
             throw new Error("Gzotpa! Invalid RHS type!");
         }
-        if (!node.lhs().type().isType(node.rhs().type())) {
+        if (!node.lhs().type().isEqualType(node.rhs().type())) {
             throw new Error("Gzotpa! Cannot assign from a different type!");
         }
-        node.setRHS(node.rhs());
         return null;
     }
 

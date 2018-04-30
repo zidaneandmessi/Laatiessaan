@@ -23,6 +23,9 @@ public class PointerType extends Type {
     public boolean isType(Type type) {
         return type instanceof PointerType;
     }
+    public boolean isEqualType(Type type) {
+        return isType(type);
+    }
     
     public String toString() {
         return baseType.toString() + "*";
