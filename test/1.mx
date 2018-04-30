@@ -1,24 +1,32 @@
-int Wallace = 1<<10;
-class sometimes {
-    int naive;
-    string haha;
-}
-class ArrayWrapper {
-    sometimes[][] arr;
-}
-int get(int n) {
-    if (n == 0) return 0;
-    return 1 + get(n-1);
-}
+A a;
+B b;
+
 int main() {
-    sometimes keep = new sometimes;
-    int n = 3;
-    keep.naive = 2 + get(n) * 4 / 5;
-    bool fun = (keep.naive - 5 * 3) != (666 ^ 7);
-    while (getInt() < Wallace) {
-        keep.naive++;
-        ++n;
-    }
+    a = new A;
+    b = new B;
+    A[] a = (new A).many()[0];
+    B[][] b = (new B).many()[1][1].many();
     return 0;
 }
 
+class A {
+    B b;
+    A one() {
+        return a;
+    }
+
+    A[][] many() {
+        return new A[10][10];
+    }
+}
+
+class B {
+    A a;
+    B one() {
+        return b;
+    }
+
+    B[][] many() {
+        return new B[10][10];
+    }
+}

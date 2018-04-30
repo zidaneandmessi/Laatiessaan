@@ -139,7 +139,7 @@ public class LocalResolver extends Visitor {
             scopeStack.addLast(scope);
             node.setScope(popScope());
         }
-        else {
+        else if (inFunc == true) {
             LocalScope scope;
             Iterator<DefinedVariable> vars = node.variables().iterator();
             Iterator<StmtNode> stmts = node.stmts().iterator();
@@ -150,8 +150,8 @@ public class LocalResolver extends Visitor {
                     DefinedVariable var = vars.next();
                     if (scope.isDefinedLocally(var.name()))
                         throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
-                    scopeStack.addLast(scope);
                     scope.defineVariable(var);
+                    scopeStack.addLast(scope);
                     super.visitVariable(var);
                     inFunc = false;
                 }
@@ -161,7 +161,6 @@ public class LocalResolver extends Visitor {
                         super.visitStmt(stmt);
                 }
             }
-            super.visit(node);
             node.setScope((LocalScope)currentScope());
         }
         return null;
@@ -222,7 +221,7 @@ public class LocalResolver extends Visitor {
                     node.setName("string" + node.name());
                 }
                 else if (node.memFuncBase() instanceof ArefNode) {
-                    node.setName("array" + node.name());
+                    node.setName(((ArefNode)node.memFuncBase()).type().typeName() + node.name());
                 }
                 else if (node.memFuncBase() instanceof MemberNode) {
                     node.setName(((MemberNode)(node.memFuncBase())).type().typeName() + node.name());
