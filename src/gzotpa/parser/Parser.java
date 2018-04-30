@@ -1407,7 +1407,7 @@ public class Parser implements ParserConstants {
     }
   }
 
-  final public Declarations class_defs() throws ParseException {
+  final public Declarations class_defs(String name) throws ParseException {
     trace_call("class_defs");
     try {
         Declarations decls = new Declarations();
@@ -1432,7 +1432,7 @@ public class Parser implements ParserConstants {
           defun = defun();
                                           decls.addDefun(defun);
         } else if (jj_2_11(2147483647)) {
-          defun = deconstruct();
+          defun = deconstruct(name);
                                           decls.addDefun(defun);
         } else if (jj_2_12(3)) {
           defvar = defvar();
@@ -1458,7 +1458,7 @@ public class Parser implements ParserConstants {
     Declarations decls;
       t = jj_consume_token(CLASS);
       n = name();
-      decls = class_defs();
+      decls = class_defs(n);
                 {if (true) return new ClassNode(location(t), new ClassTypeRef(n), n, decls);}
     throw new Error("Missing return statement in function");
     } finally {
@@ -1466,7 +1466,7 @@ public class Parser implements ParserConstants {
     }
   }
 
-  final public DefinedFunction deconstruct() throws ParseException {
+  final public DefinedFunction deconstruct(String name) throws ParseException {
     trace_call("deconstruct");
     try {
         Token t;
@@ -1478,6 +1478,7 @@ public class Parser implements ParserConstants {
       params = params();
       jj_consume_token(26);
       body = block();
+                if (!n.equals(name)) {if (true) throw new ParseException("Gzotpa! Wrong construction function!");}
                 TypeRef tr = new FunctionTypeRef(new VoidTypeRef(location(t)), params.parametersTypeRef());
                 {if (true) return new DefinedFunction(new TypeNode(tr), n, params, body);}
     throw new Error("Missing return statement in function");
@@ -1865,13 +1866,13 @@ public class Parser implements ParserConstants {
     return false;
   }
 
-  private boolean jj_3R_61() {
-    if (jj_3R_70()) return true;
+  private boolean jj_3_13() {
+    if (jj_scan_token(CLASS)) return true;
     return false;
   }
 
-  private boolean jj_3_13() {
-    if (jj_scan_token(CLASS)) return true;
+  private boolean jj_3R_61() {
+    if (jj_3R_70()) return true;
     return false;
   }
 
@@ -1893,14 +1894,14 @@ public class Parser implements ParserConstants {
     return false;
   }
 
-  private boolean jj_3R_56() {
-    if (jj_scan_token(58)) return true;
-    if (jj_3R_23()) return true;
+  private boolean jj_3_15() {
+    if (jj_3R_21()) return true;
     return false;
   }
 
-  private boolean jj_3_15() {
-    if (jj_3R_21()) return true;
+  private boolean jj_3R_56() {
+    if (jj_scan_token(58)) return true;
+    if (jj_3R_23()) return true;
     return false;
   }
 

@@ -600,7 +600,7 @@ DefinedVariable defvar():
 			return var;
 		}
 }
-Declarations class_defs():
+Declarations class_defs(String name):
 {
 	Declarations decls = new Declarations();
 	DefinedFunction defun;
@@ -610,7 +610,7 @@ Declarations class_defs():
 	(   LOOKAHEAD(typeref() <IDENTIFIER> "(")
 		defun=defun()		{ decls.addDefun(defun); }
 	|   LOOKAHEAD(<IDENTIFIER> "(")
-		defun=deconstruct()	{ decls.addDefun(defun); }
+		defun=deconstruct(name)	{ decls.addDefun(defun); }
 	|	LOOKAHEAD(3)
 		defvar=defvar()	{ decls.addDefvar(defvar); }
 	)*
@@ -628,12 +628,12 @@ ClassNode defclass():
 {
 	t=<CLASS>
 	n=name()
-	decls=class_defs() 
+	decls=class_defs(n) 
 	{
 		return new ClassNode(location(t), new ClassTypeRef(n), n, decls);
 	}
 }
-DefinedFunction deconstruct():
+DefinedFunction deconstruct(String name):
 {
 	Token t;
 	String n;
@@ -643,6 +643,7 @@ DefinedFunction deconstruct():
 {
 	n=name() t="(" params=params() ")" body=block()
 	{
+	 	if (!n.equals(name)) throw new ParseException("Gzotpa! Wrong construction function!");
 		TypeRef tr = new FunctionTypeRef(new VoidTypeRef(location(t)), params.parametersTypeRef());
 		return new DefinedFunction(new TypeNode(tr), n, params, body);
 	}

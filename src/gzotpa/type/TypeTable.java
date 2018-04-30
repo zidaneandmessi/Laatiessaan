@@ -1,5 +1,6 @@
 package gzotpa.type;
 import gzotpa.ast.*;
+import gzotpa.entity.*;
 import gzotpa.exception.*;
 import java.util.Map;
 import java.util.HashMap;
@@ -120,15 +121,10 @@ public class TypeTable {
 
     public void semanticCheck() {
         for (Type t : types()) {
-            /*if (t instanceof CompositeType) {
-                checkVoidMembers((CompositeType)t, h);
-                checkDuplicatedMembers((CompositeType)t, h);
-            }
-            else */
             if (t instanceof ArrayType) {
                 checkVoidMembers((ArrayType)t);
             }
-            //checkRecursiveDefinition(t);
+            checkRecursiveDefinition(t, new HashMap<Type, Boolean>());
         }
     }
 
@@ -138,57 +134,30 @@ public class TypeTable {
         }
     }
 
-    /*protected void checkVoidMembers(CompositeType t, ErrorHandler h) {
-        for (Slot s : t.members()) {
-            if (s.type().isVoid()) {
-                h.error(t.location(), "struct/union cannot contain void");
-            }
-        }
-    }
-
-    protected void checkDuplicatedMembers(CompositeType t, ErrorHandler h) {
-        Map<String, Slot> seen = new HashMap<String, Slot>();
-        for (Slot s : t.members()) {
-            if (seen.containsKey(s.name())) {
-                h.error(t.location(),
-                        t.toString() + " has duplicated member: " + s.name());
-            }
-            seen.put(s.name(), s);
-        }
-    }*/
-
-    /*protected void checkRecursiveDefinition(Type t) {
-        _checkRecursiveDefinition(t, new HashMap<Type, Object>());
-    }
-
-    static final protected Object checking = new Object();
-    static final protected Object checked = new Object();
-
-    protected void _checkRecursiveDefinition(Type t, Map<Type, Object> marks) {
-        if (marks.get(t) == checking) {
-            throw new error("Gzotpa! Recursive type definition: " + t);
-        }
-        else if (marks.get(t) == checked) {
-            return;
-        }
-        else {
-            marks.put(t, checking);
-            if (t instanceof CompositeType) {
-                CompositeType ct = (CompositeType)t;
-                for (Slot s : ct.members()) {
-                    _checkRecursiveDefinition(s.type(), marks, h);
+    protected void checkRecursiveDefinition(Type t, Map<Type, Boolean> marks) {
+        if (marks.get(t) == null) {
+            marks.put(t, true);
+            if (t instanceof ClassType) {
+                ClassType cls = (ClassType)t;
+                for (DefinedVariable var : cls.decls().defvars()) {
+                    checkRecursiveDefinition(var.type(), marks);
+                }
+                for (DefinedFunction func : cls.decls().defuns()) {
+                    checkRecursiveDefinition(func.type(), marks);
                 }
             }
             else 
             if (t instanceof ArrayType) {
-                ArrayType at = (ArrayType)t;
-                _checkRecursiveDefinition(at.baseType(), marks);
+                ArrayType arr = (ArrayType)t;
+                checkRecursiveDefinition(arr.baseType(), marks);
             }
-            else if (t instanceof UserType) {
-                UserType ut = (UserType)t;
-                _checkRecursiveDefinition(ut.realType(), marks);
-            }
-            marks.put(t, checked);
+            marks.put(t, false);
         }
-    }*/
+        else if (marks.get(t) == true) { // checking
+            throw new Error("Gzotpa! Recursive type definition: " + t);
+        }
+        else if (marks.get(t) == false) { // checked
+            return;
+        }
+    }
 }

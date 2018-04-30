@@ -92,7 +92,6 @@ public class Compiler {
             return false;
         }
         catch (Error e) {
-            System.err.println(e.getMessage());
             return false;
         }
     }
