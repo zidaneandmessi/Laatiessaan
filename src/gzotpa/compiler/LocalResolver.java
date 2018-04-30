@@ -41,6 +41,11 @@ public class LocalResolver extends Visitor {
         }
         for (ClassNode cls : ast.definedClasses()) {
             currentClass = cls;
+            declareClassEntities(cls, toplevel);
+            currentClass = null;
+        }
+        for (ClassNode cls : ast.definedClasses()) {
+            currentClass = cls;
             resolveClass(cls, toplevel);
             currentClass = null;
         }
@@ -67,7 +72,7 @@ public class LocalResolver extends Visitor {
         }
     }
 
-    private void resolveClass(ClassNode cl, ToplevelScope toplevel) throws SemanticException {
+    private void declareClassEntities(ClassNode cl, ToplevelScope toplevel) throws SemanticException {
         List<DefinedVariable> vars = cl.decls().defvars();
         List<DefinedFunction> funcs = cl.decls().defuns();
         for (DefinedVariable v : vars) {
@@ -75,11 +80,16 @@ public class LocalResolver extends Visitor {
                 throw new Error("Gzotpa! Class member variable should not have initializer! " + v.name());
             }
         }
-        vars.add(new DefinedVariable(cl.typeNode(), "this"));
-        pushScope(vars);
         for (DefinedFunction func : funcs) {
             toplevel.defineEntity(func);
         }
+    }
+
+    private void resolveClass(ClassNode cl, ToplevelScope toplevel) throws SemanticException {
+        List<DefinedVariable> vars = cl.decls().defvars();
+        List<DefinedFunction> funcs = cl.decls().defuns();
+        vars.add(new DefinedVariable(cl.typeNode(), "this"));
+        pushScope(vars);
         for (DefinedFunction func : funcs) {
             pushScope(func.parameters());
             inFunc = true;
