@@ -35,7 +35,8 @@ public class ArrayType extends Type {
 
     public boolean isType(Type type) {
         if (type instanceof NullType) return true;
-        return type instanceof ArrayType;
+        if (!(type instanceof ArrayType)) return false;
+        return baseType.isType(((ArrayType)type).baseType());
     }
     
     public String toString() {

@@ -1,9 +1,6 @@
-int f(int anything) {
-    return 0;
+int main()
+{
+    int[][][] a = new int[3][2][1];
+    int[][] b = new int[2][1];
+    a = b;
 }
-
-int main() {
-  int x = f(x);
-  return x;
-}
-
