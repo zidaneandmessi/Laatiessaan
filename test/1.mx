@@ -1,21 +1,24 @@
-int x = 1;
-bool b(bool x){
-    return x;
+int Wallace = 1<<10;
+class sometimes {
+    int naive;
+    string haha;
 }
-class C{
-    C(){
-        x();
-        {int x;}
+class ArrayWrapper {
+    sometimes[][] arr;
+}
+int get(int n) {
+    if (n == 0) return 0;
+    return 1 + get(n-1);
+}
+int main() {
+    sometimes keep = new sometimes;
+    int n = 3;
+    keep.naive = 2 + get(n) * 4 / 5;
+    bool fun = (keep.naive - 5 * 3) != (666 ^ 7);
+    while (getInt() < Wallace) {
+        keep.naive++;
+        ++n;
     }
-    void x(){}
+    return 0;
 }
-int main(){
-    string x = "789dcbadcba\n";
-    int y;
-    C c;
-    c.x();
-    b(true);
-    {y = x.parseInt();
-    int x = y;}
-    return y;
-}
+
