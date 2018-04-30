@@ -135,8 +135,8 @@ public class LocalResolver extends Visitor {
                     DefinedVariable var = vars.next();
                     if (scope.isDefinedLocally(var.name()))
                         throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
-                    scope.defineVariable(var);
                     super.visitVariable(var);
+                    scope.defineVariable(var);
                 }
                 else if(b == false) {
                     scopeStack.addLast(scope);
@@ -160,9 +160,9 @@ public class LocalResolver extends Visitor {
                     DefinedVariable var = vars.next();
                     if (scope.isDefinedLocally(var.name()))
                         throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
-                    scope.defineVariable(var);
                     scopeStack.addLast(scope);
                     super.visitVariable(var);
+                    scope.defineVariable(var);
                     inFunc = false;
                 }
                 else if(b == false) {
