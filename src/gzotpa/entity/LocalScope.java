@@ -32,6 +32,10 @@ public class LocalScope extends Scope {
         return children;
     }
 
+    public Map<String, DefinedVariable> variables() {
+        return variables;
+    }
+
     public boolean isDefinedLocally(String name) {
         return variables.containsKey(name);
     }

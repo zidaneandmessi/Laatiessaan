@@ -150,9 +150,9 @@ public class LocalResolver extends Visitor {
                     DefinedVariable var = vars.next();
                     if (scope.isDefinedLocally(var.name()))
                         throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
+                    scopeStack.addLast(scope);
                     scope.defineVariable(var);
                     super.visitVariable(var);
-                    scopeStack.addLast(scope);
                     inFunc = false;
                 }
                 else if(b == false) {
@@ -226,6 +226,9 @@ public class LocalResolver extends Visitor {
                 }
                 else if (node.memFuncBase() instanceof MemberNode) {
                     node.setName(((MemberNode)(node.memFuncBase())).type().typeName() + node.name());
+                }
+                else if (node.memFuncBase() instanceof NewTypeNode) {
+                    node.setName(((NewTypeNode)(node.memFuncBase())).type().typeName() + node.name());
                 }
             }
             if (currentClass != null && currentScope().has(currentClass.name() + "." + node.name())) {
