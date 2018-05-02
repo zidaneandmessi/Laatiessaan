@@ -124,7 +124,7 @@ public class TypeTable {
             if (t instanceof ArrayType) {
                 checkVoidMembers((ArrayType)t);
             }
-            checkRecursiveDefinition(t, new HashMap<Type, Boolean>());
+            //checkRecursiveDefinition(t, new HashMap<Type, Boolean>());
         }
     }
 
@@ -134,30 +134,30 @@ public class TypeTable {
         }
     }
 
-    protected void checkRecursiveDefinition(Type t, Map<Type, Boolean> marks) {
-        if (marks.get(t) == null) {
-            marks.put(t, true);
-            if (t instanceof ClassType) {
-                ClassType cls = (ClassType)t;
-                for (DefinedVariable var : cls.decls().defvars()) {
-                    checkRecursiveDefinition(var.type(), marks);
-                }
-                for (DefinedFunction func : cls.decls().defuns()) {
-                    checkRecursiveDefinition(func.type(), marks);
-                }
-            }
-            else 
-            if (t instanceof ArrayType) {
-                ArrayType arr = (ArrayType)t;
-                checkRecursiveDefinition(arr.baseType(), marks);
-            }
-            marks.put(t, false);
-        }
-        else if (marks.get(t) == true) { // checking
-            throw new Error("Gzotpa! Recursive type definition! " + t);
-        }
-        else if (marks.get(t) == false) { // checked
-            return;
-        }
-    }
+    // protected void checkRecursiveDefinition(Type t, Map<Type, Boolean> marks) {
+    //     if (marks.get(t) == null) {
+    //         marks.put(t, true);
+    //         if (t instanceof ClassType) {
+    //             ClassType cls = (ClassType)t;
+    //             for (DefinedVariable var : cls.decls().defvars()) {
+    //                 checkRecursiveDefinition(var.type(), marks);
+    //             }
+    //             for (DefinedFunction func : cls.decls().defuns()) {
+    //                 checkRecursiveDefinition(func.type(), marks);
+    //             }
+    //         }
+    //         else 
+    //         if (t instanceof ArrayType) {
+    //             ArrayType arr = (ArrayType)t;
+    //             checkRecursiveDefinition(arr.baseType(), marks);
+    //         }
+    //         marks.put(t, false);
+    //     }
+    //     else if (marks.get(t) == true) { // checking
+    //         throw new Error("Gzotpa! Recursive type definition: " + t);
+    //     }
+    //     else if (marks.get(t) == false) { // checked
+    //         return;
+    //     }
+    // }
 }
