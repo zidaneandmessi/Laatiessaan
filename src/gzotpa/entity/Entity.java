@@ -5,23 +5,17 @@ import gzotpa.ast.Location;
 
 abstract public class Entity {
     protected String name;
-    protected boolean isPrivate;
     protected TypeNode typeNode;
     protected long cntRefered;
 
-    public Entity(boolean priv, TypeNode type, String name) {
+    public Entity(TypeNode type, String name) {
         this.name = name;
-        this.isPrivate = priv;
         this.typeNode = type;
         this.cntRefered = 0;
     }
 
     public String name() {
         return name;
-    }
-
-    public boolean isPrivate() {
-        return isPrivate;
     }
     
     abstract public boolean isDefined();

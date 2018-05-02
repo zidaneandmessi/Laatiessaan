@@ -89,4 +89,8 @@ public class VariableNode extends LHSNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public String toString() {
+        return "Variable " + name;
+    }
 }

@@ -19,7 +19,6 @@ public class MemberNode extends LHSNode {
             throw new SemanticError(err.getMessage());
         }
     }
-
     public ExprNode expr() {
         return expr;
     }

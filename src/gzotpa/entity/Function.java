@@ -5,8 +5,8 @@ import gzotpa.type.Type;
 
 abstract public class Function extends Entity {
 
-    public Function(boolean priv, TypeNode t, String name) {
-        super(priv, t, name);
+    public Function(TypeNode t, String name) {
+        super(t, name);
     }
 
     public Type returnType() {

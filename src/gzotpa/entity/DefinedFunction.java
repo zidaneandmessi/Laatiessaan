@@ -8,14 +8,8 @@ public class DefinedFunction extends Function {
     protected BlockNode body;
     protected LocalScope scope;
 
-    public DefinedFunction(boolean isPrivate, TypeNode type, String name, Params params, BlockNode body) {
-        super(isPrivate, type, name);
-        this.params = params;
-        this.body = body;
-    }
-
     public DefinedFunction(TypeNode type, String name, Params params, BlockNode body) {
-        super(false, type, name);
+        super(type, name);
         this.params = params;
         this.body = body;
     }
