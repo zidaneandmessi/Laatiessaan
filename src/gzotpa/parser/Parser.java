@@ -1480,7 +1480,7 @@ public class Parser implements ParserConstants {
       body = block();
                 if (!n.equals(name)) {if (true) throw new ParseException("Gzotpa! Wrong construction function!");}
                 TypeRef tr = new FunctionTypeRef(new VoidTypeRef(location(t)), params.parametersTypeRef());
-                {if (true) return new DefinedFunction(new TypeNode(tr), n, params, body);}
+                {if (true) return new DefinedFunction(new TypeNode(tr), n, params, body, true);}
     throw new Error("Missing return statement in function");
     } finally {
       trace_return("deconstruct");

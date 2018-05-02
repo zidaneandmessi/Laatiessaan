@@ -44,10 +44,6 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>, ClassV
         return null;
     }
     
-    public Void visit(UndefinedVariable var) {
-        bindType(var.typeNode());
-        return null;
-    }
     public Void visit(DefinedFunction func) {
         bindType(func.typeNode());
         for (Parameter param : func.parameters()) {
@@ -55,15 +51,6 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>, ClassV
             param.typeNode().setType(t);
         }
         visitStmt(func.body());
-        return null;
-    }
-
-    public Void visit(UndefinedFunction func) {
-        bindType(func.typeNode());
-        for (Parameter param : func.parameters()) {
-            Type t = typeTable.getParamType(param.typeNode().typeRef());
-            param.typeNode().setType(t);
-        }
         return null;
     }
 

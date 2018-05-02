@@ -645,7 +645,7 @@ DefinedFunction deconstruct(String name):
 	{
 	 	if (!n.equals(name)) throw new ParseException("Gzotpa! Wrong construction function!");
 		TypeRef tr = new FunctionTypeRef(new VoidTypeRef(location(t)), params.parametersTypeRef());
-		return new DefinedFunction(new TypeNode(tr), n, params, body);
+		return new DefinedFunction(new TypeNode(tr), n, params, body, true);
 	}
 }
 DefinedFunction defun():

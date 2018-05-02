@@ -56,19 +56,19 @@ public class LocalResolver extends Visitor {
     }
 
     private void resolveGlobalVarInitializers(List<DefinedVariable> vars) {
-        for (DefinedVariable v : vars) {
-            if (v.hasInitializer()) {
-                resolve(v.initializer());
+        for (DefinedVariable var : vars) {
+            if (var.hasInitializer()) {
+                resolve(var.initializer());
             }
         }
     }
 
     private void resolveFunctions(List<DefinedFunction> funcs) {
-        for (DefinedFunction f : funcs) {
-            pushScope(f.parameters());
+        for (DefinedFunction func : funcs) {
+            pushScope(func.parameters());
             inFunc = true;
-            resolve(f.body());
-            f.setScope(popScope());
+            resolve(func.body());
+            func.setScope(popScope());
         }
     }
 

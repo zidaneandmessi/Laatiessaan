@@ -162,6 +162,8 @@ public class ToplevelScope extends Scope {
                     entity.name() + ": " +
                     e.location() + " and " + entity.location());
         }
+        if (entity instanceof DefinedFunction && ((DefinedFunction)entity).isConstruct())
+            return;
         entities.put(entity.name(), entity);
     }
 
