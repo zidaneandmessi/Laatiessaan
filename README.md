@@ -53,6 +53,10 @@ Parser Generator: JavaCC (LL)
 
         - StringLiteralNode
 
+    - NewTypeNode
+
+    - NullNode
+
     - UnaryOpNode
 
         - UnaryArithmeticOpNode
@@ -61,7 +65,23 @@ Parser Generator: JavaCC (LL)
 
             - SuffixOpNode (i++)
 
-        - SizeNode
+# Entity
+
+- Entity
+
+    - Variable
+
+        - DefinedVariable
+
+            - Parameter
+
+    - Function
+
+        - DefinedFunction
+
+- ParamSlots<Type>
+
+    - Params
 
 - StmtNode
 
@@ -81,6 +101,26 @@ Parser Generator: JavaCC (LL)
 
     - WhileNode
 
-- TypeDefinition
+- TypeDefinitionNode
+
+    - ClassNode
 
 - TypeNode
+
+# Semantic Checker
+
+- Visitor
+
+    - TypeResolver
+
+    - LocalResolver
+
+    - DereferenceChekcer
+
+    - TypeChecker
+
+- Scope
+
+    - TopLevelScope
+
+    - LocalScope
