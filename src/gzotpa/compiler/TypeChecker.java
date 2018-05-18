@@ -181,6 +181,9 @@ class TypeChecker extends Visitor {
 
     public Void visit(ArefNode node) {
         super.visit(node);
+        if (node.expr() instanceof NewTypeNode) {
+            throw new Error("Gzotpa! New array cannot be indexed!");
+        }
         if (!node.index().type().isInteger()) {
             throw new Error("Gzotpa! Array index not integer!");
         }

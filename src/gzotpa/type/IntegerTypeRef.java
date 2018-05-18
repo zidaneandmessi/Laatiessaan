@@ -59,6 +59,7 @@ public class IntegerTypeRef extends TypeRef {
     }
 
     public String toString() {
-        return name;
+        if (isBool) return name + " (bool)";
+        else return name;
     }
 }
