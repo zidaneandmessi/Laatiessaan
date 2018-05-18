@@ -12,6 +12,10 @@ public class IntegerType extends Type {
         this.isBool = false;
     }
 
+    public long size() {
+        return size;
+    }
+
     public IntegerType(long size, String name, boolean isBool) {
         super();
         this.size = size;

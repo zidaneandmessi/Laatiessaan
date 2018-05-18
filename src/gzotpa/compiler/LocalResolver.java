@@ -30,9 +30,6 @@ public class LocalResolver extends Visitor {
     public void resolve(AST ast) throws SemanticException {
         ToplevelScope toplevel = new ToplevelScope();
         scopeStack.add(toplevel);
-        for (Entity decl : ast.declarations()) {
-            toplevel.declareEntity(decl);
-        }
         for (Entity def : ast.definitions()) {
             toplevel.defineEntity(def);
         }

@@ -30,6 +30,10 @@ public class MemberNode extends LHSNode {
     public Type origType() {
         return baseType().memberVariableType(member);
     }
+    
+    public long offset() {
+        return baseType().memberOffset(member);
+    }
 
     public Location location() {
         return expr.location();

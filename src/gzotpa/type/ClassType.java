@@ -29,6 +29,10 @@ public class ClassType extends NamedType {
         return decls;
     }
 
+    public long size() {
+        throw new Error("Gzotpa! ClassType size called!");
+    }
+
     public boolean isClass() { return true; }
 
     public boolean isType(Type type) {
@@ -77,6 +81,11 @@ public class ClassType extends NamedType {
                 return true;
         }
         return false;
+    }
+
+    public long memberOffset(String name) {
+        return 0;
+        /**/
     }
 
     public String toString() {

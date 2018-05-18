@@ -16,6 +16,10 @@ public class NullType extends Type {
     public boolean isEqualType(Type type) {
         return isType(type);
     }
+    
+    public long size() {
+    	return 0;
+    }
 
     public String typeName() {
         return "null";

@@ -20,8 +20,21 @@ public class ArefNode extends LHSNode {
         return (expr instanceof ArefNode) && !expr.origType().isPointer();
     }
 
+    public ExprNode baseExpr() {
+        if (isMultiDimension()) return ((ArefNode)expr).baseExpr();
+        else return expr;
+    }
+
     protected Type origType() {
         return expr.origType().baseType();
+    }
+    
+    public long elementSize() {
+        return origType().allocSize();
+    }
+    
+    public long length() {
+        return ((ArrayType)expr.origType()).length();
     }
     
     public Location location() {

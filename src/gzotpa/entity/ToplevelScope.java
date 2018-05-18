@@ -2,6 +2,7 @@ package gzotpa.entity;
 import gzotpa.ast.*;
 import gzotpa.exception.*;
 import gzotpa.type.*;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -165,6 +166,16 @@ public class ToplevelScope extends Scope {
         if (entity instanceof DefinedFunction && ((DefinedFunction)entity).isConstruct())
             return;
         entities.put(entity.name(), entity);
+    }
+
+    public List<DefinedVariable> definedGlobalScopeVariables() {
+        List<DefinedVariable> vars = new ArrayList<DefinedVariable>();
+        for (Entity ent : entities.values()) {
+            if (ent instanceof DefinedVariable) {
+                vars.add((DefinedVariable)ent);
+            }
+        }
+        return vars;
     }
 
     public boolean has(String name) {

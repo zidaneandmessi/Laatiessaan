@@ -19,6 +19,10 @@ public class StringType extends Type {
     public boolean isEqualType(Type type) {
         return isType(type);
     }
+    
+    public long size() {
+    	return image.length() * 8;
+    }
 
     public String toString() {
         return name;

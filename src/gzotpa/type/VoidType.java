@@ -6,6 +6,10 @@ public class VoidType extends Type {
 
     public boolean isVoid() { return true; }
 
+    public long size() {
+        return 1;
+    }
+
     public boolean equals(Object other) {
         return (other instanceof VoidType);
     }

@@ -14,6 +14,10 @@ public class FunctionType extends Type {
     public boolean isFunction() { return true; }
     public boolean isCallable() { return true; }
     
+    public long size() {
+        throw new Error("Gzotpa! FunctionType size called!");
+    }
+
     public Type returnType() {
         return returnType;
     }

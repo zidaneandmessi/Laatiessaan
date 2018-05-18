@@ -22,6 +22,10 @@ public class ArrayType extends Type {
         return baseType;
     }
 
+    public long length() {
+        return length;
+    }
+
     public boolean isPointer() { return true; }
     public boolean isAllocatedArray() {
         return length != undefined &&
@@ -59,8 +63,13 @@ public class ArrayType extends Type {
 
     public long size() {
         return pointerSize;
-
     }
+
+    public long allocSize() {
+        if (length == undefined) return size();
+        else return baseType.allocSize() * length;
+    }
+
     public boolean equals(Object other) {
         if (!(other instanceof ArrayType)) return false;
         ArrayType type = (ArrayType)other;

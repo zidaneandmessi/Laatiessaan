@@ -21,6 +21,9 @@ public abstract class Type {
     public boolean isIncompleteArray() { return false; }
     public boolean isScalar() { return false; }
     
+    abstract public long size();
+    public long allocSize() { return size(); }
+    
     abstract public boolean isType(Type type);
     abstract public boolean isEqualType(Type type);
 

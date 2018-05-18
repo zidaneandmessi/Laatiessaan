@@ -1,5 +1,6 @@
 package gzotpa.ast;
 import gzotpa.entity.*;
+import gzotpa.ir.*;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -30,13 +31,6 @@ public class AST extends Node {
         return declarations.defvarsaftermain();
     }
 
-    public List<Entity> declarations() {
-        List<Entity> result = new ArrayList<Entity>();
-        result.addAll(declarations.funcdecls());
-        result.addAll(declarations.vardecls());
-        return result;
-    }
-
     public List<Entity> definitions() {
         List<Entity> result = new ArrayList<Entity>();
         result.addAll(declarations.defvars());
@@ -46,8 +40,6 @@ public class AST extends Node {
 
     public List<Entity> entities() {
         List<Entity> result = new ArrayList<Entity>();
-        result.addAll(declarations.funcdecls);
-        result.addAll(declarations.vardecls);
         result.addAll(declarations.defvars);
         result.addAll(declarations.defuns);
         return result;
@@ -75,5 +67,9 @@ public class AST extends Node {
             throw new Error("Gzotpa! AST scope is null!");
         }
         return scope;
+    }
+
+    public IR ir() {
+        return new IR(definedVariables(), definedFunctions(), scope());
     }
 }

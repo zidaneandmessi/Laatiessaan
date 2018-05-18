@@ -55,4 +55,10 @@ public class LocalScope extends Scope {
         if (var != null) return var;
         else return parent.get(name);
     }
+
+    public DefinedVariable allocateTmp(Type t) {
+        DefinedVariable var = DefinedVariable.tmpVariable(t);
+        defineVariable(var);
+        return var;
+    }
 }

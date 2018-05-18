@@ -1,18 +1,9 @@
+x a;
 class x
 {
-    int x;
-    x()
-    {
-        x=1;
-    }
+    int t;
 }
-x x(x a)
-{
-    return a;
-}
-int x;
 int main()
 {
-    x a;
-    x(a);
+    a.t=1;
 }

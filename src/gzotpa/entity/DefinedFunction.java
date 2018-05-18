@@ -1,6 +1,7 @@
 package gzotpa.entity;
 import gzotpa.type.Type;
 import gzotpa.ast.*;
+import gzotpa.ir.Stmt;
 import java.util.List;
 
 public class DefinedFunction extends Function {
@@ -8,6 +9,7 @@ public class DefinedFunction extends Function {
     protected BlockNode body;
     protected LocalScope scope;
     protected Boolean isConstruct;
+    protected List<Stmt> ir;
 
     public DefinedFunction(TypeNode type, String name, Params params, BlockNode body) {
         super(type, name);
@@ -49,6 +51,14 @@ public class DefinedFunction extends Function {
 
     public LocalScope scope() {
         return scope;
+    }
+
+    public List<Stmt> ir() {
+        return ir;
+    }
+
+    public void setIR(List<Stmt> ir) {
+        this.ir = ir;
     }
     
     public <T> T accept(EntityVisitor<T> visitor) {
