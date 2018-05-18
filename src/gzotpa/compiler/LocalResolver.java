@@ -233,6 +233,9 @@ public class LocalResolver extends Visitor {
                 else if (node.memFuncBase() instanceof StringLiteralNode) {
                     node.setName("string" + node.name());
                 }
+                else if (node.memFuncBase() instanceof BinaryOpNode) {
+                    node.setName(((BinaryOpNode)(node.memFuncBase())).left().type().typeName() + node.name());
+                }
                 else if (node.memFuncBase() instanceof ArefNode) {
                     node.setName(((ArefNode)node.memFuncBase()).type().typeName() + node.name());
                 }

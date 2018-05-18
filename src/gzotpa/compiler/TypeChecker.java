@@ -234,6 +234,9 @@ class TypeChecker extends Visitor {
     }
 
     public Void visit(NewTypeNode node) {
+        if (node.type() instanceof VoidType) {
+            throw new Error("Gzotpa! Cannot new void!");
+        }
         return null;
     }
 
