@@ -1470,6 +1470,9 @@ public class Parser implements ParserConstants {
       t = jj_consume_token(CLASS);
       n = name();
       decls = class_defs(n);
+        if (n.equals("main")) {
+            {if (true) throw new Error("Gzotpa! Class name cannot be \"main\"!");}
+        }
                 {if (true) return new ClassNode(location(t), new ClassTypeRef(n), n, decls);}
     throw new Error("Missing return statement in function");
     } finally {
@@ -1878,6 +1881,11 @@ public class Parser implements ParserConstants {
     return false;
   }
 
+  private boolean jj_3_13() {
+    if (jj_scan_token(CLASS)) return true;
+    return false;
+  }
+
   private boolean jj_3R_60() {
     if (jj_scan_token(NEW)) return true;
     if (jj_3R_69()) return true;
@@ -1887,13 +1895,13 @@ public class Parser implements ParserConstants {
     return false;
   }
 
-  private boolean jj_3_13() {
-    if (jj_scan_token(CLASS)) return true;
+  private boolean jj_3R_61() {
+    if (jj_3R_71()) return true;
     return false;
   }
 
-  private boolean jj_3R_61() {
-    if (jj_3R_71()) return true;
+  private boolean jj_3_15() {
+    if (jj_3R_21()) return true;
     return false;
   }
 
@@ -1906,11 +1914,6 @@ public class Parser implements ParserConstants {
   private boolean jj_3R_58() {
     if (jj_scan_token(65)) return true;
     if (jj_3R_23()) return true;
-    return false;
-  }
-
-  private boolean jj_3_15() {
-    if (jj_3R_21()) return true;
     return false;
   }
 

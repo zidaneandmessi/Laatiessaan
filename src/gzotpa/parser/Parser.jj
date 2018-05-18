@@ -632,6 +632,9 @@ ClassNode defclass():
 	n=name()
 	decls=class_defs(n) 
 	{
+        if (n.equals("main")) {
+            throw new Error("Gzotpa! Class name cannot be \"main\"!");
+        }
 		return new ClassNode(location(t), new ClassTypeRef(n), n, decls);
 	}
 }
