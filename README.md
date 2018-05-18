@@ -11,9 +11,7 @@ From Mx* language to Linux x86-64 Assembly Compiler
 |entity|toiminto & muuttuja|
 |ir|keskitason edustusto|
 |parser|jäsennin|
-|sys|assembler & linker|
 |type|tyyppi|
-|utility|hyödyllisyys|
 
 # Parser
 

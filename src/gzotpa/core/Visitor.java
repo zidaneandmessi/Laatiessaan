@@ -1,4 +1,4 @@
-package gzotpa.compiler;
+package gzotpa.core;
 import gzotpa.ast.*;
 import gzotpa.entity.*;
 import java.util.List;

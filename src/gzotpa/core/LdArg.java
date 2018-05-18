@@ -1,4 +1,4 @@
-package gzotpa.compiler;
+package gzotpa.core;
 
 interface LdArg {
     String toString();

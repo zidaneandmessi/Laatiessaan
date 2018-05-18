@@ -1,4 +1,4 @@
-package gzotpa.compiler;
+package gzotpa.core;
 import java.util.Map;
 import java.util.HashMap;
 

@@ -1,4 +1,4 @@
-package gzotpa.compiler;
+package gzotpa.core;
 import gzotpa.exception.*;
 import java.util.List;
 import java.util.ListIterator;

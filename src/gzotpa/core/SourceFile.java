@@ -1,4 +1,4 @@
-package gzotpa.compiler;
+package gzotpa.core;
 import java.io.File;
 
 class SourceFile implements LdArg {

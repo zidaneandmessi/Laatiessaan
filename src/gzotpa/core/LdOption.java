@@ -1,4 +1,4 @@
-package gzotpa.compiler;
+package gzotpa.core;
 
 class LdOption implements LdArg {
     private final String arg;

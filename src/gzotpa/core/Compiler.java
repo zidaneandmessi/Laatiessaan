@@ -1,4 +1,4 @@
-package gzotpa.compiler;
+package gzotpa.core;
 import gzotpa.parser.Parser;
 import gzotpa.ast.AST;
 import gzotpa.ast.StmtNode;

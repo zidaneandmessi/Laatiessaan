@@ -1,4 +1,4 @@
-package gzotpa.compiler;
+package gzotpa.core;
 import gzotpa.asm.*;
 import gzotpa.ast.*;
 import gzotpa.entity.*;
