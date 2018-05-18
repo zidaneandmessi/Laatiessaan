@@ -492,6 +492,7 @@ ExprNode unary():
 {
     ExprNode n;
     TypeNode t;
+    List<ExprNode> args;
 }
 {
       "++" n=unary()    { return new PrefixOpNode("++", n); }
@@ -500,7 +501,8 @@ ExprNode unary():
     | "-" n=term()      { return new UnaryOpNode("-", n); }
     | "!" n=term()      { return new UnaryOpNode("!", n); }
     | "~" n=term()      { return new UnaryOpNode("~", n); }
-	| <NEW> t=newtype()	{ return new NewTypeNode(t); }
+	| <NEW> t=newtype() ["(" args=args() ")"]
+                    	{ return new NewTypeNode(t); }
     | n=postfix()       { return n; }
 }
 ExprNode postfix():

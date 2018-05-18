@@ -107,7 +107,7 @@ class DereferenceChecker extends Visitor {
 
     public Void visit(PrefixOpNode node) {
         super.visit(node);
-        if (! node.expr().isAssignable()) {
+        if (!node.expr().isAssignable()) {
             throw new Error("Gzotpa! Cannot increment/decrement!");
         }
         return null;

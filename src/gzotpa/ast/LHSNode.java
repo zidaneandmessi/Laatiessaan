@@ -1,4 +1,5 @@
 package gzotpa.ast;
+import gzotpa.entity.Variable;
 import gzotpa.type.Type;
 
 abstract public class LHSNode extends ExprNode {
@@ -20,6 +21,8 @@ abstract public class LHSNode extends ExprNode {
     }
     
     public boolean isAssignable() {
+        if (this instanceof VariableNode && ((VariableNode)this).name().equals("this"))
+            return false;
         Type t = origType();
         return !t.isArray() && !t.isFunction();
     }

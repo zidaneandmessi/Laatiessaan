@@ -132,8 +132,10 @@ public class LocalResolver extends Visitor {
                     DefinedVariable var = vars.next();
                     if (scope.isDefinedLocally(var.name()))
                         throw new Error("Gzotpa! Variable multiple declarations! " + var.name());
+                    scopeStack.addLast(scope);
                     super.visitVariable(var);
                     scope.defineVariable(var);
+                    scope = popScope();
                 }
                 else if(b == false) {
                     scopeStack.addLast(scope);
@@ -165,7 +167,11 @@ public class LocalResolver extends Visitor {
                 else if(b == false) {
                     StmtNode stmt = stmts.next();
                     if (stmt != null)
+                    {
+                        inFunc = false;
                         super.visitStmt(stmt);
+                        inFunc = true;
+                    }
                 }
             }
             node.setScope((LocalScope)currentScope());

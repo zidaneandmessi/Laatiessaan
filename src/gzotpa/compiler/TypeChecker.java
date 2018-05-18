@@ -159,7 +159,7 @@ class TypeChecker extends Visitor {
 
     public void checkCond(ExprNode cond) {
         if (cond == null) return;
-        if (!cond.type().isInteger() || ((IntegerType)(cond.type())).isBool() == false) {
+        if (!cond.type().isInteger() && ((IntegerType)(cond.type())).isBool() == false) {
             throw new Error("Gzotpa! Condition not bool!");
         }
     }
