@@ -115,6 +115,9 @@ public class Parser {
             return Long.parseLong(s, 10);
         }
     }
+    private Boolean isLetter(char c) {
+        return (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z');
+    }
 }
 
 PARSER_END(Parser)
@@ -534,6 +537,7 @@ String name():
 { Token t; }
 {
     t=<IDENTIFIER> { if (t.image.equals("this")) throw new Error("Gzotpa! Variable/function name cannot be \"this\"!");
+                    if (!isLetter(t.image.charAt(0))) throw new Error("Gzotpa! Variable/function name must begin with a letter!");
     				return t.image; }
 }
 List<ExprNode> args():
