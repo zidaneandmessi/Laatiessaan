@@ -6,4 +6,5 @@ abstract public class Register extends Operand {
     }
     
     abstract public String dump();
+    abstract public String print();
 }

@@ -7,7 +7,9 @@ public class Int extends Expr {
         this.value = value;
     }
 
-    public long value() { return value; }
+    public long value() { 
+        return value;
+    }
 
     public boolean isConstant() { return true; }
 

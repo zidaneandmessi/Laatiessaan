@@ -2,9 +2,10 @@ package gzotpa.asm;
 
 public class Label extends Assembly {
     protected String name;
+    static private long nameCnt = 0;
 
     public Label() {
-        this("Unnamed");
+        this("_unnamed_" + (nameCnt++));
     }
 
     public Label(String name) {
@@ -21,5 +22,9 @@ public class Label extends Assembly {
 
     public String dump() {
         return "(Label " + name + ")";
+    }
+
+    public String print() {
+        return name + ":";
     }
 }

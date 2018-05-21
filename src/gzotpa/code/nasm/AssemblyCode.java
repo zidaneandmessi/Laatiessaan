@@ -8,33 +8,169 @@ public class AssemblyCode {
 
     public AssemblyCode() {}
 
-    void mov(Register src, Register dest) {
-        assemblies.add(new Instruction("mov", src, dest));
+    public List<Assembly> assemblies() {
+        return assemblies;
     }
 
-    void section(String name) {
-        assemblies.add(new Instruction("section ." + name));
+    void addAssembly(Assembly as) {
+        assemblies.add(as);
+    }
+
+    void add(Operand a, Operand b) {
+        assemblies.add(new Instruction("add", a, b));
+    }
+
+    void and(Operand a, Operand b) {
+        assemblies.add(new Instruction("and", a, b));
+    }
+
+    void call(String name) {
+        assemblies.add(new Instruction("call", new Label(name)));
+    }
+
+    void cmp(Operand a, Operand b) {
+        assemblies.add(new Instruction("cmp", a, b));
+    }
+
+    void global(Label label) {
+        assemblies.add(new Instruction("global", label));
+    }
+
+    void imul(Operand a, Operand b) {
+        assemblies.add(new Instruction("imul", a, b));
+    }
+
+    void idiv(Operand a, Operand b) {
+        assemblies.add(new Instruction("idiv", a, b));
+    }
+
+    void jmp(Label label) {
+        assemblies.add(new Instruction("jmp", label));
+    }
+
+    void jnz(Label label) {
+        assemblies.add(new Instruction("jnz", label));
     }
 
     void label(Label label) {
         assemblies.add(label);
     }
 
-    void global(Label label) {
-        assemblies.add(new Global(label));
+    void lea(Operand src, Operand dest) {
+        assemblies.add(new Instruction("lea", src, dest));
     }
-
+    
     void leave() {
         assemblies.add(new Instruction("leave"));
+    }
+
+    void mov(Operand src, Operand dest) {
+        assemblies.add(new Instruction("mov", src, dest));
+    }
+
+    void movzx(Operand src, Operand dest) {
+        assemblies.add(new Instruction("movzx", src, dest));
+    }
+
+    void neg(Operand a) {
+        assemblies.add(new Instruction("neg", a));
+    }
+
+    void not(Operand a) {
+        assemblies.add(new Instruction("not", a));
+    }
+
+    void or(Operand a, Operand b) {
+        assemblies.add(new Instruction("or", a, b));
+    }
+
+    void push(Register reg) {
+        assemblies.add(new Instruction("push", reg));
     }
 
     void ret() {
         assemblies.add(new Instruction("ret"));
     }
 
+    void section(String name) {
+        assemblies.add(new Instruction("section", new Label(name)));
+    }
+
+    void sal(Operand a, Operand b) {
+        assemblies.add(new Instruction("sal", a, b));
+    }
+
+    void sar(Operand a, Operand b) {
+        assemblies.add(new Instruction("sar", a, b));
+    }
+
+    void sub(Operand a, Operand b) {
+        assemblies.add(new Instruction("sub", a, b));
+    }
+
+    void test(Register a, Register b) {
+        assemblies.add(new Instruction("test", a, b));
+    }
+
+    void xor(Operand a, Operand b) {
+        assemblies.add(new Instruction("xor", a, b));
+    }
+
+    class VirtualStack {
+        private long size;
+        private long maxSize;
+        private List<MemoryReference> memrefs;
+
+        VirtualStack() {
+            size = 0;
+            maxSize = 0;
+            if (memrefs == null) memrefs = new ArrayList<MemoryReference>();
+            else memrefs.clear();
+        }
+
+        long maxSize() {
+            return maxSize;
+        }
+
+        void extend(long len) {
+            size += len;
+            maxSize = Math.max(size, maxSize);
+        }
+
+        void rewind(long len) {
+            size -= len;
+        }
+
+        MemoryReference top() {
+            MemoryReference mem = new MemoryReference(-size, new Register(RegisterClass.RBP, INT_SIZE), false);
+            memrefs.add(mem);
+            return mem;
+        }
+    }
+
+    static final private long STACK_WORD_SIZE = 4;
+    static final private long INT_SIZE = 32;
+    final VirtualStack virtualStack = new VirtualStack();
+
+    void virtualPush(Register reg) { // push by move, not moving stack frame
+        virtualStack.extend(STACK_WORD_SIZE);
+        mov(reg, virtualStack.top());
+    }
+
+    void virtualPop(Register reg) {
+        mov(virtualStack.top(), reg);
+        virtualStack.rewind(STACK_WORD_SIZE);
+    }
+
     public void dump() {
         for (Assembly asm : assemblies) {
             System.err.println(asm.dump());
+        }
+    }
+
+    public void print() {
+        for (Assembly asm : assemblies) {
+            System.out.println(asm.print());
         }
     }
 }

@@ -2,6 +2,7 @@ package gzotpa.entity;
 import gzotpa.type.Type;
 import gzotpa.exception.*;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.LinkedHashMap;
 
@@ -34,6 +35,13 @@ public class LocalScope extends Scope {
 
     public Map<String, DefinedVariable> variables() {
         return variables;
+    }
+
+    public List<DefinedVariable> localVariables() {
+        List<DefinedVariable> vars = new ArrayList<DefinedVariable>();
+        for (DefinedVariable var : variables.values()) 
+            vars.add(var);
+        return vars;
     }
 
     public boolean isDefinedLocally(String name) {

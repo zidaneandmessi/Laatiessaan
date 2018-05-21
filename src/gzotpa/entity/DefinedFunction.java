@@ -53,6 +53,10 @@ public class DefinedFunction extends Function {
         return scope;
     }
 
+    public LocalScope localVarScope() {
+        return body().scope();
+    }
+
     public List<Stmt> ir() {
         return ir;
     }

@@ -113,93 +113,109 @@ public class Parser implements ParserConstants {
     }
 
   final public Params params() throws ParseException {
-    trace_call("params");
-    try {
     Token t = new Token();
     Params params;
-      if (jj_2_1(2147483647)) {
+    if (jj_2_1(2147483647)) {
             {if (true) return new Params(location(t), new ArrayList<Parameter>());}
-      } else {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case VOID:
-        case BOOL:
-        case INT:
-        case STR:
-        case IDENTIFIER:
-          params = fixedparams();
+    } else {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case VOID:
+      case BOOL:
+      case INT:
+      case STR:
+      case IDENTIFIER:
+        params = fixedparams();
             {if (true) return params;}
-          break;
-        default:
-          jj_la1[0] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
+        break;
+      default:
+        jj_la1[0] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("params");
     }
+    throw new Error("Missing return statement in function");
   }
 
   final public Params fixedparams() throws ParseException {
-    trace_call("fixedparams");
-    try {
     List<Parameter> params = new ArrayList<Parameter>();
     Parameter param, param1;
-      param1 = param();
+    param1 = param();
                      params.add(param1);
-      label_1:
-      while (true) {
-        if (jj_2_2(2)) {
-          ;
-        } else {
-          break label_1;
-        }
-        jj_consume_token(27);
-        param = param();
-                                       params.add(param);
+    label_1:
+    while (true) {
+      if (jj_2_2(2)) {
+        ;
+      } else {
+        break label_1;
       }
+      jj_consume_token(27);
+      param = param();
+                                       params.add(param);
+    }
             {if (true) return new Params(param1.location(), params);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("fixedparams");
-    }
   }
 
   final public Parameter param() throws ParseException {
-    trace_call("param");
-    try {
     TypeNode t;
     String n;
-      t = type();
-      n = name();
+    t = type();
+    n = name();
                         {if (true) return new Parameter(t, n);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("param");
-    }
   }
 
   final public BlockNode block() throws ParseException {
-    trace_call("block");
-    try {
     Token t;
     DefinedVariable var;
     List<DefinedVariable> vars = new ArrayList<DefinedVariable>();
     StmtNode stmt;
     List<StmtNode> stmts = new ArrayList<StmtNode>();
     List<Boolean> order = new ArrayList<Boolean>();
-      t = jj_consume_token(28);
-      label_2:
-      while (true) {
+    t = jj_consume_token(28);
+    label_2:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case VOID:
+      case NULL:
+      case BOOL:
+      case TRUE:
+      case FALSE:
+      case INT:
+      case STR:
+      case IF:
+      case WHILE:
+      case FOR:
+      case RETURN:
+      case BREAK:
+      case CONTINUE:
+      case NEW:
+      case IDENTIFIER:
+      case INTEGER:
+      case STRING:
+      case 28:
+      case 32:
+      case 33:
+      case 58:
+      case 59:
+      case 63:
+      case 64:
+      case 65:
+      case 66:
+        ;
+        break;
+      default:
+        jj_la1[1] = jj_gen;
+        break label_2;
+      }
+      if (jj_2_3(2147483647)) {
+        var = defvar();
+                               vars.add(var); order.add(true);
+      } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case VOID:
         case NULL:
-        case BOOL:
         case TRUE:
         case FALSE:
-        case INT:
-        case STR:
         case IF:
         case WHILE:
         case FOR:
@@ -219,1375 +235,1154 @@ public class Parser implements ParserConstants {
         case 64:
         case 65:
         case 66:
-          ;
+          stmt = stmt();
+                               stmts.add(stmt); order.add(false);
           break;
         default:
-          jj_la1[1] = jj_gen;
-          break label_2;
-        }
-        if (jj_2_3(2147483647)) {
-          var = defvar();
-                               vars.add(var); order.add(true);
-        } else {
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case NULL:
-          case TRUE:
-          case FALSE:
-          case IF:
-          case WHILE:
-          case FOR:
-          case RETURN:
-          case BREAK:
-          case CONTINUE:
-          case NEW:
-          case IDENTIFIER:
-          case INTEGER:
-          case STRING:
-          case 28:
-          case 32:
-          case 33:
-          case 58:
-          case 59:
-          case 63:
-          case 64:
-          case 65:
-          case 66:
-            stmt = stmt();
-                               stmts.add(stmt); order.add(false);
-            break;
-          default:
-            jj_la1[2] = jj_gen;
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
+          jj_la1[2] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
         }
       }
-      jj_consume_token(29);
+    }
+    jj_consume_token(29);
             {if (true) return new BlockNode(location(t), vars, stmts, order);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("block");
-    }
   }
 
   final public TypeNode type() throws ParseException {
-    trace_call("type");
-    try {
   TypeRef ref;
-      ref = typeref();
+    ref = typeref();
                     {if (true) return new TypeNode(ref);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("type");
-    }
   }
 
   final public TypeRef typeref() throws ParseException {
-    trace_call("typeref");
-    try {
     TypeRef ref;
     Token t;
-      ref = typeref_base();
-      label_3:
-      while (true) {
+    ref = typeref_base();
+    label_3:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 30:
+        ;
+        break;
+      default:
+        jj_la1[3] = jj_gen;
+        break label_3;
+      }
+      if (jj_2_4(2)) {
+        jj_consume_token(30);
+        jj_consume_token(31);
+            ref = new ArrayTypeRef(ref);
+      } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case 30:
-          ;
+          jj_consume_token(30);
+          t = jj_consume_token(INTEGER);
+          jj_consume_token(31);
+            ref = new ArrayTypeRef(ref, integerValue(t.image));
           break;
         default:
-          jj_la1[3] = jj_gen;
-          break label_3;
-        }
-        if (jj_2_4(2)) {
-          jj_consume_token(30);
-          jj_consume_token(31);
-            ref = new ArrayTypeRef(ref);
-        } else {
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case 30:
-            jj_consume_token(30);
-            t = jj_consume_token(INTEGER);
-            jj_consume_token(31);
-            ref = new ArrayTypeRef(ref, integerValue(t.image));
-            break;
-          default:
-            jj_la1[4] = jj_gen;
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
+          jj_la1[4] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
         }
       }
+    }
             {if (true) return ref;}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("typeref");
-    }
   }
 
   final public TypeNode newtype() throws ParseException {
-    trace_call("newtype");
-    try {
   TypeRef newref;
-      newref = newtyperef();
+    newref = newtyperef();
                           {if (true) return new TypeNode(newref);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("newtype");
-    }
   }
 
   final public TypeRef newtyperef() throws ParseException {
-    trace_call("newtyperef");
-    try {
     TypeRef ref;
     ExprNode e;
-      ref = typeref_base();
-      label_4:
-      while (true) {
-        if (jj_2_5(2)) {
-          ;
-        } else {
-          break label_4;
-        }
-        jj_consume_token(30);
-        e = expr();
-        jj_consume_token(31);
+    ref = typeref_base();
+    label_4:
+    while (true) {
+      if (jj_2_5(2)) {
+        ;
+      } else {
+        break label_4;
+      }
+      jj_consume_token(30);
+      e = expr();
+      jj_consume_token(31);
             ref = new ArrayTypeRef(ref, e);
+    }
+    label_5:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 30:
+        ;
+        break;
+      default:
+        jj_la1[5] = jj_gen;
+        break label_5;
       }
-      label_5:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 30:
-          ;
-          break;
-        default:
-          jj_la1[5] = jj_gen;
-          break label_5;
-        }
-        jj_consume_token(30);
-        jj_consume_token(31);
+      jj_consume_token(30);
+      jj_consume_token(31);
             ref = new ArrayTypeRef(ref);
-      }
+    }
             {if (true) return ref;}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("newtyperef");
-    }
   }
 
   final public TypeRef typeref_base() throws ParseException {
-    trace_call("typeref_base");
-    try {
     Token t;
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case VOID:
-        t = jj_consume_token(VOID);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case VOID:
+      t = jj_consume_token(VOID);
                           {if (true) return new VoidTypeRef(location(t));}
-        break;
-      case BOOL:
-        t = jj_consume_token(BOOL);
+      break;
+    case BOOL:
+      t = jj_consume_token(BOOL);
                           {if (true) return IntegerTypeRef.intRef(location(t), true);}
-        break;
-      case INT:
-        t = jj_consume_token(INT);
+      break;
+    case INT:
+      t = jj_consume_token(INT);
                           {if (true) return IntegerTypeRef.intRef(location(t));}
-        break;
-      case STR:
-        t = jj_consume_token(STR);
+      break;
+    case STR:
+      t = jj_consume_token(STR);
                           {if (true) return new StringTypeRef("string", location(t));}
-        break;
-      case IDENTIFIER:
-        t = jj_consume_token(IDENTIFIER);
+      break;
+    case IDENTIFIER:
+      t = jj_consume_token(IDENTIFIER);
                           {if (true) return new ClassTypeRef(location(t), t.image);}
-        break;
-      default:
-        jj_la1[6] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("typeref_base");
+      break;
+    default:
+      jj_la1[6] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
     }
+    throw new Error("Missing return statement in function");
   }
 
   final public List<StmtNode> stmts() throws ParseException {
-    trace_call("stmts");
-    try {
     List<StmtNode> ss = new ArrayList<StmtNode>();
     StmtNode s;
-      label_6:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case NULL:
-        case TRUE:
-        case FALSE:
-        case IF:
-        case WHILE:
-        case FOR:
-        case RETURN:
-        case BREAK:
-        case CONTINUE:
-        case NEW:
-        case IDENTIFIER:
-        case INTEGER:
-        case STRING:
-        case 28:
-        case 32:
-        case 33:
-        case 58:
-        case 59:
-        case 63:
-        case 64:
-        case 65:
-        case 66:
-          ;
-          break;
-        default:
-          jj_la1[7] = jj_gen;
-          break label_6;
-        }
-        s = stmt();
-                if (s != null) ss.add(s);
+    label_6:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case NULL:
+      case TRUE:
+      case FALSE:
+      case IF:
+      case WHILE:
+      case FOR:
+      case RETURN:
+      case BREAK:
+      case CONTINUE:
+      case NEW:
+      case IDENTIFIER:
+      case INTEGER:
+      case STRING:
+      case 28:
+      case 32:
+      case 33:
+      case 58:
+      case 59:
+      case 63:
+      case 64:
+      case 65:
+      case 66:
+        ;
+        break;
+      default:
+        jj_la1[7] = jj_gen;
+        break label_6;
       }
+      s = stmt();
+                if (s != null) ss.add(s);
+    }
             {if (true) return ss;}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("stmts");
-    }
   }
 
   final public StmtNode stmt() throws ParseException {
-    trace_call("stmt");
-    try {
     StmtNode n = null;
     ExprNode e = null;
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 32:
-        jj_consume_token(32);
-        break;
-      case NULL:
-      case TRUE:
-      case FALSE:
-      case NEW:
-      case IDENTIFIER:
-      case INTEGER:
-      case STRING:
-      case 33:
-      case 58:
-      case 59:
-      case 63:
-      case 64:
-      case 65:
-      case 66:
-        e = expr();
-        jj_consume_token(32);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case 32:
+      jj_consume_token(32);
+      break;
+    case NULL:
+    case TRUE:
+    case FALSE:
+    case NEW:
+    case IDENTIFIER:
+    case INTEGER:
+    case STRING:
+    case 33:
+    case 58:
+    case 59:
+    case 63:
+    case 64:
+    case 65:
+    case 66:
+      e = expr();
+      jj_consume_token(32);
                      n = new ExprStmtNode(e.location(), e);
-        break;
-      case 28:
-        n = block();
-        break;
-      case IF:
-        n = if_stmt();
-        break;
-      case WHILE:
-        n = while_stmt();
-        break;
-      case FOR:
-        n = for_stmt();
-        break;
-      case RETURN:
-        n = return_stmt();
-        break;
-      case BREAK:
-        n = break_stmt();
-        break;
-      case CONTINUE:
-        n = continue_stmt();
-        break;
-      default:
-        jj_la1[8] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
+      break;
+    case 28:
+      n = block();
+      break;
+    case IF:
+      n = if_stmt();
+      break;
+    case WHILE:
+      n = while_stmt();
+      break;
+    case FOR:
+      n = for_stmt();
+      break;
+    case RETURN:
+      n = return_stmt();
+      break;
+    case BREAK:
+      n = break_stmt();
+      break;
+    case CONTINUE:
+      n = continue_stmt();
+      break;
+    default:
+      jj_la1[8] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
             {if (true) return n;}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("stmt");
-    }
   }
 
   final public IfNode if_stmt() throws ParseException {
-    trace_call("if_stmt");
-    try {
     Token t;
     ExprNode cond;
     StmtNode thenBody, elseBody = null;
-      t = jj_consume_token(IF);
-      jj_consume_token(33);
-      cond = expr();
-      jj_consume_token(26);
-      thenBody = stmt();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case ELSE:
-        jj_consume_token(ELSE);
-        elseBody = stmt();
-        break;
-      default:
-        jj_la1[9] = jj_gen;
-        ;
-      }
+    t = jj_consume_token(IF);
+    jj_consume_token(33);
+    cond = expr();
+    jj_consume_token(26);
+    thenBody = stmt();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ELSE:
+      jj_consume_token(ELSE);
+      elseBody = stmt();
+      break;
+    default:
+      jj_la1[9] = jj_gen;
+      ;
+    }
             {if (true) return new IfNode(location(t), cond, thenBody, elseBody);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("if_stmt");
-    }
   }
 
   final public WhileNode while_stmt() throws ParseException {
-    trace_call("while_stmt");
-    try {
     Token t;
     ExprNode cond;
     StmtNode body;
-      t = jj_consume_token(WHILE);
-      jj_consume_token(33);
-      cond = expr();
-      jj_consume_token(26);
-      body = stmt();
+    t = jj_consume_token(WHILE);
+    jj_consume_token(33);
+    cond = expr();
+    jj_consume_token(26);
+    body = stmt();
             {if (true) return new WhileNode(location(t), cond, body);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("while_stmt");
-    }
   }
 
   final public ForNode for_stmt() throws ParseException {
-    trace_call("for_stmt");
-    try {
     Token t;
     ExprNode init = null, cond = null, incr = null;
     StmtNode body;
-      t = jj_consume_token(FOR);
-      jj_consume_token(33);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case NULL:
-      case TRUE:
-      case FALSE:
-      case NEW:
-      case IDENTIFIER:
-      case INTEGER:
-      case STRING:
-      case 33:
-      case 58:
-      case 59:
-      case 63:
-      case 64:
-      case 65:
-      case 66:
-        init = expr();
-        break;
-      default:
-        jj_la1[10] = jj_gen;
-        ;
-      }
-      jj_consume_token(32);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case NULL:
-      case TRUE:
-      case FALSE:
-      case NEW:
-      case IDENTIFIER:
-      case INTEGER:
-      case STRING:
-      case 33:
-      case 58:
-      case 59:
-      case 63:
-      case 64:
-      case 65:
-      case 66:
-        cond = expr();
-        break;
-      default:
-        jj_la1[11] = jj_gen;
-        ;
-      }
-      jj_consume_token(32);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case NULL:
-      case TRUE:
-      case FALSE:
-      case NEW:
-      case IDENTIFIER:
-      case INTEGER:
-      case STRING:
-      case 33:
-      case 58:
-      case 59:
-      case 63:
-      case 64:
-      case 65:
-      case 66:
-        incr = expr();
-        break;
-      default:
-        jj_la1[12] = jj_gen;
-        ;
-      }
-      jj_consume_token(26);
-      body = stmt();
+    t = jj_consume_token(FOR);
+    jj_consume_token(33);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case NULL:
+    case TRUE:
+    case FALSE:
+    case NEW:
+    case IDENTIFIER:
+    case INTEGER:
+    case STRING:
+    case 33:
+    case 58:
+    case 59:
+    case 63:
+    case 64:
+    case 65:
+    case 66:
+      init = expr();
+      break;
+    default:
+      jj_la1[10] = jj_gen;
+      ;
+    }
+    jj_consume_token(32);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case NULL:
+    case TRUE:
+    case FALSE:
+    case NEW:
+    case IDENTIFIER:
+    case INTEGER:
+    case STRING:
+    case 33:
+    case 58:
+    case 59:
+    case 63:
+    case 64:
+    case 65:
+    case 66:
+      cond = expr();
+      break;
+    default:
+      jj_la1[11] = jj_gen;
+      ;
+    }
+    jj_consume_token(32);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case NULL:
+    case TRUE:
+    case FALSE:
+    case NEW:
+    case IDENTIFIER:
+    case INTEGER:
+    case STRING:
+    case 33:
+    case 58:
+    case 59:
+    case 63:
+    case 64:
+    case 65:
+    case 66:
+      incr = expr();
+      break;
+    default:
+      jj_la1[12] = jj_gen;
+      ;
+    }
+    jj_consume_token(26);
+    body = stmt();
             {if (true) return new ForNode(location(t), init, cond, incr, body);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("for_stmt");
-    }
   }
 
   final public BreakNode break_stmt() throws ParseException {
-    trace_call("break_stmt");
-    try {
   Token t;
-      t = jj_consume_token(BREAK);
-      jj_consume_token(32);
+    t = jj_consume_token(BREAK);
+    jj_consume_token(32);
                     {if (true) return new BreakNode(location(t));}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("break_stmt");
-    }
   }
 
   final public ContinueNode continue_stmt() throws ParseException {
-    trace_call("continue_stmt");
-    try {
   Token t;
-      t = jj_consume_token(CONTINUE);
-      jj_consume_token(32);
+    t = jj_consume_token(CONTINUE);
+    jj_consume_token(32);
                        {if (true) return new ContinueNode(location(t));}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("continue_stmt");
-    }
   }
 
   final public ReturnNode return_stmt() throws ParseException {
-    trace_call("return_stmt");
-    try {
     Token t;
     ExprNode expr;
-      if (jj_2_6(2)) {
-        t = jj_consume_token(RETURN);
-        jj_consume_token(32);
+    if (jj_2_6(2)) {
+      t = jj_consume_token(RETURN);
+      jj_consume_token(32);
                                     {if (true) return new ReturnNode(location(t), null);}
-      } else {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case RETURN:
-          t = jj_consume_token(RETURN);
-          expr = expr();
-          jj_consume_token(32);
-                                    {if (true) return new ReturnNode(location(t), expr);}
-          break;
-        default:
-          jj_la1[13] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
-      }
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("return_stmt");
-    }
-  }
-
-  final public ExprNode expr() throws ParseException {
-    trace_call("expr");
-    try {
-    ExprNode lhs, rhs, expr;
-    String op;
-      if (jj_2_7(2147483647)) {
-        lhs = term();
-        jj_consume_token(34);
-        rhs = expr();
-            {if (true) return new AssignNode(lhs, rhs);}
-      } else if (jj_2_8(2147483647)) {
-        lhs = term();
-        op = opassign_op();
-        rhs = expr();
-            {if (true) return new OpAssignNode(lhs, op, rhs);}
-      } else {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case NULL:
-        case TRUE:
-        case FALSE:
-        case NEW:
-        case IDENTIFIER:
-        case INTEGER:
-        case STRING:
-        case 33:
-        case 58:
-        case 59:
-        case 63:
-        case 64:
-        case 65:
-        case 66:
-          expr = expr9();
-            {if (true) return expr;}
-          break;
-        default:
-          jj_la1[14] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
-      }
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("expr");
-    }
-  }
-
-  final public String opassign_op() throws ParseException {
-    trace_call("opassign_op");
-    try {
+    } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 35:
-        jj_consume_token(35);
-              {if (true) return "+";}
-        break;
-      case 36:
-        jj_consume_token(36);
-              {if (true) return "-";}
-        break;
-      case 37:
-        jj_consume_token(37);
-              {if (true) return "*";}
-        break;
-      case 38:
-        jj_consume_token(38);
-              {if (true) return "/";}
-        break;
-      case 39:
-        jj_consume_token(39);
-              {if (true) return "%";}
-        break;
-      case 40:
-        jj_consume_token(40);
-              {if (true) return "&";}
-        break;
-      case 41:
-        jj_consume_token(41);
-              {if (true) return "|";}
-        break;
-      case 42:
-        jj_consume_token(42);
-              {if (true) return "^";}
-        break;
-      case 43:
-        jj_consume_token(43);
-              {if (true) return "<<";}
-        break;
-      case 44:
-        jj_consume_token(44);
-              {if (true) return ">>";}
+      case RETURN:
+        t = jj_consume_token(RETURN);
+        expr = expr();
+        jj_consume_token(32);
+                                    {if (true) return new ReturnNode(location(t), expr);}
         break;
       default:
-        jj_la1[15] = jj_gen;
+        jj_la1[13] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("opassign_op");
     }
+    throw new Error("Missing return statement in function");
   }
 
-  final public ExprNode expr9() throws ParseException {
-    trace_call("expr9");
-    try {
-  ExprNode l, r;
-      l = expr8();
-      label_7:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 45:
-          ;
-          break;
-        default:
-          jj_la1[16] = jj_gen;
-          break label_7;
-        }
-        jj_consume_token(45);
-        r = expr8();
-                                l = new LogicalOrNode(l, r);
-      }
-            {if (true) return l;}
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("expr9");
-    }
-  }
-
-  final public ExprNode expr8() throws ParseException {
-    trace_call("expr8");
-    try {
-  ExprNode l, r;
-      l = expr7();
-      label_8:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 46:
-          ;
-          break;
-        default:
-          jj_la1[17] = jj_gen;
-          break label_8;
-        }
-        jj_consume_token(46);
-        r = expr7();
-                                l = new LogicalAndNode(l, r);
-      }
-            {if (true) return l;}
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("expr8");
-    }
-  }
-
-  final public ExprNode expr7() throws ParseException {
-    trace_call("expr7");
-    try {
-  ExprNode l, r;
-      l = expr6();
-      label_9:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 47:
-        case 48:
-        case 49:
-        case 50:
-        case 51:
-        case 52:
-          ;
-          break;
-        default:
-          jj_la1[18] = jj_gen;
-          break label_9;
-        }
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 47:
-          jj_consume_token(47);
-          r = expr6();
-                                 l = new BinaryOpNode(l, ">", r);
-          break;
-        case 48:
-          jj_consume_token(48);
-          r = expr6();
-                                 l = new BinaryOpNode(l, "<", r);
-          break;
-        case 49:
-          jj_consume_token(49);
-          r = expr6();
-                                 l = new BinaryOpNode(l, ">=", r);
-          break;
-        case 50:
-          jj_consume_token(50);
-          r = expr6();
-                                 l = new BinaryOpNode(l, "<=", r);
-          break;
-        case 51:
-          jj_consume_token(51);
-          r = expr6();
-                                 l = new BinaryOpNode(l, "==", r);
-          break;
-        case 52:
-          jj_consume_token(52);
-          r = expr6();
-                                 l = new BinaryOpNode(l, "!=", r);
-          break;
-        default:
-          jj_la1[19] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
-      }
-            {if (true) return l;}
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("expr7");
-    }
-  }
-
-  final public ExprNode expr6() throws ParseException {
-    trace_call("expr6");
-    try {
-  ExprNode l, r;
-      l = expr5();
-      label_10:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 53:
-          ;
-          break;
-        default:
-          jj_la1[20] = jj_gen;
-          break label_10;
-        }
-        jj_consume_token(53);
-        r = expr5();
-                               l = new BinaryOpNode(l, "|", r);
-      }
-            {if (true) return l;}
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("expr6");
-    }
-  }
-
-  final public ExprNode expr5() throws ParseException {
-    trace_call("expr5");
-    try {
-  ExprNode l, r;
-      l = expr4();
-      label_11:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 54:
-          ;
-          break;
-        default:
-          jj_la1[21] = jj_gen;
-          break label_11;
-        }
-        jj_consume_token(54);
-        r = expr4();
-                               l = new BinaryOpNode(l, "^", r);
-      }
-            {if (true) return l;}
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("expr5");
-    }
-  }
-
-  final public ExprNode expr4() throws ParseException {
-    trace_call("expr4");
-    try {
-  ExprNode l, r;
-      l = expr3();
-      label_12:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 55:
-          ;
-          break;
-        default:
-          jj_la1[22] = jj_gen;
-          break label_12;
-        }
-        jj_consume_token(55);
-        r = expr3();
-                               l = new BinaryOpNode(l, "&", r);
-      }
-            {if (true) return l;}
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("expr4");
-    }
-  }
-
-  final public ExprNode expr3() throws ParseException {
-    trace_call("expr3");
-    try {
-  ExprNode l, r;
-      l = expr2();
-      label_13:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 56:
-        case 57:
-          ;
-          break;
-        default:
-          jj_la1[23] = jj_gen;
-          break label_13;
-        }
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 56:
-          jj_consume_token(56);
-          r = expr2();
-                                 l = new BinaryOpNode(l, ">>", r);
-          break;
-        case 57:
-          jj_consume_token(57);
-          r = expr2();
-                                 l = new BinaryOpNode(l, "<<", r);
-          break;
-        default:
-          jj_la1[24] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
-      }
-            {if (true) return l;}
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("expr3");
-    }
-  }
-
-  final public ExprNode expr2() throws ParseException {
-    trace_call("expr2");
-    try {
-  ExprNode l, r;
-      l = expr1();
-      label_14:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 58:
-        case 59:
-          ;
-          break;
-        default:
-          jj_la1[25] = jj_gen;
-          break label_14;
-        }
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 58:
-          jj_consume_token(58);
-          r = expr1();
-                                l = new BinaryOpNode(l, "+", r);
-          break;
-        case 59:
-          jj_consume_token(59);
-          r = expr1();
-                                l = new BinaryOpNode(l, "-", r);
-          break;
-        default:
-          jj_la1[26] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
-      }
-            {if (true) return l;}
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("expr2");
-    }
-  }
-
-  final public ExprNode expr1() throws ParseException {
-    trace_call("expr1");
-    try {
-  ExprNode l, r;
-      l = term();
-      label_15:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 60:
-        case 61:
-        case 62:
-          ;
-          break;
-        default:
-          jj_la1[27] = jj_gen;
-          break label_15;
-        }
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 60:
-          jj_consume_token(60);
-          r = term();
-                              l = new BinaryOpNode(l, "*", r);
-          break;
-        case 61:
-          jj_consume_token(61);
-          r = term();
-                              l = new BinaryOpNode(l, "/", r);
-          break;
-        case 62:
-          jj_consume_token(62);
-          r = term();
-                              l = new BinaryOpNode(l, "%", r);
-          break;
-        default:
-          jj_la1[28] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
-      }
-            {if (true) return l;}
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("expr1");
-    }
-  }
-
-  final public ExprNode term() throws ParseException {
-    trace_call("term");
-    try {
-    TypeNode t;
-    ExprNode n;
-      n = unary();
-                                    {if (true) return n;}
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("term");
-    }
-  }
-
-  final public ExprNode unary() throws ParseException {
-    trace_call("unary");
-    try {
-    ExprNode n;
-    TypeNode t;
-    List<ExprNode> args;
+  final public ExprNode expr() throws ParseException {
+    ExprNode lhs, rhs, expr;
+    String op;
+    if (jj_2_7(2147483647)) {
+      lhs = term();
+      jj_consume_token(34);
+      rhs = expr();
+            {if (true) return new AssignNode(lhs, rhs);}
+    } else if (jj_2_8(2147483647)) {
+      lhs = term();
+      op = opassign_op();
+      rhs = expr();
+            {if (true) return new OpAssignNode(lhs, op, rhs);}
+    } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 63:
-        jj_consume_token(63);
-        n = unary();
-                          {if (true) return new PrefixOpNode("++", n);}
-        break;
-      case 64:
-        jj_consume_token(64);
-        n = unary();
-                          {if (true) return new PrefixOpNode("--", n);}
-        break;
-      case 58:
-        jj_consume_token(58);
-        n = term();
-                          {if (true) return new UnaryOpNode("+", n);}
-        break;
-      case 59:
-        jj_consume_token(59);
-        n = term();
-                          {if (true) return new UnaryOpNode("-", n);}
-        break;
-      case 65:
-        jj_consume_token(65);
-        n = term();
-                          {if (true) return new UnaryOpNode("!", n);}
-        break;
-      case 66:
-        jj_consume_token(66);
-        n = term();
-                          {if (true) return new UnaryOpNode("~", n);}
-        break;
-      case NEW:
-        jj_consume_token(NEW);
-        t = newtype();
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 33:
-          jj_consume_token(33);
-          args = args();
-          jj_consume_token(26);
-          break;
-        default:
-          jj_la1[29] = jj_gen;
-          ;
-        }
-                          {if (true) return new NewTypeNode(t);}
-        break;
       case NULL:
       case TRUE:
       case FALSE:
+      case NEW:
       case IDENTIFIER:
       case INTEGER:
       case STRING:
       case 33:
-        n = postfix();
-                          {if (true) return n;}
+      case 58:
+      case 59:
+      case 63:
+      case 64:
+      case 65:
+      case 66:
+        expr = expr9();
+            {if (true) return expr;}
         break;
       default:
-        jj_la1[30] = jj_gen;
+        jj_la1[14] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("unary");
     }
+    throw new Error("Missing return statement in function");
+  }
+
+  final public String opassign_op() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case 35:
+      jj_consume_token(35);
+              {if (true) return "+";}
+      break;
+    case 36:
+      jj_consume_token(36);
+              {if (true) return "-";}
+      break;
+    case 37:
+      jj_consume_token(37);
+              {if (true) return "*";}
+      break;
+    case 38:
+      jj_consume_token(38);
+              {if (true) return "/";}
+      break;
+    case 39:
+      jj_consume_token(39);
+              {if (true) return "%";}
+      break;
+    case 40:
+      jj_consume_token(40);
+              {if (true) return "&";}
+      break;
+    case 41:
+      jj_consume_token(41);
+              {if (true) return "|";}
+      break;
+    case 42:
+      jj_consume_token(42);
+              {if (true) return "^";}
+      break;
+    case 43:
+      jj_consume_token(43);
+              {if (true) return "<<";}
+      break;
+    case 44:
+      jj_consume_token(44);
+              {if (true) return ">>";}
+      break;
+    default:
+      jj_la1[15] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode expr9() throws ParseException {
+  ExprNode l, r;
+    l = expr8();
+    label_7:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 45:
+        ;
+        break;
+      default:
+        jj_la1[16] = jj_gen;
+        break label_7;
+      }
+      jj_consume_token(45);
+      r = expr8();
+                                l = new LogicalOrNode(l, r);
+    }
+            {if (true) return l;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode expr8() throws ParseException {
+  ExprNode l, r;
+    l = expr7();
+    label_8:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 46:
+        ;
+        break;
+      default:
+        jj_la1[17] = jj_gen;
+        break label_8;
+      }
+      jj_consume_token(46);
+      r = expr7();
+                                l = new LogicalAndNode(l, r);
+    }
+            {if (true) return l;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode expr7() throws ParseException {
+  ExprNode l, r;
+    l = expr6();
+    label_9:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 47:
+      case 48:
+      case 49:
+      case 50:
+      case 51:
+      case 52:
+        ;
+        break;
+      default:
+        jj_la1[18] = jj_gen;
+        break label_9;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 47:
+        jj_consume_token(47);
+        r = expr6();
+                                 l = new BinaryOpNode(l, ">", r);
+        break;
+      case 48:
+        jj_consume_token(48);
+        r = expr6();
+                                 l = new BinaryOpNode(l, "<", r);
+        break;
+      case 49:
+        jj_consume_token(49);
+        r = expr6();
+                                 l = new BinaryOpNode(l, ">=", r);
+        break;
+      case 50:
+        jj_consume_token(50);
+        r = expr6();
+                                 l = new BinaryOpNode(l, "<=", r);
+        break;
+      case 51:
+        jj_consume_token(51);
+        r = expr6();
+                                 l = new BinaryOpNode(l, "==", r);
+        break;
+      case 52:
+        jj_consume_token(52);
+        r = expr6();
+                                 l = new BinaryOpNode(l, "!=", r);
+        break;
+      default:
+        jj_la1[19] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+            {if (true) return l;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode expr6() throws ParseException {
+  ExprNode l, r;
+    l = expr5();
+    label_10:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 53:
+        ;
+        break;
+      default:
+        jj_la1[20] = jj_gen;
+        break label_10;
+      }
+      jj_consume_token(53);
+      r = expr5();
+                               l = new BinaryOpNode(l, "|", r);
+    }
+            {if (true) return l;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode expr5() throws ParseException {
+  ExprNode l, r;
+    l = expr4();
+    label_11:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 54:
+        ;
+        break;
+      default:
+        jj_la1[21] = jj_gen;
+        break label_11;
+      }
+      jj_consume_token(54);
+      r = expr4();
+                               l = new BinaryOpNode(l, "^", r);
+    }
+            {if (true) return l;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode expr4() throws ParseException {
+  ExprNode l, r;
+    l = expr3();
+    label_12:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 55:
+        ;
+        break;
+      default:
+        jj_la1[22] = jj_gen;
+        break label_12;
+      }
+      jj_consume_token(55);
+      r = expr3();
+                               l = new BinaryOpNode(l, "&", r);
+    }
+            {if (true) return l;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode expr3() throws ParseException {
+  ExprNode l, r;
+    l = expr2();
+    label_13:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 56:
+      case 57:
+        ;
+        break;
+      default:
+        jj_la1[23] = jj_gen;
+        break label_13;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 56:
+        jj_consume_token(56);
+        r = expr2();
+                                 l = new BinaryOpNode(l, ">>", r);
+        break;
+      case 57:
+        jj_consume_token(57);
+        r = expr2();
+                                 l = new BinaryOpNode(l, "<<", r);
+        break;
+      default:
+        jj_la1[24] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+            {if (true) return l;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode expr2() throws ParseException {
+  ExprNode l, r;
+    l = expr1();
+    label_14:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 58:
+      case 59:
+        ;
+        break;
+      default:
+        jj_la1[25] = jj_gen;
+        break label_14;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 58:
+        jj_consume_token(58);
+        r = expr1();
+                                l = new BinaryOpNode(l, "+", r);
+        break;
+      case 59:
+        jj_consume_token(59);
+        r = expr1();
+                                l = new BinaryOpNode(l, "-", r);
+        break;
+      default:
+        jj_la1[26] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+            {if (true) return l;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode expr1() throws ParseException {
+  ExprNode l, r;
+    l = term();
+    label_15:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 60:
+      case 61:
+      case 62:
+        ;
+        break;
+      default:
+        jj_la1[27] = jj_gen;
+        break label_15;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 60:
+        jj_consume_token(60);
+        r = term();
+                              l = new BinaryOpNode(l, "*", r);
+        break;
+      case 61:
+        jj_consume_token(61);
+        r = term();
+                              l = new BinaryOpNode(l, "/", r);
+        break;
+      case 62:
+        jj_consume_token(62);
+        r = term();
+                              l = new BinaryOpNode(l, "%", r);
+        break;
+      default:
+        jj_la1[28] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+            {if (true) return l;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode term() throws ParseException {
+    TypeNode t;
+    ExprNode n;
+    n = unary();
+                                    {if (true) return n;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public ExprNode unary() throws ParseException {
+    ExprNode n;
+    TypeNode t;
+    List<ExprNode> args;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case 63:
+      jj_consume_token(63);
+      n = unary();
+                          {if (true) return new PrefixOpNode("++", n);}
+      break;
+    case 64:
+      jj_consume_token(64);
+      n = unary();
+                          {if (true) return new PrefixOpNode("--", n);}
+      break;
+    case 58:
+      jj_consume_token(58);
+      n = term();
+                          {if (true) return new UnaryOpNode("+", n);}
+      break;
+    case 59:
+      jj_consume_token(59);
+      n = term();
+                          {if (true) return new UnaryOpNode("-", n);}
+      break;
+    case 65:
+      jj_consume_token(65);
+      n = term();
+                          {if (true) return new UnaryOpNode("!", n);}
+      break;
+    case 66:
+      jj_consume_token(66);
+      n = term();
+                          {if (true) return new UnaryOpNode("~", n);}
+      break;
+    case NEW:
+      jj_consume_token(NEW);
+      t = newtype();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 33:
+        jj_consume_token(33);
+        args = args();
+        jj_consume_token(26);
+        break;
+      default:
+        jj_la1[29] = jj_gen;
+        ;
+      }
+                          {if (true) return new NewTypeNode(t);}
+      break;
+    case NULL:
+    case TRUE:
+    case FALSE:
+    case IDENTIFIER:
+    case INTEGER:
+    case STRING:
+    case 33:
+      n = postfix();
+                          {if (true) return n;}
+      break;
+    default:
+      jj_la1[30] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    throw new Error("Missing return statement in function");
   }
 
   final public ExprNode postfix() throws ParseException {
-    trace_call("postfix");
-    try {
         Token t;
     ExprNode expr, idx, membfunc;
     String memb;
     List<ExprNode> args;
-      expr = primary();
-      label_16:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 30:
-        case 33:
-        case 63:
-        case 64:
-        case 67:
-          ;
-          break;
-        default:
-          jj_la1[31] = jj_gen;
-          break label_16;
-        }
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 63:
-          jj_consume_token(63);
+    expr = primary();
+    label_16:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 30:
+      case 33:
+      case 63:
+      case 64:
+      case 67:
+        ;
+        break;
+      default:
+        jj_la1[31] = jj_gen;
+        break label_16;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 63:
+        jj_consume_token(63);
                               expr = new SuffixOpNode("++", expr);
-          break;
-        case 64:
-          jj_consume_token(64);
+        break;
+      case 64:
+        jj_consume_token(64);
                               expr = new SuffixOpNode("--", expr);
-          break;
-        case 30:
-          jj_consume_token(30);
-          idx = expr();
-          jj_consume_token(31);
+        break;
+      case 30:
+        jj_consume_token(30);
+        idx = expr();
+        jj_consume_token(31);
                               expr = new ArefNode(expr, idx);
-          break;
-        default:
-          jj_la1[32] = jj_gen;
-          if (jj_2_9(3)) {
-            t = jj_consume_token(67);
-            membfunc = primary();
-            jj_consume_token(33);
-            args = args();
-            jj_consume_token(26);
+        break;
+      default:
+        jj_la1[32] = jj_gen;
+        if (jj_2_9(3)) {
+          t = jj_consume_token(67);
+          membfunc = primary();
+          jj_consume_token(33);
+          args = args();
+          jj_consume_token(26);
                                                   args.add(expr);
                                                 ((VariableNode)membfunc).setName("." + ((VariableNode)membfunc).name());
                                                 ((VariableNode)membfunc).setMemFuncBase(expr);
                                                   expr = new FuncallNode(membfunc, args, true);
-          } else {
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case 67:
-              jj_consume_token(67);
-              memb = name();
+        } else {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case 67:
+            jj_consume_token(67);
+            memb = name();
                               expr = new MemberNode(expr, memb);
-              break;
-            case 33:
-              jj_consume_token(33);
-              args = args();
-              jj_consume_token(26);
+            break;
+          case 33:
+            jj_consume_token(33);
+            args = args();
+            jj_consume_token(26);
                               expr = new FuncallNode(expr, args);
-              break;
-            default:
-              jj_la1[33] = jj_gen;
-              jj_consume_token(-1);
-              throw new ParseException();
-            }
+            break;
+          default:
+            jj_la1[33] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
           }
         }
       }
+    }
             {if (true) return expr;}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("postfix");
-    }
   }
 
   final public String name() throws ParseException {
-    trace_call("name");
-    try {
   Token t;
-      t = jj_consume_token(IDENTIFIER);
+    t = jj_consume_token(IDENTIFIER);
                      if (t.image.equals("this")) {if (true) throw new Error("Gzotpa! Variable/function name cannot be \"this\"!");}
                     if (!isLetter(t.image.charAt(0))) {if (true) throw new Error("Gzotpa! Variable/function name must begin with a letter!");}
                                 {if (true) return t.image;}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("name");
-    }
   }
 
   final public List<ExprNode> args() throws ParseException {
-    trace_call("args");
-    try {
     List<ExprNode> args = new ArrayList<ExprNode>();
     ExprNode arg;
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case NULL:
-      case TRUE:
-      case FALSE:
-      case NEW:
-      case IDENTIFIER:
-      case INTEGER:
-      case STRING:
-      case 33:
-      case 58:
-      case 59:
-      case 63:
-      case 64:
-      case 65:
-      case 66:
-        arg = expr();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case NULL:
+    case TRUE:
+    case FALSE:
+    case NEW:
+    case IDENTIFIER:
+    case INTEGER:
+    case STRING:
+    case 33:
+    case 58:
+    case 59:
+    case 63:
+    case 64:
+    case 65:
+    case 66:
+      arg = expr();
                    args.add(arg);
-        label_17:
-        while (true) {
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case 27:
-            ;
-            break;
-          default:
-            jj_la1[34] = jj_gen;
-            break label_17;
-          }
-          jj_consume_token(27);
-          arg = expr();
-                        args.add(arg);
+      label_17:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case 27:
+          ;
+          break;
+        default:
+          jj_la1[34] = jj_gen;
+          break label_17;
         }
-        break;
-      default:
-        jj_la1[35] = jj_gen;
-        ;
+        jj_consume_token(27);
+        arg = expr();
+                        args.add(arg);
       }
+      break;
+    default:
+      jj_la1[35] = jj_gen;
+      ;
+    }
             {if (true) return args;}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("args");
-    }
   }
 
   final public ExprNode primary() throws ParseException {
-    trace_call("primary");
-    try {
     Token t;
     ExprNode n;
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case NULL:
-        t = jj_consume_token(NULL);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case NULL:
+      t = jj_consume_token(NULL);
                         {if (true) return new NullNode(location(t));}
-        break;
-      case TRUE:
-        t = jj_consume_token(TRUE);
+      break;
+    case TRUE:
+      t = jj_consume_token(TRUE);
             {if (true) return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(true), integerValue("1"));}
-        break;
-      case FALSE:
-        t = jj_consume_token(FALSE);
+      break;
+    case FALSE:
+      t = jj_consume_token(FALSE);
             {if (true) return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(true), integerValue("0"));}
-        break;
-      case INTEGER:
-        t = jj_consume_token(INTEGER);
+      break;
+    case INTEGER:
+      t = jj_consume_token(INTEGER);
             {if (true) return new IntegerLiteralNode(location(t), IntegerTypeRef.intRef(), integerValue(t.image));}
-        break;
-      case STRING:
-        t = jj_consume_token(STRING);
+      break;
+    case STRING:
+      t = jj_consume_token(STRING);
             {if (true) return new StringLiteralNode(location(t),
                 new StringTypeRef(stringValue(t.image), location(t)),
                 stringValue(t.image));}
-        break;
-      case IDENTIFIER:
-        t = jj_consume_token(IDENTIFIER);
+      break;
+    case IDENTIFIER:
+      t = jj_consume_token(IDENTIFIER);
             {if (true) return new VariableNode(location(t), t.image);}
-        break;
-      case 33:
-        jj_consume_token(33);
-        n = expr();
-        jj_consume_token(26);
+      break;
+    case 33:
+      jj_consume_token(33);
+      n = expr();
+      jj_consume_token(26);
             {if (true) return n;}
-        break;
-      default:
-        jj_la1[36] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-    throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("primary");
+      break;
+    default:
+      jj_la1[36] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
     }
+    throw new Error("Missing return statement in function");
   }
 
   final public DefinedVariable defvar() throws ParseException {
-    trace_call("defvar");
-    try {
         DefinedVariable var;
         TypeNode type;
         String name;
         ExprNode init = null;
-      type = type();
-      name = name();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 34:
-        jj_consume_token(34);
-        init = expr();
-        break;
-      default:
-        jj_la1[37] = jj_gen;
-        ;
-      }
+    type = type();
+    name = name();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case 34:
+      jj_consume_token(34);
+      init = expr();
+      break;
+    default:
+      jj_la1[37] = jj_gen;
+      ;
+    }
                         var = new DefinedVariable(type, name, init);
                         init = null;
-      jj_consume_token(32);
+    jj_consume_token(32);
                         {if (true) return var;}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("defvar");
-    }
   }
 
   final public Declarations class_defs(String name) throws ParseException {
-    trace_call("class_defs");
-    try {
         Declarations decls = new Declarations();
         DefinedFunction defun;
     DefinedVariable defvar;
-      jj_consume_token(28);
-      label_18:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case VOID:
-        case BOOL:
-        case INT:
-        case STR:
-        case IDENTIFIER:
-          ;
-          break;
-        default:
-          jj_la1[38] = jj_gen;
-          break label_18;
-        }
-        if (jj_2_10(2147483647)) {
-          defun = defun();
-                                          decls.addDefun(defun);
-        } else if (jj_2_11(2147483647)) {
-          defun = deconstruct(name);
-                                          decls.addDefun(defun);
-        } else if (jj_2_12(3)) {
-          defvar = defvar();
-                                  decls.addDefvar(defvar);
-        } else {
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
+    jj_consume_token(28);
+    label_18:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case VOID:
+      case BOOL:
+      case INT:
+      case STR:
+      case IDENTIFIER:
+        ;
+        break;
+      default:
+        jj_la1[38] = jj_gen;
+        break label_18;
       }
-      jj_consume_token(29);
+      if (jj_2_10(2147483647)) {
+        defun = defun();
+                                          decls.addDefun(defun);
+      } else if (jj_2_11(2147483647)) {
+        defun = deconstruct(name);
+                                          decls.addDefun(defun);
+      } else if (jj_2_12(3)) {
+        defvar = defvar();
+                                  decls.addDefvar(defvar);
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+    jj_consume_token(29);
                 {if (true) return decls;}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("class_defs");
-    }
   }
 
   final public ClassNode defclass() throws ParseException {
-    trace_call("defclass");
-    try {
     Token t;
         String n;
     Declarations decls;
-      t = jj_consume_token(CLASS);
-      n = name();
-      decls = class_defs(n);
+    t = jj_consume_token(CLASS);
+    n = name();
+    decls = class_defs(n);
         if (n.equals("main")) {
             {if (true) throw new Error("Gzotpa! Class name cannot be \"main\"!");}
         }
                 {if (true) return new ClassNode(location(t), new ClassTypeRef(n), n, decls);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("defclass");
-    }
   }
 
   final public DefinedFunction deconstruct(String name) throws ParseException {
-    trace_call("deconstruct");
-    try {
         Token t;
         String n;
         Params params;
         BlockNode body;
-      n = name();
-      t = jj_consume_token(33);
-      params = params();
-      jj_consume_token(26);
-      body = block();
+    n = name();
+    t = jj_consume_token(33);
+    params = params();
+    jj_consume_token(26);
+    body = block();
                 if (!n.equals(name)) {if (true) throw new ParseException("Gzotpa! Wrong construction function!");}
                 TypeRef tr = new FunctionTypeRef(new VoidTypeRef(location(t)), params.parametersTypeRef());
                 {if (true) return new DefinedFunction(new TypeNode(tr), n, params, body, true);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("deconstruct");
-    }
   }
 
   final public DefinedFunction defun() throws ParseException {
-    trace_call("defun");
-    try {
         TypeRef ret;
         String n;
         Params params;
         BlockNode body;
-      ret = typeref();
-      n = name();
-      jj_consume_token(33);
-      params = params();
-      jj_consume_token(26);
-      body = block();
+    ret = typeref();
+    n = name();
+    jj_consume_token(33);
+    params = params();
+    jj_consume_token(26);
+    body = block();
                         if (n.equals("main") && !(ret instanceof IntegerTypeRef)) {
                                 {if (true) throw new Error("Gzotpa! Main function must return integer!");}
                         }
                         TypeRef t = new FunctionTypeRef(ret, params.parametersTypeRef());
                         {if (true) return new DefinedFunction(new TypeNode(t), n, params, body);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("defun");
-    }
   }
 
   final public Declarations top_defs() throws ParseException {
-    trace_call("top_defs");
-    try {
         Declarations decls = new Declarations();
         DefinedFunction defun;
     ClassNode defclass;
         DefinedVariable defvar;
-      label_19:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case VOID:
-        case BOOL:
-        case INT:
-        case STR:
-        case CLASS:
-        case IDENTIFIER:
-          ;
-          break;
-        default:
-          jj_la1[39] = jj_gen;
-          break label_19;
-        }
-        if (jj_2_13(2147483647)) {
-          defclass = defclass();
+    label_19:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case VOID:
+      case BOOL:
+      case INT:
+      case STR:
+      case CLASS:
+      case IDENTIFIER:
+        ;
+        break;
+      default:
+        jj_la1[39] = jj_gen;
+        break label_19;
+      }
+      if (jj_2_13(2147483647)) {
+        defclass = defclass();
                                       decls.addDefclass(defclass);
-        } else if (jj_2_14(2147483647)) {
-          defun = defun();
+      } else if (jj_2_14(2147483647)) {
+        defun = defun();
                                 if (defun.name().equals("main")) mainFunc = true;
                                                 decls.addDefun(defun);
-        } else if (jj_2_15(3)) {
-          defvar = defvar();
+      } else if (jj_2_15(3)) {
+        defvar = defvar();
                                   if (!mainFunc) decls.addDefvar(defvar);
                                                         else decls.addDefvaraftermain(defvar);
-        } else {
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
       }
+    }
                         {if (true) return decls;}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("top_defs");
-    }
   }
 
   final public AST compilation_unit() throws ParseException {
-    trace_call("compilation_unit");
-    try {
         Token t;
         Declarations decls;
                 t = getToken(1);
-      decls = top_defs();
-      jj_consume_token(0);
+    decls = top_defs();
+    jj_consume_token(0);
                         if (!mainFunc) {if (true) throw new Error("Gzotpa! No main function!");}
                         {if (true) return new AST(location(t), decls);}
     throw new Error("Missing return statement in function");
-    } finally {
-      trace_return("compilation_unit");
-    }
   }
 
   private boolean jj_2_1(int xla) {
@@ -2644,7 +2439,6 @@ public class Parser implements ParserConstants {
           }
         }
       }
-      trace_token(token, "");
       return token;
     }
     token = oldToken;
@@ -2682,7 +2476,6 @@ public class Parser implements ParserConstants {
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
     jj_gen++;
-      trace_token(token, " (in getNextToken)");
     return token;
   }
 
@@ -2777,55 +2570,12 @@ public class Parser implements ParserConstants {
     return new ParseException(token, exptokseq, tokenImage);
   }
 
-  private int trace_indent = 0;
-  private boolean trace_enabled = true;
-
-/** Enable tracing. */
+  /** Enable tracing. */
   final public void enable_tracing() {
-    trace_enabled = true;
   }
 
-/** Disable tracing. */
+  /** Disable tracing. */
   final public void disable_tracing() {
-    trace_enabled = false;
-  }
-
-  private void trace_call(String s) {
-    if (trace_enabled) {
-      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
-      System.out.println("Call:   " + s);
-    }
-    trace_indent = trace_indent + 2;
-  }
-
-  private void trace_return(String s) {
-    trace_indent = trace_indent - 2;
-    if (trace_enabled) {
-      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
-      System.out.println("Return: " + s);
-    }
-  }
-
-  private void trace_token(Token t, String where) {
-    if (trace_enabled) {
-      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
-      System.out.print("Consumed token: <" + tokenImage[t.kind]);
-      if (t.kind != 0 && !tokenImage[t.kind].equals("\"" + t.image + "\"")) {
-        System.out.print(": \"" + t.image + "\"");
-      }
-      System.out.println(" at line " + t.beginLine + " column " + t.beginColumn + ">" + where);
-    }
-  }
-
-  private void trace_scan(Token t1, int t2) {
-    if (trace_enabled) {
-      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
-      System.out.print("Visited token: <" + tokenImage[t1.kind]);
-      if (t1.kind != 0 && !tokenImage[t1.kind].equals("\"" + t1.image + "\"")) {
-        System.out.print(": \"" + t1.image + "\"");
-      }
-      System.out.println(" at line " + t1.beginLine + " column " + t1.beginColumn + ">; Expected token: <" + tokenImage[t2] + ">");
-    }
   }
 
   private void jj_rescan_token() {

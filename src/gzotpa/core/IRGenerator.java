@@ -238,10 +238,16 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         return null;
     }
 
+    static private long ifCnt = 0;
+    static private long forCnt = 0;
+    static private long logicAndCnt = 0;
+    static private long logicOrCnt = 0;
+    static private long whileCnt = 0;
+
     public Void visit(IfNode node) {
-        Label thenLabel = new Label();
-        Label elseLabel = new Label();
-        Label endLabel = new Label();
+        Label thenLabel = new Label("_if_then_" + ifCnt);
+        Label elseLabel = new Label("_if_else_" + ifCnt);
+        Label endLabel = new Label("_if_end_" + (ifCnt++));
         Expr cond = visitExpr(node.cond());
         if (node.elseBody() == null) {
             stmts.add(new ConditionJump(node.location(), cond, thenLabel, endLabel));
@@ -262,10 +268,10 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     public Void visit(ForNode node) {
-        Label beginLabel = new Label();
-        Label bodyLabel = new Label();
-        Label continueLabel = new Label();
-        Label endLabel = new Label();
+        Label beginLabel = new Label("_for_begin_" + forCnt);
+        Label bodyLabel = new Label("_for_body_" + forCnt);
+        Label continueLabel = new Label("_for_continue_" + forCnt);
+        Label endLabel = new Label("_for_end_" + (forCnt++));
 
         visitStmt(node.init());
         stmts.add(new LabelStmt(null, beginLabel));
@@ -307,8 +313,8 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     public Expr visit(LogicalAndNode node) {
-        Label rightLabel = new Label();
-        Label endLabel = new Label();
+        Label rightLabel = new Label("_logic_and_right_" + logicAndCnt);
+        Label endLabel = new Label("_logic_and_end_" + (logicAndCnt++));
         DefinedVariable var = tmpVar(node.type());
         assign(node.left().location(), ref(var), visitExpr(node.left()));
         stmts.add(new ConditionJump(node.location(), ref(var), rightLabel, endLabel));
@@ -322,8 +328,8 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     public Expr visit(LogicalOrNode node) {
-        Label rightLabel = new Label();
-        Label endLabel = new Label();
+        Label rightLabel = new Label("_logic_or_right_" + logicOrCnt);
+        Label endLabel = new Label("_logic_or_end_" + logicOrCnt);
         DefinedVariable var = tmpVar(node.type());
         assign(node.left().location(), ref(var), visitExpr(node.left()));
         stmts.add(new ConditionJump(node.location(), ref(var), rightLabel, endLabel));
@@ -415,9 +421,9 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     public Void visit(WhileNode node) {
-        Label beginLabel = new Label();
-        Label bodyLabel = new Label();
-        Label endLabel = new Label();
+        Label beginLabel = new Label("_while_begin_" + whileCnt);
+        Label bodyLabel = new Label("_while_body_" + whileCnt);
+        Label endLabel = new Label("_while_end_" + (whileCnt++));
         stmts.add(new LabelStmt(null, beginLabel));
         stmts.add(new ConditionJump(node.location(), visitExpr(node.cond()), bodyLabel, endLabel));
         stmts.add(new LabelStmt(null, bodyLabel));

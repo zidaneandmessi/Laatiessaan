@@ -10,6 +10,10 @@ abstract public class Scope {
         children = new ArrayList<LocalScope>();
     }
 
+    public List<LocalScope> children() {
+        return children;
+    }
+
     abstract public boolean isToplevel();
     abstract public ToplevelScope toplevel();
     abstract public Scope parent();

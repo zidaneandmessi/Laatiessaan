@@ -2,11 +2,14 @@ package gzotpa.entity;
 import gzotpa.ast.TypeNode;
 import gzotpa.type.Type;
 import gzotpa.ast.Location;
+import gzotpa.asm.*;
 
 abstract public class Entity {
     protected String name;
     protected TypeNode typeNode;
+    protected MemoryReference memref;
     protected long cntRefered;
+    protected Operand address;
 
     public Entity(TypeNode type, String name) {
         this.name = name;
@@ -30,6 +33,10 @@ abstract public class Entity {
         return typeNode.type();
     }
 
+    public long allocSize() {
+        return type().allocSize();
+    }
+
     public void refered() {
         cntRefered++;
     }
@@ -40,6 +47,29 @@ abstract public class Entity {
 
     public Location location() {
         return typeNode.location();
+    }
+
+    public MemoryReference memref() {
+        if (memref == null && address == null) {
+            throw new Error("Gzotpa! Address did not resolved: " + name);
+        }
+        return memref;
+    }
+
+    public Operand address() {
+        return address;
+    }
+
+    public void setMemref(MemoryReference mem) {
+        this.memref = mem;
+    }
+
+    public void setAddress(MemoryReference mem) {
+        this.address = mem;
+    }
+
+    public void setAddress(ImmediateValue imm) {
+        this.address = imm;
     }
     
     abstract public <T> T accept(EntityVisitor<T> visitor);

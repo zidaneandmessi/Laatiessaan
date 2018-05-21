@@ -2,9 +2,9 @@ package gzotpa.code.nasm;
 
 class Register extends gzotpa.asm.Register {
     RegisterClass _class;
-    int size;
+    long size;
 
-    Register(RegisterClass _class, int size) {
+    Register(RegisterClass _class, long size) {
         this._class = _class;
         this.size = size;
     }
@@ -13,7 +13,7 @@ class Register extends gzotpa.asm.Register {
         return _class;
     }
 
-    public int size() {
+    public long size() {
         return size;
     }
 
@@ -33,5 +33,9 @@ class Register extends gzotpa.asm.Register {
 
     public String dump() {
         return "(Register " + _class.toString() + ")";
+    }
+
+    public String print() {
+        return _class.toString().toLowerCase();
     }
 }

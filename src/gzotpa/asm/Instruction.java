@@ -8,6 +8,10 @@ public class Instruction extends Assembly {
         this(name, new Operand[0]);
     }
 
+    public Instruction(String name, Label label) {
+        this(name, new Operand[] { new ImmediateValue(label) });
+    }
+
     public Instruction(String name, Operand a1) {
         this(name, new Operand[] { a1 });
     }
@@ -49,6 +53,20 @@ public class Instruction extends Assembly {
             buf.append(" ").append(oper.dump());
         }
         buf.append(")");
+        return buf.toString();
+    }
+
+    public String print() {
+        StringBuilder buf = new StringBuilder();
+        buf.append("\t" + name + "\t");
+        int cnt = 0;
+        for (Operand oper : operands) {
+            if (cnt == 0)
+                buf.append(oper.print());
+            else
+                buf.append(", ").append(oper.print());
+            cnt++;
+        }
         return buf.toString();
     }
 }

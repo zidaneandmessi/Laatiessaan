@@ -182,7 +182,8 @@ public class Compiler {
             new TypeChecker(types).check(ast);
             IR ir = new IRGenerator(types).generate(ast);
             AssemblyCode code = new CodeGenerator().generate(ir);
-            code.dump();
+            //code.dump();
+            code.print();
             return true;
         }
         catch (SemanticException ex) {
