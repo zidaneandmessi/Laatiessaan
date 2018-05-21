@@ -39,4 +39,10 @@ public class IR {
         }
     }
 
+    public void dump() {
+        Dumper d = new Dumper(System.err);
+        d.printClass(this);
+        d.printVars("variables", defvars);
+        d.printFuncs("functions", defuns);
+    }
 }

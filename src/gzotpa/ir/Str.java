@@ -14,4 +14,8 @@ public class Str extends Expr {
     public <S,E> E accept(IRVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    protected void _dump(Dumper d) {
+        d.printMember("value", value);
+    }
 }

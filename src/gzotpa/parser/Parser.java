@@ -108,7 +108,7 @@ public class Parser implements ParserConstants {
             return Long.parseLong(s, 10);
         }
     }
-    private Boolean isLetter(char c) {
+    private boolean isLetter(char c) {
         return (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z');
     }
 

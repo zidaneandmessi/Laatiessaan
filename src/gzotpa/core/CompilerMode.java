@@ -5,15 +5,7 @@ import java.util.HashMap;
 enum CompilerMode {
     CheckSyntax ("--check-syntax"),
     CheckSemantic ("--check-semantic"),
-    DumpTokens ("--dump-tokens"),
-    DumpAST ("--dump-ast"),
-    DumpStmt ("--dump-stmt"),
-    DumpExpr ("--dump-expr"),
-    DumpSemantic ("--dump-semantic"),
-    DumpReference ("--dump-reference"),
-    DumpIR ("--dump-ir"),
-    DumpAsm ("--dump-asm"),
-    PrintAsm ("--print-asm"),
+    GenerateIR ("--generate-ir"),
     Compile ("-S"),
     Assemble ("-c"),
     Link ("--link");
@@ -23,15 +15,7 @@ enum CompilerMode {
         modes = new HashMap<String, CompilerMode>();
         modes.put("--check-syntax", CheckSyntax);
         modes.put("--check-semantic", CheckSemantic);
-        modes.put("--dump-tokens", DumpTokens);
-        modes.put("--dump-ast", DumpAST);
-        modes.put("--dump-stmt", DumpStmt);
-        modes.put("--dump-expr", DumpExpr);
-        modes.put("--dump-semantic", DumpSemantic);
-        modes.put("--dump-reference", DumpReference);
-        modes.put("--dump-ir", DumpIR);
-        modes.put("--dump-asm", DumpAsm);
-        modes.put("--print-asm", PrintAsm);
+        modes.put("--generate-ir", GenerateIR);
         modes.put("-S", Compile);
         modes.put("-c", Assemble);
     }

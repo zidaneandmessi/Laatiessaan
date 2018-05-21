@@ -3,7 +3,9 @@ import gzotpa.parser.Parser;
 import gzotpa.ast.AST;
 import gzotpa.ast.StmtNode;
 import gzotpa.ast.ExprNode;
+import gzotpa.code.nasm.*;
 import gzotpa.exception.*;
+import gzotpa.ir.IR;
 import gzotpa.type.TypeTable;
 import java.util.*;
 import java.io.*;
@@ -27,6 +29,12 @@ public class Compiler {
         else if (opts.mode() == CompilerMode.CheckSemantic) {
             System.exit(checkSemantic(opts) ? 0 : 1);
         }
+        else if (opts.mode() == CompilerMode.GenerateIR) {
+            System.exit(generateIR(opts) ? 0 : 1);
+        }
+        else if (opts.mode() == CompilerMode.Assemble) {
+            System.exit(Assemble(opts) ? 0 : 1);
+        }
     }
     private Options parseOptions(String[] args) {
         return Options.parse(args);
@@ -45,6 +53,7 @@ public class Compiler {
         }
         return !failed;
     }
+
     private boolean checkSemantic(Options opts) {
         boolean failed = false;
         for (SourceFile src : opts.sourceFiles()) {
@@ -58,6 +67,40 @@ public class Compiler {
         }
         return !failed;
     }
+
+    private boolean generateIR(Options opts) {
+        boolean failed = false;
+        for (SourceFile src : opts.sourceFiles()) {
+            if (tryGenerateIR(src.path(), opts)) {
+                System.out.println(src.path() + ": Generate IR OK");
+            }
+            else {
+                System.out.println(src.path() + ": Generate IR Error");
+                failed = true;
+            }
+        }
+        return !failed;
+    }
+
+    private boolean Assemble(Options opts) {
+        boolean failed = false;
+        for (SourceFile src : opts.sourceFiles()) {
+            if (tryAssemble(src.path(), opts)) {
+                System.out.println(src.path() + ": Assemble OK");
+            }
+            else {
+                System.out.println(src.path() + ": Assemble Error");
+                failed = true;
+            }
+        }
+        return !failed;
+    }
+
+    public AST parseFile(String path)
+                            throws SyntaxException, FileException {
+        return Parser.parseFile(new File(path));
+    }
+
     private boolean isValidSyntax(String path, Options opts) {
         try {
             parseFile(path);
@@ -70,6 +113,7 @@ public class Compiler {
             return false;
         }
     }
+
     private boolean isValidSemantic(String path, Options opts) {
         try {
             AST ast = parseFile(path);
@@ -96,8 +140,63 @@ public class Compiler {
             return false;
         }
     }
-    public AST parseFile(String path)
-                            throws SyntaxException, FileException {
-        return Parser.parseFile(new File(path));
+
+    private boolean tryGenerateIR(String path, Options opts) {
+        try {
+            AST ast = parseFile(path);
+            TypeTable types = new TypeTable();
+            types.addKnownedTypes();
+            new TypeResolver(types).resolve(ast);
+            types.semanticCheck();
+            new LocalResolver().resolve(ast);
+            new DereferenceChecker(types).check(ast);
+            new TypeChecker(types).check(ast);
+            IR ir = new IRGenerator(types).generate(ast);
+            ir.dump();
+            return true;
+        }
+        catch (SemanticException ex) {
+            return false;
+        }
+        catch (SyntaxException ex) {
+            return false;
+        }
+        catch (FileException ex) {
+            return false;
+        }
+        catch (Error e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean tryAssemble(String path, Options opts) {
+        try {
+            AST ast = parseFile(path);
+            TypeTable types = new TypeTable();
+            types.addKnownedTypes();
+            new TypeResolver(types).resolve(ast);
+            types.semanticCheck();
+            new LocalResolver().resolve(ast);
+            new DereferenceChecker(types).check(ast);
+            new TypeChecker(types).check(ast);
+            IR ir = new IRGenerator(types).generate(ast);
+            AssemblyCode code = new CodeGenerator().generate(ir);
+            code.dump();
+            return true;
+        }
+        catch (SemanticException ex) {
+            return false;
+        }
+        catch (SyntaxException ex) {
+            return false;
+        }
+        catch (FileException ex) {
+            return false;
+        }
+        catch (Error e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
     }
 }

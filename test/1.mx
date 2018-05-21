@@ -1,7 +1,4 @@
-int __print() {
-
-}
-int main() {
-int a = (new int[123])[31];
-__print();
+int main()
+{
+    int i;
 }

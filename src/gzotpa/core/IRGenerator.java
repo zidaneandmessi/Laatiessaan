@@ -35,11 +35,13 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     LinkedList<Label> continueStack;
 
     private void visitStmt(StmtNode node) {
-        node.accept(this);
+        if (node != null)
+            node.accept(this);
     }
 
     private void visitStmt(ExprNode node) {
-        node.accept(this);
+        if (node != null)
+            node.accept(this);
     }
 
     private Expr visitExpr(ExprNode node) {

@@ -16,4 +16,8 @@ public class ExprStmt extends Stmt {
     public <S,E> S accept(IRVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    protected void _dump(Dumper d) {
+        d.printMember("expr", expr);
+    }
 }

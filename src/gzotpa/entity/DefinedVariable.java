@@ -44,7 +44,7 @@ public class DefinedVariable extends Variable {
     static private long tmpCnt = 0;
 
     static public DefinedVariable tmpVariable(Type t) {
-        return new DefinedVariable(new TypeNode(t), "(tmp) " + (tmpCnt++), null);
+        return new DefinedVariable(new TypeNode(t), "(tmp_" + (tmpCnt++) + ")", null);
     }
     
     public <T> T accept(EntityVisitor<T> visitor) {

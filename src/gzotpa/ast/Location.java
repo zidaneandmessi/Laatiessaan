@@ -21,4 +21,8 @@ public class Location {
     public MxToken token() {
         return token;
     }
+
+    public String toString() {
+        return sourceName + ":" + token.lineno();
+    }
 }

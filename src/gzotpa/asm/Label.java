@@ -1,25 +1,25 @@
 package gzotpa.asm;
 
 public class Label extends Assembly {
-    protected Symbol symbol;
+    protected String name;
 
     public Label() {
-        this(new UnnamedSymbol());
+        this("Unnamed");
     }
 
-    public Label(Symbol sym) {
-        this.symbol = sym;
+    public Label(String name) {
+        this.name = name;
     }
     
-    public Symbol symbol() {
-        return symbol;
+    public String name() {
+        return name;
     }
 
     public boolean isLabel() {
         return true;
     }
 
-    public String toSource(SymbolTable table) {
-        return symbol.toSource(table) + ":";
+    public String dump() {
+        return "(Label " + name + ")";
     }
 }

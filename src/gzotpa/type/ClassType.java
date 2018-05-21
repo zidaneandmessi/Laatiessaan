@@ -30,7 +30,22 @@ public class ClassType extends NamedType {
     }
 
     public long size() {
-        throw new Error("Gzotpa! ClassType size called!");
+        long size = 0;
+        for (DefinedVariable var : decls.defvars()) {
+            if (var.type() instanceof IntegerType) {
+                size += 32;
+            }
+            else if (var.type() instanceof StringType) {
+                size += var.type().size();
+            }
+            else if (var.type() instanceof ArrayType) {
+                size += var.type().allocSize();
+            }
+            else if (var.type() instanceof ClassType) {
+                size += 32;
+            }
+        }
+        return size;
     }
 
     public boolean isClass() { return true; }
@@ -84,7 +99,19 @@ public class ClassType extends NamedType {
     }
 
     public long memberOffset(String name) {
-        return 0;
+        boolean isVariable = hasMemberVariable(name);
+        boolean isFunction = hasMemberFunction(name);
+        if (!isVariable && !isFunction) {
+            throw new Error("Gzotpa! Class has no such member!");
+        }
+        else if (isVariable) {
+            DefinedVariable var = getMemberVariable(name);
+            return 233;
+        }
+        else {
+            DefinedFunction func = getMemberFunction(name);
+            return 666;
+        }
         /**/
     }
 
