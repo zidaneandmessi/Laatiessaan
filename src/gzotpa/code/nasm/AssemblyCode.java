@@ -56,20 +56,20 @@ public class AssemblyCode {
         assemblies.add(label);
     }
 
-    void lea(Operand src, Operand dest) {
-        assemblies.add(new Instruction("lea", src, dest));
+    void lea(Operand dest, Operand src) {
+        assemblies.add(new Instruction("lea", dest, src));
     }
     
     void leave() {
         assemblies.add(new Instruction("leave"));
     }
 
-    void mov(Operand src, Operand dest) {
-        assemblies.add(new Instruction("mov", src, dest));
+    void mov(Operand dest, Operand src) {
+        assemblies.add(new Instruction("mov", dest, src));
     }
 
-    void movzx(Operand src, Operand dest) {
-        assemblies.add(new Instruction("movzx", src, dest));
+    void movzx(Operand dest, Operand src) {
+        assemblies.add(new Instruction("movzx", dest, src));
     }
 
     void neg(Operand a) {
@@ -102,6 +102,34 @@ public class AssemblyCode {
 
     void sar(Operand a, Operand b) {
         assemblies.add(new Instruction("sar", a, b));
+    }
+
+    void sete(Operand a) {
+        assemblies.add(new Instruction("sete", a));
+    }
+
+    void setg(Operand a) {
+        assemblies.add(new Instruction("setg", a));
+    }
+
+    void setge(Operand a) {
+        assemblies.add(new Instruction("setge", a));
+    }
+
+    void setl(Operand a) {
+        assemblies.add(new Instruction("setl", a));
+    }
+
+    void setle(Operand a) {
+        assemblies.add(new Instruction("setle", a));
+    }
+
+    void setne(Operand a) {
+        assemblies.add(new Instruction("setne", a));
+    }
+
+    void setz(Operand a) {
+        assemblies.add(new Instruction("setz", a));
     }
 
     void sub(Operand a, Operand b) {
@@ -154,11 +182,11 @@ public class AssemblyCode {
 
     void virtualPush(Register reg) { // push by move, not moving stack frame
         virtualStack.extend(STACK_WORD_SIZE);
-        mov(reg, virtualStack.top());
+        mov(virtualStack.top(), reg);
     }
 
     void virtualPop(Register reg) {
-        mov(virtualStack.top(), reg);
+        mov(reg, virtualStack.top());
         virtualStack.rewind(STACK_WORD_SIZE);
     }
 

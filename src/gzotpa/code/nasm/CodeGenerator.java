@@ -200,7 +200,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     
     private void rewindStack(AssemblyCode code, long len) {
         if (len > 0) {
-            code.add(new ImmediateValue(len), rsp());
+            code.add(rsp(), new ImmediateValue(len));
         }
     }
 
@@ -220,7 +220,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             break;
         case MOD:
             as.idiv(left, right);
-            as.mov(rdx(), left);
+            as.mov(left, rdx());
             break;
         case BIT_AND:
             as.and(left, right);
@@ -239,27 +239,27 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             break;
         case EQ:
             as.cmp(left, right);
-            as.mov(r4(), left);
+            as.sete(left);
             break;
         case NEQ:
             as.cmp(left, right);
-            as.mov(r5(), left);
+            as.setne(left);
             break;
         case GT:
             as.cmp(left, right);
-            as.mov(r15(), left);
+            as.setg(left);
             break;
         case GTEQ:
             as.cmp(left, right);
-            as.mov(r13(), left);
+            as.setge(left);
             break;
         case LT:
             as.cmp(left, right);
-            as.mov(r12(), left);
+            as.setl(left);
             break;
         case LTEQ:
             as.cmp(left, right);
-            as.mov(r14(), left);
+            as.setle(left);
             break;
         }
     }
@@ -274,7 +274,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             break;
         case NOT:
             as.test(reg, reg);
-            as.mov(r4(), reg);
+            as.setz(reg);
             as.movzx(reg, reg);
             break;
         }
@@ -282,10 +282,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private void loadAddress(Entity var, Register dest) {
         if (var.address() != null) {
-            as.mov(var.address(), dest);
+            as.mov(dest, var.address());
         }
         else {
-        	as.lea(var.memref(), dest);
+        	as.lea(dest, var.memref());
         }
     }
     
@@ -298,9 +298,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         visit(node.rhs());
         as.virtualPush(rax());
         visit(node.lhs());
-        as.mov(rax(), rcx());
+        as.mov(rcx(), rax());
         as.virtualPop(rax());
-        as.mov(rax(), mem(rcx()));
+        as.mov(mem(rcx()), rax());
         return null;
     }
 
@@ -362,7 +362,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(Mem node) {
         visit(node.expr());
-        as.mov(mem(rax()), rax());
+        as.mov(rax(), mem(rax()));
         return null;
     }
 
@@ -373,7 +373,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(Str node) {
-    	as.mov(node.imm(), rax());
+    	as.mov(rax(), node.imm());
         return null;
     }
 
@@ -385,7 +385,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(Var node) {
-        as.mov(node.memref(), rax());
+        as.mov(rax(), node.memref());
         return null;
     }
 }
