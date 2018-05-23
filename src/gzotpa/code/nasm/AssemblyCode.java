@@ -222,7 +222,7 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
 
     public void dump() {
         for (Assembly asm : assemblies) {
-            System.err.println(asm.dump());
+            System.err.println(asm.print());
         }
     }
 
