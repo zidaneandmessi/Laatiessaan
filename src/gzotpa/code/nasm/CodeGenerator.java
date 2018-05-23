@@ -143,6 +143,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         frame.tempSize = body.virtualStack.maxSize();
         fixLocalVariableOffsets(func.localVarScope(), frame.localVarOffset());
         fixTempVariableOffsets(body, frame.tempVarOffset());
+        code.label(new Label(func.name()));
         generateFunctionBody(code, body, frame);
     }
 
@@ -258,7 +259,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private AssemblyCode compileStmts(DefinedFunction func) {
         as = new AssemblyCode();
-        as.label(new Label(func.name()));
         epilogue = new Label("_end_" + func.name());
         for (DefinedVariable var : func.localVariables()) {
             visit(var.ir());
