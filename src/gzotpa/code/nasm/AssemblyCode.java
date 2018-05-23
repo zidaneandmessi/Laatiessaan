@@ -206,7 +206,7 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         }
     }
 
-    static final private long STACK_WORD_SIZE = 4;
+    static final private long STACK_WORD_SIZE = 8;
     static final private long INT_SIZE = 32;
     final VirtualStack virtualStack = new VirtualStack();
 
