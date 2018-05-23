@@ -19,10 +19,6 @@ public class LabelLiteral extends Literal {
     public boolean equals(LabelLiteral other) {
         return other.value.equals(this.value);
     }
-
-    public String toSource() {
-        return value;
-    }
     
     public String dump() {
         return "(LabelLiteral " + value + ")";

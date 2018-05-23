@@ -19,6 +19,8 @@ public class Label extends Assembly {
     public boolean isLabel() {
         return true;
     }
+    
+    public void statisticRegister(AssemblyCode as) {}
 
     public String dump() {
         return "(Label " + name + ")";

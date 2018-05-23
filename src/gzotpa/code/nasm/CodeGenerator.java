@@ -9,30 +9,39 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     public CodeGenerator() {}
     
     public AssemblyCode generate(IR ir) {
-        //locateSymbols(ir);
         return generateAssemblyCode(ir);
     }
-    
-    /*private void locateSymbols(IR ir) {
-        SymbolTable constSymbols = new SymbolTable(CONST_SYMBOL_BASE);
-        for (ConstantEntry ent : ir.constantTable().entries()) {
-            locateStringLiteral(ent, constSymbols);
-        }
-        for (Variable var : ir.allGlobalVariables()) {
-            locateGlobalVariable(var);
-        }
-        for (Function func : ir.allFunctions()) {
-            locateFunction(func);
-        }
-    }*/
 
     private AssemblyCode generateAssemblyCode(IR ir) {
         AssemblyCode code = new AssemblyCode();
+        for (DefinedVariable var : ir.defvars()) {
+            code.global(new Label(var.name())); 
+        }
         for (DefinedFunction func : ir.defuns()) {
             code.global(new Label(func.name())); 
         }
+        generateDataSection(code, ir.defvars());
         generateTextSection(code, ir.defuns());
         return code;
+    }
+
+    private void generateDataSection(AssemblyCode code, List<DefinedVariable> vars) {
+        code.section(".data");
+        for (DefinedVariable var : vars) {
+            code.label(new Label(var.name()));
+            if (var.hasInitializer()) {
+                generateImmediate(code, var.ir());
+            }
+        }
+    }
+
+    private void generateImmediate(AssemblyCode code, Expr node) {
+        if (node instanceof Int) {
+            code.dq(((Int)node).value());
+        }
+        else if (node instanceof Str) {
+            code.db(((Str)node).value());
+        }
     }
 
     private void generateTextSection(AssemblyCode code, List<DefinedFunction> funcs) {
@@ -124,8 +133,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
         public StackFrame() {}
         public long saveRegsSize() { return saveRegs.size() * STACK_WORD_SIZE; }
-        public long lvarOffset() { return saveRegsSize(); }
-        public long tempOffset() { return saveRegsSize() + localVarSize; }
+        public long localVarOffset() { return saveRegsSize(); }
+        public long tempVarOffset() { return saveRegsSize() + localVarSize; }
         public long frameSize() { return saveRegsSize() + localVarSize + tempSize; }
     }   
 
@@ -134,14 +143,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         locateParameters(func.parameters());
         frame.localVarSize = locateLocalVariables(func.localVarScope(), 0);
         AssemblyCode body = compileStmts(func);
-        for (Assembly as : body.assemblies()) {
-            code.addAssembly(as);
-        }
-        // frame.saveRegs = usedCalleeSaveRegisters(body);
-        // frame.tempSize = body.virtualStack.maxSize();
-        // fixLocalVariableOffsets(func.lvarScope(), frame.lvarOffset());
-        // fixTempVariableOffsets(body, frame.tempOffset());
-        // generateFunctionBody(code, body, frame);
+        frame.saveRegs = usedCalleeSaveRegisters(body);
+        frame.tempSize = body.virtualStack.maxSize();
+        fixLocalVariableOffsets(func.localVarScope(), frame.localVarOffset());
+        fixTempVariableOffsets(body, frame.tempVarOffset());
+        generateFunctionBody(code, body, frame);
     }
 
     static final private long PARAM_START_WORD = 2;
@@ -157,13 +163,80 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     static final RegisterClass[] CALLEE_SAVE_REGISTERS = {
         RegisterClass.RBP, RegisterClass.RBX, RegisterClass.R12, RegisterClass.R13, RegisterClass.R14, RegisterClass.R15
     };
+
+    private List<Register> calleeSaveRegistersCache = null;
+
+    private List<Register> calleeSaveRegisters() {
+        if (calleeSaveRegistersCache == null) {
+            List<Register> regs = new ArrayList<Register>();
+            for (RegisterClass c : CALLEE_SAVE_REGISTERS) {
+                regs.add(new Register(c, 32));
+            }
+            calleeSaveRegistersCache = regs;
+        }
+        return calleeSaveRegistersCache;
+    }
+
+    private List<Register> usedCalleeSaveRegisters(AssemblyCode body) {
+        List<Register> result = new ArrayList<Register>();
+        for (Register reg : calleeSaveRegisters()) {
+            if (body.usesRegister(reg)) {
+                result.add(reg);
+            }
+        }
+        result.remove(rbp());
+        return result;
+    }
+
+    private void fixLocalVariableOffsets(LocalScope scope, long len) {
+        for (DefinedVariable var : scope.localVariables()) {
+            var.memref().fixOffset(-len);
+        }
+    }
+
+    private void fixTempVariableOffsets(AssemblyCode as, long len) {
+        as.virtualStack.fixOffset(-len);
+    }
+
+    private void generateFunctionBody(AssemblyCode as, AssemblyCode body, StackFrame frame) {
+        as.virtualStack.reset();
+        prologue(as, frame.saveRegs, frame.frameSize());
+        as.addAll(body.assemblies());
+        epilogue(as, frame.saveRegs);
+        as.virtualStack.fixOffset(0);
+    }
     
+    private void prologue(AssemblyCode as, List<Register> saveRegs, long frameSize) {
+        as.push(rbp());
+        as.mov(rbp(), rsp());
+        for (Register reg : saveRegs) {
+            as.virtualPush(reg);
+        }
+        extendStack(as, frameSize);
+    }
+
+    private void epilogue(AssemblyCode as, List<Register> savedRegs) {
+        Collections.reverse(savedRegs);
+        for (Register reg : savedRegs) {
+            as.virtualPop(reg);
+        }
+        as.mov(rsp(), rbp());
+        as.pop(rbp());
+        as.ret();
+    }
+
     private MemoryReference mem(Register reg) {
         return mem(0, reg);
     }
 
     private MemoryReference mem(long offset, Register reg) {
         return new MemoryReference(offset, reg);
+    }
+
+    private void extendStack(AssemblyCode as, long len) {
+        if (len > 0) {
+            as.sub(rsp(), new ImmediateValue(len));
+        }
     }
 
     static public long alignStack(long n, long alignment) {
@@ -173,7 +246,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private long locateLocalVariables(LocalScope scope, long parentStackSize) {
         long size = parentStackSize;
         for (DefinedVariable var : scope.localVariables()) {
-            size = alignStack(size + var.allocSize(), STACK_WORD_SIZE);
+            size = alignStack(size + var.allocSize() / 8, STACK_WORD_SIZE);
             var.setMemref(new MemoryReference(-size, rbp(), false)); //offset value changeable
         }
         long maxSize = size;

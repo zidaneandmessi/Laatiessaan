@@ -3,10 +3,11 @@ import gzotpa.asm.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class AssemblyCode {
-    private List<Assembly> assemblies = new ArrayList<Assembly>();
+public class AssemblyCode extends gzotpa.asm.AssemblyCode {
 
-    public AssemblyCode() {}
+    public AssemblyCode() {
+        assemblies = new ArrayList<Assembly>();
+    }
 
     public List<Assembly> assemblies() {
         return assemblies;
@@ -14,6 +15,13 @@ public class AssemblyCode {
 
     void addAssembly(Assembly as) {
         assemblies.add(as);
+        as.statisticRegister(this);
+    }
+
+    void addAll(List<Assembly> ass) {
+        assemblies.addAll(ass);
+        for (Assembly as : ass)
+            as.statisticRegister(this);
     }
 
     void add(Operand a, Operand b) {
@@ -30,6 +38,14 @@ public class AssemblyCode {
 
     void cmp(Operand a, Operand b) {
         assemblies.add(new Instruction("cmp", a, b));
+    }
+
+    void db(String s) {
+        assemblies.add(new Instruction("db", new ImmediateValue(s)));
+    }
+
+    void dq(long n) {
+        assemblies.add(new Instruction("dq", new ImmediateValue(n)));
     }
 
     void global(Label label) {
@@ -86,6 +102,10 @@ public class AssemblyCode {
 
     void push(Register reg) {
         assemblies.add(new Instruction("push", reg));
+    }
+
+    void pop(Register reg) {
+        assemblies.add(new Instruction("pop", reg));
     }
 
     void ret() {
@@ -150,6 +170,10 @@ public class AssemblyCode {
         private List<MemoryReference> memrefs;
 
         VirtualStack() {
+            reset();
+        }
+
+        void reset() {
             size = 0;
             maxSize = 0;
             if (memrefs == null) memrefs = new ArrayList<MemoryReference>();
@@ -167,6 +191,12 @@ public class AssemblyCode {
 
         void rewind(long len) {
             size -= len;
+        }
+
+        void fixOffset(long diff) {
+            for (MemoryReference mem : memrefs) {
+                mem.fixOffset(diff);
+            }
         }
 
         MemoryReference top() {

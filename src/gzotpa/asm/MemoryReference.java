@@ -53,6 +53,8 @@ public class MemoryReference extends Operand {
             return "[" + base.print() + "+" + offset.print() + "]";
         else if (base != null && offset != null && offset.value() < 0)
             return "[" + base.print() + "-" + (-offset.value()) + "]";
+        else if (base != null && offset != null && offset.value() == 0)
+            return "[" + base.print() + "]";
         else if (offset != null)
             return "[" + offset.print() + "]";
         else

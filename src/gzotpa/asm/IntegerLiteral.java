@@ -20,10 +20,7 @@ public class IntegerLiteral extends Literal {
         return other.value == this.value;
     }
 
-
-    public String toSource() {
-        return new Long(value).toString();
-    }
+    public void statisticRegister(AssemblyCode as) {}
     
     public String dump() {
         return "(IntegerLiteral " + new Long(value).toString() + ")";

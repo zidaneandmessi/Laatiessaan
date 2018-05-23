@@ -45,8 +45,15 @@ public class Instruction extends Assembly {
         return "#<Insn " + name + ">";
     }
 
+    public void statisticRegister(AssemblyCode as) {
+        for (int i = 0; i < operands.length; i++) {
+        	if (operands[i] instanceof Register)
+        		((Register)operands[i]).statisticRegister(as);
+        }
+    }
+
     public String dump() {
-        StringBuilder buf = new StringBuilder();
+        StringBuffer buf = new StringBuffer();
         buf.append("(Instruction ");
         buf.append(name);
         for (Operand oper : operands) {
@@ -57,8 +64,10 @@ public class Instruction extends Assembly {
     }
 
     public String print() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("\t" + name + "\t");
+        StringBuffer buf = new StringBuffer();
+        if (!name.equals("global") && !name.equals("section"))
+            buf.append("\t");
+        buf.append(name + "\t");
         int cnt = 0;
         for (Operand oper : operands) {
             if (cnt == 0)
