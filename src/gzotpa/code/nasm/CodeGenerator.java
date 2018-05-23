@@ -46,7 +46,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             compileFunctionBody(code, func);
     }
 
-    static final private long STACK_WORD_SIZE = 4;
+    static final private long STACK_WORD_SIZE = 8;
     static final private long INT_SIZE = 32;
 
     private Register r0() {
@@ -167,7 +167,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         if (calleeSaveRegistersCache == null) {
             List<Register> regs = new ArrayList<Register>();
             for (RegisterClass c : CALLEE_SAVE_REGISTERS) {
-                regs.add(new Register(c, 32));
+                regs.add(new Register(c, 64));
             }
             calleeSaveRegistersCache = regs;
         }
