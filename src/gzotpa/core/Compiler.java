@@ -44,10 +44,10 @@ public class Compiler {
         boolean failed = false;
         for (SourceFile src : opts.sourceFiles()) {
             if (isValidSyntax(src.path(), opts)) {
-                System.out.println(src.path() + ": Syntax OK");
+                System.err.println(src.path() + ": Syntax OK");
             }
             else {
-                System.out.println(src.path() + ": Syntax Error");
+                System.err.println(src.path() + ": Syntax Error");
                 failed = true;
             }
         }
@@ -58,10 +58,10 @@ public class Compiler {
         boolean failed = false;
         for (SourceFile src : opts.sourceFiles()) {
             if (isValidSemantic(src.path(), opts)) {
-                System.out.println(src.path() + ": Semantic OK");
+                System.err.println(src.path() + ": Semantic OK");
             }
             else {
-                System.out.println(src.path() + ": Semantic Error");
+                System.err.println(src.path() + ": Semantic Error");
                 failed = true;
             }
         }
@@ -72,10 +72,10 @@ public class Compiler {
         boolean failed = false;
         for (SourceFile src : opts.sourceFiles()) {
             if (tryGenerateIR(src.path(), opts)) {
-                System.out.println(src.path() + ": Generate IR OK");
+                System.err.println(src.path() + ": Generate IR OK");
             }
             else {
-                System.out.println(src.path() + ": Generate IR Error");
+                System.err.println(src.path() + ": Generate IR Error");
                 failed = true;
             }
         }
@@ -86,10 +86,10 @@ public class Compiler {
         boolean failed = false;
         for (SourceFile src : opts.sourceFiles()) {
             if (tryAssemble(src.path(), opts)) {
-                System.out.println(src.path() + ": Assemble OK");
+                System.err.println(src.path() + ": Assemble OK");
             }
             else {
-                System.out.println(src.path() + ": Assemble Error");
+                System.err.println(src.path() + ": Assemble Error");
                 failed = true;
             }
         }
@@ -181,7 +181,7 @@ public class Compiler {
             new DereferenceChecker(types).check(ast);
             new TypeChecker(types).check(ast);
             IR ir = new IRGenerator(types).generate(ast);
-            AssemblyCode code = new CodeGenerator().generate(ir);
+            AssemblyCode code = new CodeGenerator().generateAssemblyCode(ir);
             code.dump();
             code.print();
             return true;

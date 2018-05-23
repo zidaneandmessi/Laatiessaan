@@ -10,7 +10,7 @@ public class Dumper {
     PrintStream stream;
     private int numIndent;
 
-    Dumper(PrintStream s) {
+    public Dumper(PrintStream s) {
         stream = s;
         numIndent = 0;
     }

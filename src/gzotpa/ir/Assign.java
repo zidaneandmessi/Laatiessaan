@@ -10,6 +10,12 @@ public class Assign extends Stmt {
         this.rhs = rhs;
     }
 
+    public Assign(Expr lhs, Expr rhs) {
+        super(null);
+        this.lhs = lhs;
+        this.rhs = rhs;
+    }
+
     public Expr lhs() {
         return lhs;
     }

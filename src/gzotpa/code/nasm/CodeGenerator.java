@@ -7,12 +7,8 @@ import java.util.*;
 
 public class CodeGenerator implements IRVisitor<Void,Void> {
     public CodeGenerator() {}
-    
-    public AssemblyCode generate(IR ir) {
-        return generateAssemblyCode(ir);
-    }
 
-    private AssemblyCode generateAssemblyCode(IR ir) {
+    public AssemblyCode generateAssemblyCode(IR ir) {
         AssemblyCode code = new AssemblyCode();
         for (DefinedVariable var : ir.defvars()) {
             code.global(new Label(var.name())); 
@@ -264,6 +260,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         as = new AssemblyCode();
         as.label(new Label(func.name()));
         epilogue = new Label("_end_" + func.name());
+        for (DefinedVariable var : func.localVariables()) {
+            if (var.ir() != null)
+                var.ir().accept(this);
+        }
         for (Stmt stmt : func.ir()) {
             stmt.accept(this);
         }
