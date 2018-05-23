@@ -261,8 +261,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         as.label(new Label(func.name()));
         epilogue = new Label("_end_" + func.name());
         for (DefinedVariable var : func.localVariables()) {
-            if (var.ir() != null)
-                var.ir().accept(this);
+            visit(var.ir());
+            as.virtualPush(rax());
+            loadAddress(var, rax());
+            as.mov(rcx(), rax());
+            as.virtualPop(rax());
+            as.mov(mem(rcx()), rax());
         }
         for (Stmt stmt : func.ir()) {
             stmt.accept(this);
