@@ -7,6 +7,7 @@ import gzotpa.type.Type;
 public class DefinedVariable extends Variable {
     protected ExprNode initializer;
     protected Expr ir;
+    protected boolean isInitialized;
 
     public DefinedVariable(TypeNode type, String name) {
         super(type, name);
@@ -32,6 +33,10 @@ public class DefinedVariable extends Variable {
     
     public void setInitializer(ExprNode expr) {
         this.initializer = expr;
+    }
+
+    public void deletInitializer() {
+        this.initializer = null;
     }
 
     public Expr ir() {

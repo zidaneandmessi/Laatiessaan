@@ -7,6 +7,11 @@ public class ExprStmtNode extends StmtNode {
         super(loc);
         this.expr = expr;
     }
+
+    public ExprStmtNode(ExprNode expr) {
+        super(null);
+        this.expr = expr;
+    }
     
     public ExprNode expr() {
         return expr;

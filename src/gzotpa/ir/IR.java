@@ -30,15 +30,6 @@ public class IR {
         return scope;
     }
 
-    private void initVariables() {
-        gvars = new ArrayList<DefinedVariable>();
-        comms = new ArrayList<DefinedVariable>();
-        for (DefinedVariable var : scope.definedGlobalScopeVariables()) {
-            if (var.hasInitializer()) gvars.add(var);
-            else comms.add(var);
-        }
-    }
-
     public void dump() {
         Dumper d = new Dumper(System.err);
         d.printClass(this);

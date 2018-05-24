@@ -203,7 +203,16 @@ BlockNode block():
 }
 {
     t="{" (	LOOKAHEAD(defvar())
-    		var=defvar() { vars.add(var); order.add(true); } // true: var
+    		var=defvar() { if (var.hasInitializer()) {
+                                ExprStmtNode tmp = new ExprStmtNode(new AssignNode(new VariableNode(var), var.initializer()));
+                                var.deletInitializer();
+                                vars.add(var); order.add(true); 
+                                stmts.add(tmp); order.add(false);
+                            }
+                            else {
+                                vars.add(var); order.add(true); 
+                            }
+                         } // true: var
     	 |	stmt=stmt()  { stmts.add(stmt); order.add(false); } // false: stmt
      	  )*
       "}"
