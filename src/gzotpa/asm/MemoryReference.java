@@ -47,7 +47,7 @@ public class MemoryReference extends Operand {
     
     public String print() {
         if (!fixed) {
-            //throw new Error("Gzotpa! must not happen: writing unfixed variable");
+            throw new Error("Gzotpa! must not happen: writing unfixed variable");
         }
         if (base != null && offset != null && offset.value() > 0)
             return "[" + base.print() + "+" + offset.print() + "]";
