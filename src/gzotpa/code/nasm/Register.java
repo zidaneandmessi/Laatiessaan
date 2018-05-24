@@ -32,10 +32,10 @@ class Register extends gzotpa.asm.Register {
     }
 
     public String dump() {
-        return "(Register " + _class.toString() + ")";
+        return "(Register " + _class.transFormat(size) + ")";
     }
 
     public String print() {
-        return _class.toString().toLowerCase();
+        return _class.transFormat(size).toLowerCase();
     }
 }

@@ -200,14 +200,13 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         }
 
         MemoryReference top() {
-            MemoryReference mem = new MemoryReference(-size, new Register(RegisterClass.RBP, INT_SIZE), false);
+            MemoryReference mem = new MemoryReference(-size, new Register(RegisterClass.RBP, 64), false);
             memrefs.add(mem);
             return mem;
         }
     }
 
     static final private long STACK_WORD_SIZE = 8;
-    static final private long INT_SIZE = 32;
     final VirtualStack virtualStack = new VirtualStack();
 
     void virtualPush(Register reg) { // push by move, not moving stack frame
