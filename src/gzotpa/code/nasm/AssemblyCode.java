@@ -186,7 +186,7 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
 
         void extend(long len) {
             size += len;
-            maxSize = Math.max(size, maxSize);
+            maxSize = Math.max(maxSize, size);
         }
 
         void rewind(long len) {

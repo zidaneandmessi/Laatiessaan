@@ -33,7 +33,7 @@ public class MemoryReference extends Operand {
 
     public void fixOffset(long diff) {
         if (fixed) {
-            throw new Error("Gzotpa! Indirect memory reference already fixed!");
+            throw new Error("Gzotpa! Memory reference already fixed!");
         }
         this.offset = new IntegerLiteral(((IntegerLiteral)offset).value + diff);
         this.fixed = true;

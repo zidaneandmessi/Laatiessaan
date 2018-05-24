@@ -210,6 +210,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private void fixLocalVariableOffsets(LocalScope scope, long len) {
         for (DefinedVariable var : scope.localVariables()) {
+            if (var instanceof Parameter) continue;
             var.memref().fixOffset(-len);
         }
     }
@@ -253,9 +254,15 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         return new MemoryReference(offset, reg);
     }
 
-    private void extendStack(AssemblyCode as, long len) {
+    private void extendStack(AssemblyCode code, long len) {
         if (len > 0) {
-            as.sub(rsp(), new ImmediateValue(len));
+            code.sub(rsp(), new ImmediateValue(len));
+        }
+    }
+    
+    private void rewindStack(AssemblyCode code, long len) {
+        if (len > 0) {
+            code.add(rsp(), new ImmediateValue(len));
         }
     }
 
@@ -266,6 +273,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private long locateLocalVariables(LocalScope scope, long parentStackSize) {
         long size = parentStackSize;
         for (DefinedVariable var : scope.localVariables()) {
+            if (var instanceof Parameter) continue;
             size = alignStack(size + var.allocSize() / 8, STACK_WORD_SIZE);
             var.setMemref(new MemoryReference(-size, rbp(), false)); //offset value changeable
         }
@@ -288,12 +296,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         }
         as.label(epilogue);
         return as;
-    }
-    
-    private void rewindStack(AssemblyCode code, long len) {
-        if (len > 0) {
-            code.add(rsp(), new ImmediateValue(len));
-        }
     }
 
     private void compileBinaryOp(Op op, Register left, Operand right) {
@@ -324,34 +326,40 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.xor(left, right);
             break;
         case BIT_LSHIFT:
-            as.sal(left, right);
+            as.sal(left, rcx(8));
             break;
         case ARITH_RSHIFT:
-            as.sar(left, right);
+            as.sar(left, rcx(8));
             break;
         case EQ:
             as.cmp(left, right);
             as.sete(rax(8));
+            as.movzx(left, rax(8));
             break;
         case NEQ:
             as.cmp(left, right);
             as.setne(rax(8));
+            as.movzx(left, rax(8));
             break;
         case GT:
             as.cmp(left, right);
             as.setg(rax(8));
+            as.movzx(left, rax(8));
             break;
         case GTEQ:
             as.cmp(left, right);
             as.setge(rax(8));
+            as.movzx(left, rax(8));
             break;
         case LT:
             as.cmp(left, right);
             as.setl(rax(8));
+            as.movzx(left, rax(8));
             break;
         case LTEQ:
             as.cmp(left, right);
             as.setle(rax(8));
+            as.movzx(left, rax(8));
             break;
         }
     }
@@ -366,7 +374,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             break;
         case NOT:
             as.test(reg, reg);
-            as.setz(reg);
+            as.setz(rax(8));
             as.movzx(reg, reg);
             break;
         }
