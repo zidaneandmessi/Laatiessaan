@@ -40,6 +40,10 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         assemblies.add(new Instruction("cmp", a, b));
     }
 
+    void cwd() {
+        assemblies.add(new Instruction("cwd"));
+    }
+
     void db(String s) {
         assemblies.add(new Instruction("db", new ImmediateValue(s)));
     }
@@ -56,8 +60,8 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         assemblies.add(new Instruction("imul", a, b));
     }
 
-    void idiv(Operand a, Operand b) {
-        assemblies.add(new Instruction("idiv", a, b));
+    void idiv(Operand a) {
+        assemblies.add(new Instruction("idiv", a));
     }
 
     void jmp(Label label) {

@@ -310,10 +310,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.imul(left, right);
             break;
         case DIV:
-            as.idiv(left, right);
+            as.cwd();
+            as.idiv(rcx());
             break;
         case MOD:
-            as.idiv(left, right);
+            as.cwd();
+            as.idiv(rcx());
             as.mov(left, rdx());
             break;
         case BIT_AND:
@@ -374,8 +376,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             break;
         case NOT:
             as.test(reg, reg);
-            as.setz(rax(8));
-            as.movzx(reg, reg);
+            as.sete(rax(8));
+            as.movzx(reg, rax(8));
             break;
         }
     }
