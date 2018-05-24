@@ -283,15 +283,14 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private AssemblyCode compileStmts(DefinedFunction func) {
         as = new AssemblyCode();
         epilogue = new Label("_end_" + func.name());
-        for (DefinedVariable var : func.localVariables()) 
-            if (var.ir() != null) {
-                visit(var.ir());
-                as.virtualPush(rax());
-                loadAddress(var, rax());
-                as.mov(rcx(), rax());
-                as.virtualPop(rax());
-                as.mov(mem(rcx()), rax());
-            }
+        for (DefinedVariable var : func.localVariables()) {
+            visit(var.ir());
+            as.virtualPush(rax());
+            loadAddress(var, rax());
+            as.mov(rcx(), rax());
+            as.virtualPop(rax());
+            as.mov(mem(rcx()), rax());
+        }
         for (Stmt stmt : func.ir()) {
             stmt.accept(this);
         }
