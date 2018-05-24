@@ -171,7 +171,7 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
     class VirtualStack {
         private long size;
         private long maxSize;
-        private List<MemoryReference> memrefs;
+        private List<IndirectMemoryReference> memrefs;
 
         VirtualStack() {
             reset();
@@ -180,7 +180,7 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         void reset() {
             size = 0;
             maxSize = 0;
-            if (memrefs == null) memrefs = new ArrayList<MemoryReference>();
+            if (memrefs == null) memrefs = new ArrayList<IndirectMemoryReference>();
             else memrefs.clear();
         }
 
@@ -198,13 +198,13 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         }
 
         void fixOffset(long diff) {
-            for (MemoryReference mem : memrefs) {
+            for (IndirectMemoryReference mem : memrefs) {
                 mem.fixOffset(diff);
             }
         }
 
-        MemoryReference top() {
-            MemoryReference mem = new MemoryReference(-size, new Register(RegisterClass.RBP, 64), false);
+        IndirectMemoryReference top() {
+            IndirectMemoryReference mem = new IndirectMemoryReference(-size, new Register(RegisterClass.RBP, 64), false);
             memrefs.add(mem);
             return mem;
         }

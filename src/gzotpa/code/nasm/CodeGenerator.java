@@ -17,6 +17,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             code.global(new Label(func.name())); 
         }
         generateDataSection(code, ir.defvars());
+        locateGlobalVariables(ir.defvars());
         generateTextSection(code, ir.defuns());
         return code;
     }
@@ -24,8 +25,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void generateDataSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".data");
         for (DefinedVariable var : vars) {
-            code.label(new Label(var.name()));
             if (var.hasInitializer()) {
+                code.label(new Label(var.name()));
                 generateImmediate(code, var.ir());
             }
         }
@@ -172,6 +173,14 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     static final private long PARAM_START_WORD = 2;
 
+    private void locateGlobalVariables(List<DefinedVariable> vars) {
+        for (DefinedVariable var : vars) {
+            DirectMemoryReference addr = new DirectMemoryReference(new LabelLiteral(new Label(var.name())));
+            var.setMemref(addr);
+            var.setAddress(addr);
+        }
+    }
+
     private void locateParameters(List<Parameter> params) {
         long numWords = PARAM_START_WORD;
         for (Parameter param : params) {
@@ -246,12 +255,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         as.ret();
     }
 
-    private MemoryReference mem(Register reg) {
+    private IndirectMemoryReference mem(Register reg) {
         return mem(0, reg);
     }
 
-    private MemoryReference mem(long offset, Register reg) {
-        return new MemoryReference(offset, reg);
+    private IndirectMemoryReference mem(long offset, Register reg) {
+        return new IndirectMemoryReference(offset, reg);
     }
 
     private void extendStack(AssemblyCode code, long len) {
@@ -275,7 +284,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         for (DefinedVariable var : scope.localVariables()) {
             if (var instanceof Parameter) continue;
             size = alignStack(size + var.allocSize() / 8, STACK_WORD_SIZE);
-            var.setMemref(new MemoryReference(-size, rbp(), false)); //offset value changeable
+            var.setMemref(new IndirectMemoryReference(-size, rbp(), false)); //offset value changeable
         }
         long maxSize = size;
         for (LocalScope s : scope.children()) {
