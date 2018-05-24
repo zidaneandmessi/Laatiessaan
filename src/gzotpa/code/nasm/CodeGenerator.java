@@ -170,7 +170,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         generateFunctionBody(code, body, frame);
     }
 
-    static final private long PARAM_START_WORD = 0;
+    static final private long PARAM_START_WORD = 1;
 
     private void locateParameters(List<Parameter> params) {
         long numWords = PARAM_START_WORD;
