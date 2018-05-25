@@ -25,19 +25,19 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void generateDataSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".data");
         for (DefinedVariable var : vars) {
-            if (var.hasInitializer()) {
-                code.label(new Label(var.name()));
-                generateImmediate(code, var.ir());
-            }
+            code.label(new Label(var.name()));
+            generateImmediate(code, var.ir());
         }
     }
 
     private void generateImmediate(AssemblyCode code, Expr node) {
         if (node instanceof Int) {
-            code.dq(((Int)node).value());
+            if (node == null) code.dq(0);
+            else code.dq(((Int)node).value());
         }
         else if (node instanceof Str) {
-            code.db(((Str)node).value());
+            if (node == null) code.db("\0");
+            else code.db(((Str)node).value());
         }
     }
 
@@ -175,9 +175,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private void locateGlobalVariables(List<DefinedVariable> vars) {
         for (DefinedVariable var : vars) {
-            DirectMemoryReference addr = new DirectMemoryReference(new LabelLiteral(new Label(var.name())));
-            var.setMemref(addr);
-            var.setAddress(addr);
+            var.setMemref(new DirectMemoryReference(new LabelLiteral(new Label(var.name()))));
+            var.setAddress(new ImmediateValue(new LabelLiteral(new Label(var.name()))));
         }
     }
 

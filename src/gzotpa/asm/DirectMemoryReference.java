@@ -20,6 +20,6 @@ public class DirectMemoryReference extends MemoryReference {
     }
 
     public String print() {
-        return "[rel " + name.print() + "]";
+        return "[" + name.print() + "]";
     }
 }
