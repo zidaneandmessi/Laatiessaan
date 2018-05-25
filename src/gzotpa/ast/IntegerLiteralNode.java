@@ -9,6 +9,11 @@ public class IntegerLiteralNode extends LiteralNode {
         this.value = value;
     }
 
+    public IntegerLiteralNode(TypeRef ref, long value) {
+        super(null, ref);
+        this.value = value;
+    }
+    
     public long value() {
         return value;
     }

@@ -29,7 +29,7 @@ public class FunctionTypeRef extends TypeRef {
     public String toString() {
         StringBuffer buf = new StringBuffer();
         buf.append(returnType.toString());
-        buf.append(" (");
+        buf.append("(");
         String sep = "";
         for (TypeRef ref : this.params.typerefs()) {
             buf.append(sep);

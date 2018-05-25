@@ -13,6 +13,7 @@ public interface IRVisitor<S,E> {
     public E visit(Call x);
     public E visit(Int x);
     public E visit(Mem x);
+    public E visit(New x);
     public E visit(Str x);
     public E visit(Var x);
     public E visit(Uni x);

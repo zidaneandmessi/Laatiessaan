@@ -1,21 +1,25 @@
 package gzotpa.type;
+import gzotpa.ast.*;
 
 public class ArrayType extends Type {
     protected Type baseType;
     protected long length;
     protected long pointerSize;
+    private ExprNode exprLen;
     static final protected long undefined = -1;
 
     public ArrayType(Type baseType, long length, long pointerSize) {
         this.baseType = baseType;
         this.length = length;
         this.pointerSize = pointerSize;
+        this.exprLen = null;
     }
 
     public ArrayType(Type baseType, long pointerSize) {
         this.baseType = baseType;
         this.length = undefined;
         this.pointerSize = pointerSize;
+        this.exprLen = null;
     }
 
     public Type baseType() {
@@ -26,12 +30,19 @@ public class ArrayType extends Type {
         return length;
     }
 
+    public ExprNode exprLen() {
+        return exprLen;
+    }
+
+    public void setExprLen(ExprNode exprLen) {
+        this.exprLen = exprLen;
+    }
+
     public boolean isPointer() { return true; }
     public boolean isAllocatedArray() {
         return length != undefined &&
             (!baseType.isArray() || baseType.isAllocatedArray());
     }
-
     public boolean isIncompleteArray() {
         if (!baseType.isArray()) return false;
         return !baseType.isAllocatedArray();
@@ -66,8 +77,28 @@ public class ArrayType extends Type {
     }
 
     public long allocSize() {
-        if (length == undefined) return size();
+        if (length == undefined) return pointerSize;
         else return baseType.allocSize() * length;
+    }
+
+    public ExprNode exprAllocSize() {
+        if (exprLen == null) {
+            return new IntegerLiteralNode(IntegerTypeRef.intRef(), pointerSize);
+        }
+        else {
+            if (baseType instanceof ArrayType) {
+                return new BinaryOpNode(
+                                        ((ArrayType)baseType).exprAllocSize(),
+                                         "*",
+                                         exprLen);
+            }
+            else {
+                return new BinaryOpNode(new IntegerType(32, "int"),
+                                        new IntegerLiteralNode(IntegerTypeRef.intRef(), baseType.allocSize()),
+                                        "*",
+                                        exprLen);
+            }
+        }
     }
 
     public boolean equals(Object other) {

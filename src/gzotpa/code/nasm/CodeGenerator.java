@@ -16,6 +16,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         for (DefinedFunction func : ir.defuns()) {
             code.global(new Label(func.name())); 
         }
+        code.extern(new Label("puts"));
         generateDataSection(code, ir.defvars());
         locateGlobalVariables(ir.defvars());
         generateTextSection(code, ir.defuns());
@@ -425,14 +426,24 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(Call node) {
-        List<Expr> argList = node.args();
-        Collections.reverse(argList);
-        for (Expr arg : argList) {
-            visit(arg);
-            as.push(rax());
+        String name = node.function().name();
+        if (name.equals("print")) {
+            Var var = (Var)node.args().get(0);
+            loadAddress(var.entity(), rax());
+            as.mov(rdi(), rax());
+            as.call("puts");
         }
-        as.call(node.function().name());
-        rewindStack(as, node.numArgs() * STACK_WORD_SIZE);
+        else
+        {
+            List<Expr> argList = node.args();
+            Collections.reverse(argList);
+            for (Expr arg : argList) {
+                visit(arg);
+                as.push(rax());
+            }
+            as.call(name);
+            rewindStack(as, node.numArgs() * STACK_WORD_SIZE);
+        }
         return null;
     }
 
@@ -473,6 +484,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     public Void visit(Mem node) {
         visit(node.expr());
         as.mov(rax(), mem(rax()));
+        return null;
+    }
+
+    public Void visit(New node) {
         return null;
     }
 

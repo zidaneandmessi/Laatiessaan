@@ -1,5 +1,6 @@
 package gzotpa.ast;
 import gzotpa.type.Type;
+import gzotpa.type.TypeRef;
 
 public class NewTypeNode extends ExprNode {
     TypeNode type;
@@ -10,6 +11,10 @@ public class NewTypeNode extends ExprNode {
 
     public TypeNode typeNode() {
         return type;
+    }
+
+    public TypeRef typeRef() {
+        return type.typeRef();
     }
 
     public Type type() {

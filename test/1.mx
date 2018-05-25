@@ -1,8 +1,4 @@
-int x=0;
-int y=0;
+string s = "gzotpa";
 int main() {
-    x = 10;
-    y = 20;
-    int c = x+y;
-    return c;
+    print(s);
 }

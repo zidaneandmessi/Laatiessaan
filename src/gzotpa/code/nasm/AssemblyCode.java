@@ -52,6 +52,10 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         assemblies.add(new Instruction("dq", new ImmediateValue(n)));
     }
 
+    void extern(Label label) {
+        assemblies.add(new Instruction("extern", label));
+    }
+
     void global(Label label) {
         assemblies.add(new Instruction("global", label));
     }

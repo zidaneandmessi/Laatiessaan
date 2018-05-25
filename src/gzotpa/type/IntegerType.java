@@ -12,10 +12,6 @@ public class IntegerType extends Type {
         this.isBool = false;
     }
 
-    public long size() {
-        return size;
-    }
-
     public IntegerType(long size, String name, boolean isBool) {
         super();
         this.size = size;
@@ -23,12 +19,16 @@ public class IntegerType extends Type {
         this.isBool = isBool;
     }
 
-    public boolean isInteger() {
-        return true;
+    public long size() {
+        return size;
     }
 
     public boolean isBool() {
         return isBool;
+    }
+
+    public boolean isInteger() {
+        return true;
     }
 
     public boolean isType(Type type) {

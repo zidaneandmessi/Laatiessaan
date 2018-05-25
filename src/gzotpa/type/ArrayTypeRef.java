@@ -24,6 +24,7 @@ public class ArrayTypeRef extends TypeRef {
         super(baseType.location());
         this.baseType = baseType;
         this.exprLen = expr;
+        this.length = undefined;
     }
 
     public boolean isArray() {

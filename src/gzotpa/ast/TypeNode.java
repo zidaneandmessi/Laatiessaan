@@ -36,7 +36,7 @@ public class TypeNode extends Node {
 
     public Type type() {
         if (type == null) {
-            throw new Error("Gzotpa! Null type! TypeRef = "+typeRef);
+            throw new Error("Gzotpa! Null type! TypeRef = " + typeRef);
         }
         return type;
     }
