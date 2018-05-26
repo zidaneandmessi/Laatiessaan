@@ -182,6 +182,7 @@ public class Compiler {
             new TypeChecker(types).check(ast);
             IR ir = new IRGenerator(types).generate(ast);
             AssemblyCode code = new CodeGenerator().generateAssemblyCode(ir);
+            code.dump();
             code.print();
             return true;
         }

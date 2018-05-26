@@ -427,7 +427,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(Call node) {
         String name = node.function().name();
-        if (name.equals("print")) {
+        if (name.equals("println")) {
             Var var = (Var)node.args().get(0);
             loadAddress(var.entity(), rax());
             as.mov(rdi(), rax());
