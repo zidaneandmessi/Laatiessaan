@@ -16,6 +16,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         for (DefinedFunction func : ir.defuns()) {
             code.global(new Label(func.name())); 
         }
+        code.extern(new Label("printf"));
         code.extern(new Label("puts"));
         generateDataSection(code, ir.defvars());
         locateGlobalVariables(ir.defvars());
@@ -427,7 +428,13 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(Call node) {
         String name = node.function().name();
-        if (name.equals("println")) {
+        if (name.equals("print")) {
+            Var var = (Var)node.args().get(0);
+            loadAddress(var.entity(), rdi());
+            as.mov(rax(), new ImmediateValue(0));
+            as.call("printf");
+        }
+        else if (name.equals("println")) {
             Var var = (Var)node.args().get(0);
             loadAddress(var.entity(), rax());
             as.mov(rdi(), rax());
