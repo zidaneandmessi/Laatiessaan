@@ -1,4 +1,6 @@
-string s = "gzotpa";
+int[] x;
 int main() {
-    print(s);
+    x = new int[5];
+    x[1] = 2;
+    int y = x[1];
 }

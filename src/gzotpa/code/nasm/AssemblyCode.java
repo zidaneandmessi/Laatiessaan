@@ -92,6 +92,10 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         assemblies.add(new Instruction("mov", dest, src));
     }
 
+    void mov(Operand dest, Label l) {
+        assemblies.add(new Instruction("mov", dest, l));
+    }
+
     void movzx(Operand dest, Operand src) {
         assemblies.add(new Instruction("movzx", dest, src));
     }

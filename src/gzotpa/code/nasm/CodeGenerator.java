@@ -16,8 +16,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         for (DefinedFunction func : ir.defuns()) {
             code.global(new Label(func.name())); 
         }
+        code.extern(new Label("malloc"));
         code.extern(new Label("printf"));
         code.extern(new Label("puts"));
+        code.extern(new Label("sprintf"));
+        code.label(new Label("_int_format"));
+        code.addAssembly(new Instruction("db \"%d\", 0, 0"));
         generateDataSection(code, ir.defvars());
         locateGlobalVariables(ir.defvars());
         generateTextSection(code, ir.defuns());
@@ -431,7 +435,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         if (name.equals("print")) {
             Var var = (Var)node.args().get(0);
             loadAddress(var.entity(), rdi());
-            as.mov(rax(), new ImmediateValue(0));
+            as.xor(rax(), rax());
             as.call("printf");
         }
         else if (name.equals("println")) {
@@ -439,6 +443,16 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             loadAddress(var.entity(), rax());
             as.mov(rdi(), rax());
             as.call("puts");
+        }
+        else if (name.equals("toString")) {
+            Var var = (Var)node.args().get(0);
+            as.push(rax());
+            as.mov(rdi(), rsp());
+            as.pop(rax());
+            as.mov(rsi(), new Label("_int_format"));
+            as.mov(rdx(), var.memref());
+            as.xor(rax(), rax());
+            as.call("sprintf");
         }
         else
         {
@@ -495,6 +509,14 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(New node) {
+        if (node.sizeKnown()) {
+            as.mov(rdi(), new ImmediateValue(5));
+        }
+        else {
+            visit(node.exprLen());
+            as.mov(rdi(), rax());
+        }
+        as.call("malloc");
         return null;
     }
 
