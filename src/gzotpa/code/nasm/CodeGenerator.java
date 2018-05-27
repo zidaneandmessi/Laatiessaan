@@ -20,6 +20,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.extern(new Label("printf"));
         code.extern(new Label("puts"));
         code.extern(new Label("sprintf"));
+        code.extern(new Label("scanf"));
         code.label(new Label("_int_format"));
         code.addAssembly(new Instruction("db \"%d\", 0, 0"));
         generateDataSection(code, ir.defvars());
@@ -453,6 +454,15 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.mov(rdx(), var.memref());
             as.xor(rax(), rax());
             as.call("sprintf");
+        }
+        else if (name.equals("getInt")) {
+            as.push(rax());
+            as.mov(rsi(), rsp());
+            as.mov(rdi(), new Label("_int_format"));
+            as.xor(rax(), rax());
+            as.call("scanf");
+            as.mov(rax(), rsp());
+            as.pop(rax());
         }
         else
         {
