@@ -25,11 +25,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.extern(new Label("puts"));
         code.extern(new Label("sprintf"));
         code.extern(new Label("scanf"));
-        code.extern(new Label("strcat"));
         code.label(new Label("_int_format"));
         code.db("%d");
         code.label(new Label("_str_format"));
         code.db("%s");
+        code.label(new Label("_str_str_format"));
+        code.db("%s%s");
         generateDataSection(code, ir.defvars());
         code.setDataIndex();
         locateGlobalVariables(ir.defvars());
@@ -334,9 +335,18 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         switch (op) {
         case ADD:
             if (stringBin) {
-                as.mov(rsi(), right);
-                as.mov(rdi(), left);
-                as.call("strcat");
+                as.push(left);
+                as.push(rcx());
+                as.mov(rdi(), new ImmediateValue(500));
+                as.call("malloc");
+                as.pop(rcx());
+                as.pop(rdx());
+                as.push(rax());
+                as.mov(rdi(), new IndirectMemoryReference(0, rsp()));
+                as.mov(rsi(), new ImmediateValue(new Label("_str_str_format")));
+                as.xor(rax(), rax());
+                as.call("sprintf");
+                as.pop(rax());
             }
             else {
                 as.add(left, right);
