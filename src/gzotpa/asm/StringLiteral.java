@@ -29,6 +29,6 @@ public class StringLiteral extends Literal {
     }
     
     public String print() {
-        return "\'" + value + "\'";
+        return "\"" + value + "\"";
     }
 }

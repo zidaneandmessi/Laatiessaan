@@ -12,10 +12,6 @@ public class Instruction extends Assembly {
         this(name, new Operand[] { new ImmediateValue(label) });
     }
 
-    public Instruction(String name, Operand a, Label label) {
-        this(name, new Operand[] { a, new ImmediateValue(label) });
-    }
-
     public Instruction(String name, Operand a1) {
         this(name, new Operand[] { a1 });
     }

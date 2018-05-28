@@ -24,6 +24,10 @@ public class StringType extends Type {
     	return image.length() * 8;
     }
 
+    public long allocSize() {
+        return 32;
+    }
+
     public String toString() {
         return name;
     }

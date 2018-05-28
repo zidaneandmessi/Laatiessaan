@@ -3,13 +3,17 @@ import gzotpa.asm.*;
 import gzotpa.ast.Location;
 import gzotpa.entity.*;
 import gzotpa.ir.*;
+import gzotpa.type.*;
 import java.util.*;
 
 public class CodeGenerator implements IRVisitor<Void,Void> {
-    public CodeGenerator() {}
+    AssemblyCode code;
+
+    public CodeGenerator() {
+        code = new AssemblyCode();
+    }
 
     public AssemblyCode generateAssemblyCode(IR ir) {
-        AssemblyCode code = new AssemblyCode();
         for (DefinedVariable var : ir.defvars()) {
             code.global(new Label(var.name())); 
         }
@@ -23,7 +27,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.extern(new Label("scanf"));
         code.label(new Label("_int_format"));
         code.addAssembly(new Instruction("db \"%d\", 0, 0"));
+        code.label(new Label("_str_format"));
+        code.addAssembly(new Instruction("db \"%s\", 0, 0"));
         generateDataSection(code, ir.defvars());
+        code.setDataIndex();
         locateGlobalVariables(ir.defvars());
         generateTextSection(code, ir.defuns());
         return code;
@@ -256,8 +263,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         for (Register reg : savedRegs) {
             as.virtualPop(reg);
         }
-        as.mov(rsp(), rbp());
-        as.pop(rbp());
+        //as.mov(rsp(), rbp());
+        //as.pop(rbp());
+        as.leave();
         as.ret();
     }
 
@@ -405,6 +413,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         	as.lea(dest, var.memref());
         }
     }
+
+    static private int constStrCnt = 0;
     
     public Void visit(Addr node) {
         loadAddress(node.entity(), rax());
@@ -434,31 +444,37 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     public Void visit(Call node) {
         String name = node.function().name();
         if (name.equals("print")) {
-            Var var = (Var)node.args().get(0);
-            loadAddress(var.entity(), rdi());
+            Expr arg = node.args().get(0);
+            visit(arg);
+            as.mov(rsi(), rax());
+            as.mov(rdi(), new ImmediateValue(new Label("_str_format")));
             as.xor(rax(), rax());
             as.call("printf");
         }
         else if (name.equals("println")) {
-            Var var = (Var)node.args().get(0);
-            loadAddress(var.entity(), rax());
+            Expr arg = node.args().get(0);
+            visit(arg);
             as.mov(rdi(), rax());
             as.call("puts");
         }
         else if (name.equals("toString")) {
-            Var var = (Var)node.args().get(0);
+            as.mov(rdi(), new ImmediateValue(20));
+            as.call("malloc");
             as.push(rax());
-            as.mov(rdi(), rsp());
-            as.pop(rax());
-            as.mov(rsi(), new Label("_int_format"));
-            as.mov(rdx(), var.memref());
+            Expr arg = node.args().get(0);
+            visit(arg);
+            as.mov(rdx(), rax());
+            as.mov(rdi(), new IndirectMemoryReference(0, rsp()));
+            as.mov(rsi(), new ImmediateValue(new Label("_int_format")));
             as.xor(rax(), rax());
             as.call("sprintf");
+            as.mov(rax(), rsp());
+            as.pop(rax());
         }
         else if (name.equals("getInt")) {
             as.push(rax());
             as.mov(rsi(), rsp());
-            as.mov(rdi(), new Label("_int_format"));
+            as.mov(rdi(), new ImmediateValue(new Label("_int_format")));
             as.xor(rax(), rax());
             as.call("scanf");
             as.mov(rax(), rsp());
@@ -520,7 +536,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(New node) {
         if (node.sizeKnown()) {
-            as.mov(rdi(), new ImmediateValue(5));
+            as.mov(rdi(), new ImmediateValue(node.length()));
         }
         else {
             visit(node.exprLen());
@@ -537,7 +553,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(Str node) {
-    	as.mov(rax(), node.imm());
+    	code.addData(new Label("_const_string_" + constStrCnt));
+        code.addData(new Instruction("db", new ImmediateValue(node.value())));
+        as.mov(rax(), new ImmediateValue(new Label("_const_string_" + constStrCnt)));
+        constStrCnt++;
         return null;
     }
 

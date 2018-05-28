@@ -2,11 +2,13 @@ package gzotpa.code.nasm;
 import gzotpa.asm.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class AssemblyCode extends gzotpa.asm.AssemblyCode {
+    private int dataIndex = 0;
 
     public AssemblyCode() {
-        assemblies = new ArrayList<Assembly>();
+        assemblies = new LinkedList<Assembly>();
     }
 
     public List<Assembly> assemblies() {
@@ -16,6 +18,14 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
     void addAssembly(Assembly as) {
         assemblies.add(as);
         as.statisticRegister(this);
+    }
+
+    void setDataIndex() {
+        for (Assembly as : assemblies) dataIndex++;
+    }
+
+    void addData(Assembly as) {
+        assemblies.add((dataIndex++), as);
     }
 
     void addAll(List<Assembly> ass) {
@@ -90,10 +100,6 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
 
     void mov(Operand dest, Operand src) {
         assemblies.add(new Instruction("mov", dest, src));
-    }
-
-    void mov(Operand dest, Label l) {
-        assemblies.add(new Instruction("mov", dest, l));
     }
 
     void movzx(Operand dest, Operand src) {

@@ -96,7 +96,7 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>, ClassV
 
     public Void visit(NewTypeNode node) {
         if (node.typeRef() instanceof ArrayTypeRef) {
-            ((ArrayTypeRef)node.typeRef()).exprLen().accept(this);
+            visitExpr(((ArrayTypeRef)node.typeRef()).exprLen());
         }
         bindType(node.typeNode());
         if (node.type() instanceof ArrayType) {
