@@ -1,6 +1,7 @@
 package gzotpa.core;
 import gzotpa.ast.*;
 import gzotpa.entity.*;
+import gzotpa.type.*;
 import java.util.List;
 import java.util.Iterator;
 
@@ -152,6 +153,10 @@ abstract public class Visitor implements ASTVisitor<Void, Void> {
     }
 
     public Void visit(NewTypeNode node) {
+        if(node.type() instanceof ArrayType) {
+            ArrayType type = (ArrayType)node.type();
+            visitExpr(type.exprLen());
+        }
         return null;
     }
 
