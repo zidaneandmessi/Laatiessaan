@@ -2,18 +2,18 @@ package gzotpa.asm;
 
 public class IndirectMemoryReference extends MemoryReference {
     IntegerLiteral offset;
-    Register base;
+    Operand base;
     boolean fixed;
 
-    public IndirectMemoryReference(long offset, Register base) {
+    public IndirectMemoryReference(long offset, Operand base) {
         this(new IntegerLiteral(offset), base, true);
     }
 
-    public IndirectMemoryReference(long offset, Register base, boolean fixed) {
+    public IndirectMemoryReference(long offset, Operand base, boolean fixed) {
         this(new IntegerLiteral(offset), base, fixed);
     }
 
-    private IndirectMemoryReference(IntegerLiteral offset, Register base, boolean fixed) {
+    private IndirectMemoryReference(IntegerLiteral offset, Operand base, boolean fixed) {
         this.offset = offset;
         this.base = base;
         this.fixed = fixed;
@@ -23,7 +23,7 @@ public class IndirectMemoryReference extends MemoryReference {
         return offset;
     }
 
-    public Register base() {
+    public Operand base() {
         return base;
     }
 

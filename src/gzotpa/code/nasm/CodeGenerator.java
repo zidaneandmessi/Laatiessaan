@@ -190,9 +190,16 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private void locateGlobalVariables(List<DefinedVariable> vars) {
         for (DefinedVariable var : vars) {
-            DirectMemoryReference memref = new DirectMemoryReference(new LabelLiteral(new Label(var.name())));
-            var.setMemref(memref);
-            var.setAddress(memref);
+            if (var.type() instanceof IntegerType) {
+                var.setMemref(new IndirectMemoryReference(0, new ImmediateValue(new Label(var.name()))));
+                var.setAddress(new DirectMemoryReference(new LabelLiteral(new Label(var.name()))));
+            }
+            else 
+            {
+                DirectMemoryReference memref = new DirectMemoryReference(new LabelLiteral(new Label(var.name())));
+                var.setMemref(memref);
+                var.setAddress(memref);
+            }
         }
     }
 
@@ -327,10 +334,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         switch (op) {
         case ADD:
             if (stringBin) {
-                as.mov(rdi(), left);
                 as.mov(rsi(), right);
+                as.mov(rdi(), left);
                 as.call("strcat");
-                as.mov(rax(), left);
             }
             else {
                 as.add(left, right);
@@ -478,7 +484,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.mov(rsi(), new ImmediateValue(new Label("_int_format")));
             as.xor(rax(), rax());
             as.call("sprintf");
-            as.mov(rax(), rsp());
             as.pop(rax());
         }
         else if (name.equals("getInt")) {
@@ -487,7 +492,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.mov(rdi(), new ImmediateValue(new Label("_int_format")));
             as.xor(rax(), rax());
             as.call("scanf");
-            as.mov(rax(), rsp());
             as.pop(rax());
         }
         else
