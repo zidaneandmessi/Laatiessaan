@@ -323,17 +323,17 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         return as;
     }
 
-    private void compileBinaryOp(Op op, Expr lhs, Register left, Operand right) {
+    private void compileBinaryOp(Op op, Register left, Operand right, boolean stringBin) {
         switch (op) {
         case ADD:
-            if (lhs instanceof Int || lhs instanceof Var && ((Var)lhs).entity().type() instanceof IntegerType) {
-                as.add(left, right);
-            }
-            else if (lhs instanceof Str || lhs instanceof Var && ((Var)lhs).entity().type() instanceof StringType) {
+            if (stringBin) {
                 as.mov(rdi(), left);
                 as.mov(rsi(), right);
                 as.call("strcat");
                 as.mov(rax(), left);
+            }
+            else {
+                as.add(left, right);
             }
             break;
         case SUB:
@@ -447,7 +447,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         as.virtualPush(rax());
         visit(node.left());
         as.virtualPop(rcx());
-        compileBinaryOp(op, node.left(), rax(), rcx());
+        compileBinaryOp(op, rax(), rcx(), node.stringBin());
         return null;
     }
 

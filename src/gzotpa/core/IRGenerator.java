@@ -190,7 +190,12 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         Expr left = visitExpr(node.left());
         Op op = Op.internBinary(node.operator());
         Type t = node.type();
-        return new Bin(op, left, right);
+        if (t instanceof IntegerType)
+            return new Bin(op, left, right);
+        else if (t instanceof StringType)
+            return new Bin(op, left, right, true);
+        else
+            throw new Error("Gzotpa! Unknown binary operator expr type! " + t);
     }
 
     public Void visit(BlockNode node) {
