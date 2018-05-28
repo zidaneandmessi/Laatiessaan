@@ -50,8 +50,8 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         assemblies.add(new Instruction("cmp", a, b));
     }
 
-    void cwd() {
-        assemblies.add(new Instruction("cwd"));
+    void cdq() {
+        assemblies.add(new Instruction("cdq"));
     }
 
     void db(String s) {

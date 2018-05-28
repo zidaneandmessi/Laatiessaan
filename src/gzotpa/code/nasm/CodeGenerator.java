@@ -333,11 +333,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.imul(left, right);
             break;
         case DIV:
-            as.cwd();
+            as.cdq();
             as.idiv(rcx());
             break;
         case MOD:
-            as.cwd();
+            as.cdq();
             as.idiv(rcx());
             as.mov(left, rdx());
             break;
