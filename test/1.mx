@@ -1,43 +1,24 @@
-int gcd(int x, int y) {
-  if (x%y == 0) return y;
-  else return gcd5(y, x%y);
-}
-
-
-int gcd1(int x, int y) {
-  if (x%y == 0) return y;
-  else return gcd(y, x%y);
-}
-
-
-int gcd2(int x, int y) {
-  if (x%y == 0) return y;
-  else return gcd1(y, x%y);
-}
-
-
-
-int gcd3(int x, int y) {
-  if (x%y == 0) return y;
-  else return gcd2(y, x%y);
-}
-
-
-int gcd4(int x, int y) {
-  if (x%y == 0) return y;
-  else return gcd(y, x%y);
-}
-
-
-int gcd5(int x, int y) {
-  if (x%y == 0) return y;
-  else return gcd2(y, x%y);
+int cd(int d, string a, string b, string c, int sum) {
+    if (d == 1) {
+        println("move " + a );
+        sum++;
+    } else {
+        sum = cd(d - 1, a, c, b, sum);
+        println("move " + a );
+        sum = cd(d - 1, b, a, c, sum);
+        sum++;
+    }
+    return sum;
 }
 
 int main() {
-    println(toString(gcd(10,1)));
-    println(toString(gcd(34986,3087)));
-    println(toString(gcd(2907,1539)));
-
+    string a = "A";
+    string b = "B";
+    string c = "C";
+    int d = getInt();
+    int sum = cd(d, a, b, c, 0);
+    println(toString(sum));
     return 0;
 }
+
+

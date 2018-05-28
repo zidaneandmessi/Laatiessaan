@@ -25,10 +25,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.extern(new Label("puts"));
         code.extern(new Label("sprintf"));
         code.extern(new Label("scanf"));
+        code.extern(new Label("strcat"));
         code.label(new Label("_int_format"));
-        code.addAssembly(new Instruction("db \"%d\", 0, 0"));
+        code.db("%d");
         code.label(new Label("_str_format"));
-        code.addAssembly(new Instruction("db \"%s\", 0, 0"));
+        code.db("%s");
         generateDataSection(code, ir.defvars());
         code.setDataIndex();
         locateGlobalVariables(ir.defvars());
@@ -189,8 +190,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private void locateGlobalVariables(List<DefinedVariable> vars) {
         for (DefinedVariable var : vars) {
-            var.setMemref(new DirectMemoryReference(new LabelLiteral(new Label(var.name()))));
-            var.setAddress(new ImmediateValue(new LabelLiteral(new Label(var.name()))));
+            DirectMemoryReference memref = new DirectMemoryReference(new LabelLiteral(new Label(var.name())));
+            var.setMemref(memref);
+            var.setAddress(memref);
         }
     }
 
@@ -321,10 +323,18 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         return as;
     }
 
-    private void compileBinaryOp(Op op, Register left, Operand right) {
+    private void compileBinaryOp(Op op, Expr lhs, Register left, Operand right) {
         switch (op) {
         case ADD:
-            as.add(left, right);
+            if (lhs instanceof Int || lhs instanceof Var && ((Var)lhs).entity().type() instanceof IntegerType) {
+                as.add(left, right);
+            }
+            else if (lhs instanceof Str || lhs instanceof Var && ((Var)lhs).entity().type() instanceof StringType) {
+                as.mov(rdi(), left);
+                as.mov(rsi(), right);
+                as.call("strcat");
+                as.mov(rax(), left);
+            }
             break;
         case SUB:
             as.sub(left, right);
@@ -437,7 +447,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         as.virtualPush(rax());
         visit(node.left());
         as.virtualPop(rcx());
-        compileBinaryOp(op, rax(), rcx());
+        compileBinaryOp(op, node.left(), rax(), rcx());
         return null;
     }
 
@@ -554,7 +564,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(Str node) {
     	code.addData(new Label("_const_string_" + constStrCnt));
-        code.addData(new Instruction("db", new ImmediateValue(node.value())));
+        code.addData(new Instruction("db \"" + node.value() + "\", 0, 0"));
         as.mov(rax(), new ImmediateValue(new Label("_const_string_" + constStrCnt)));
         constStrCnt++;
         return null;

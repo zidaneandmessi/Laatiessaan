@@ -20,7 +20,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     public IR generate(AST ast) {
         for (DefinedVariable var : ast.definedVariables()) {
             if (var.hasInitializer()) {
-                var.setIR(toExpr(var.initializer()));
+                var.setIR(visitExpr(var.initializer()));
             }
         }
         for (DefinedFunction f : ast.definedFunctions()) {
@@ -33,6 +33,8 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     LinkedList<LocalScope> scopeStack;
     LinkedList<Label> breakStack;
     LinkedList<Label> continueStack;
+
+    private int exprNestLevel = 0;
 
     private void visitStmt(StmtNode node) {
         if (node != null)
@@ -51,14 +53,6 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         return e;
     }
 
-    private int exprNestLevel = 0;
-
-    private Expr toExpr(ExprNode node) {
-        exprNestLevel++;
-        Expr e = node.accept(this);
-        exprNestLevel--;
-        return e;
-    }
     public List<Stmt> compileFunctionBody(DefinedFunction func) {
         stmts = new ArrayList<Stmt>();
         scopeStack = new LinkedList<LocalScope>();
@@ -203,7 +197,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         pushScope(node.scope());
         for (DefinedVariable var : node.variables()) {
             if (var.hasInitializer()) {
-                var.setIR(toExpr(var.initializer()));
+                var.setIR(visitExpr(var.initializer()));
             }
         }
         for (StmtNode stmt : node.stmts()) {
@@ -234,7 +228,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     public Void visit(ExprStmtNode node) {
-        Expr e = visitExpr(node.expr());
+        Expr e = node.expr().accept(this); // not visitExpr(node.expr()) because it will increase nest level!!!
         return null;
     }
 
@@ -297,7 +291,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
             args.add(0, visitExpr(arg));
         }
         Expr call = new Call(visitExpr(node.expr()), args);
-        if (isStatement()) {
+        if (isStatement()) {System.err.println("ESADFXSDFA");
             stmts.add(new ExprStmt(node.location(), call));
             return null;
         }
