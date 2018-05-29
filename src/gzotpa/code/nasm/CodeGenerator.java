@@ -22,6 +22,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.extern(new Label("scanf"));
         code.extern(new Label("strlen"));
         code.extern(new Label("strcmp"));
+        code.extern(new Label("strcpy"));
         code.extern(new Label("strncpy"));
         code.label(new Label("_int_format"));
         code.db("%d");
@@ -39,7 +40,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void generateDataSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".data");
         for (DefinedVariable var : vars) {
-            code.label(new Label(var.name()));
+            code.label(new Label("_" + var.name()));
             generateImmediate(code, var);
         }
     }
@@ -48,7 +49,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         Expr node = var.ir();
         if (node == null) {
             if (var.type() instanceof StringType) {
-                code.db("\\0");
+                code.db(0);
             }
             else {
                 code.dq(0);
@@ -188,7 +189,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         frame.tempSize = body.virtualStack.maxSize();
         fixLocalVariableOffsets(func.localVarScope(), frame.localVarOffset());
         fixTempVariableOffsets(body, frame.tempVarOffset());
-        code.label(new Label(func.name()));
+        if (func.name().equals("main"))
+            code.label(new Label(func.name()));
+        else
+            code.label(new Label("_" + func.name()));
         generateFunctionBody(code, body, frame);
     }
 
@@ -197,12 +201,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void locateGlobalVariables(List<DefinedVariable> vars) {
         for (DefinedVariable var : vars) {
             if (var.type() instanceof IntegerType) {
-                var.setMemref(new IndirectMemoryReference(new ImmediateValue(new Label(var.name())), 0));
-                var.setAddress(new DirectMemoryReference(new LabelLiteral(new Label(var.name()))));
+                var.setMemref(new IndirectMemoryReference(new ImmediateValue(new Label("_" + var.name())), 0));
+                var.setAddress(new DirectMemoryReference(new LabelLiteral(new Label("_" + var.name()))));
             }
             else 
             {
-                DirectMemoryReference memref = new DirectMemoryReference(new LabelLiteral(new Label(var.name())));
+                DirectMemoryReference memref = new DirectMemoryReference(new LabelLiteral(new Label("_" + var.name())));
                 var.setMemref(memref);
                 var.setAddress(memref);
             }
@@ -623,13 +627,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         else if (name.equals("_array.size")) {
             Expr arg = node.args().get(0);
             visit(arg);
-            ArrayType type = (ArrayType)((Var)arg).entity().type();
-            if (type.exprLen() != null) {
-                //visit(type.ExprLen());
-            }
-            else {
-                as.mov(rax(), new ImmediateValue(type.length()));
-            }
+            as.mov(rax(), mem(rax(), -8));
         }
         else
         {
@@ -639,7 +637,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 visit(arg);
                 as.push(rax());
             }
-            as.call(name);
+            as.call("_" + name);
             rewindStack(as, node.numArgs() * STACK_WORD_SIZE);
         }
         return null;
@@ -687,13 +685,21 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(New node) {
         if (node.sizeKnown()) {
-            as.mov(rdi(), new ImmediateValue(node.length()));
+            as.mov(rdi(), new ImmediateValue(node.length() / 8));
+            as.call("malloc");
         }
         else {
-            visit(node.exprLen());
+            visit(node.exprSize());
+            as.sar(rax(), new ImmediateValue(3));
             as.mov(rdi(), rax());
+            visit(node.exprLen());
+            as.push(rax());
+            as.add(rdi(), new ImmediateValue(8));
+            as.call("malloc");
+            as.pop(rdi());
+            as.mov(mem(rax()), rdi());
+            as.add(rax(), new ImmediateValue(8));
         }
-        as.call("malloc");
         return null;
     }
 
@@ -705,7 +711,41 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(Str node) {
     	code.addData(new Label("_const_string_" + constStrCnt));
-        code.addData(new Instruction("db \"" + node.originValue() + "\", 0, 0"));
+        String s = node.originValue();
+        int st = 0, i = 0;
+        for (i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\\' && i < s.length() - 1) {
+                char c = s.charAt(i + 1);
+                switch(c) {
+                case '\"':
+                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    code.addData(new Instruction("db\t34"));
+                    st = i + 2;
+                    i++;
+                    break;
+                case '\\':
+                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    code.addData(new Instruction("db\t92"));
+                    st = i + 2;
+                    i++;
+                    break;
+                case '\'':
+                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    code.addData(new Instruction("db\t39"));
+                    st = i + 2;
+                    i++;
+                    break;
+                case 'n':
+                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    code.addData(new Instruction("db\t10"));
+                    st = i + 2;
+                    i++;
+                    break;
+                default:;
+                }
+            }
+        }
+        code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\", 0, 0"));
         as.mov(rax(), new ImmediateValue(new Label("_const_string_" + constStrCnt)));
         constStrCnt++;
         return null;

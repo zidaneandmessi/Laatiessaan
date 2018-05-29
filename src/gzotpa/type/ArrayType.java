@@ -92,8 +92,8 @@ public class ArrayType extends Type {
                                          exprLen);
             }
             else {
-                return new BinaryOpNode(new IntegerType(32, "int"),
-                                        new IntegerLiteralNode(new IntegerType(32, "int"), IntegerTypeRef.intRef(), baseType.allocSize()),
+                return new BinaryOpNode(new IntegerType(64, "int"),
+                                        new IntegerLiteralNode(new IntegerType(64, "int"), IntegerTypeRef.intRef(), baseType.allocSize()),
                                         "*",
                                         exprLen);
             }

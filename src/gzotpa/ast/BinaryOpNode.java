@@ -34,7 +34,7 @@ public class BinaryOpNode extends ExprNode {
             || operator.equals("<=")
             || operator.equals("==")
             || operator.equals("!="))
-            return new IntegerType(32, "bool", true);
+            return new IntegerType(64, "bool", true);
         return left.type();
     }
 

@@ -1,11 +1,13 @@
 package gzotpa.ir;
 
 public class New extends Expr {
+    protected Expr exprSize;
     protected Expr exprLen;
     protected long length;
     protected boolean sizeKnown;
 
-    public New(Expr exprLen) {
+    public New(Expr exprSize, Expr exprLen) {
+        this.exprSize = exprSize;
         this.exprLen = exprLen;
         this.length = 0;
         this.sizeKnown = false;
@@ -15,6 +17,10 @@ public class New extends Expr {
         this.exprLen = null;
         this.length = length;
         this.sizeKnown = true;
+    }
+
+    public Expr exprSize() {
+        return exprLen;
     }
 
     public Expr exprLen() {

@@ -8,9 +8,9 @@ import java.util.Collection;
 
 public class TypeTable {
 
-    private static int pointerSize = 32;
+    private static int pointerSize = 64;
     private static int charSize = 8;
-    private static int intSize = 32;
+    private static int intSize = 64;
     private Map<TypeRef, Type> table;
 
     public TypeTable() {

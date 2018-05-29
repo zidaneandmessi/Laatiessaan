@@ -46,7 +46,7 @@ public class ToplevelScope extends Scope {
                                                                 new ArrayList<StmtNode>(),
                                                                 new ArrayList<Boolean>())));
 
-        entities.put("getInt", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "getInt"),
+        entities.put("getInt", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(64, "getInt"),
                                                                                     new ParamTypes(new ArrayList<Type>(), false))),
                                                 "getInt",
                                                 new Params(new ArrayList<Parameter>()),
@@ -56,7 +56,7 @@ public class ToplevelScope extends Scope {
 
         ParamTypes toStringtypes = new ParamTypes(new ArrayList<Type>(), false);
         Params toStringparams = new Params(new ArrayList<Parameter>());
-        toStringtypes.add(new IntegerType(32, "i"));
+        toStringtypes.add(new IntegerType(64, "i"));
         toStringparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("i")), "i"));
         entities.put("toString", new DefinedFunction(new TypeNode(new FunctionType(new StringType("", "toString"),
                                                                                     toStringtypes)),
@@ -70,7 +70,7 @@ public class ToplevelScope extends Scope {
         Params lengthparams = new Params(new ArrayList<Parameter>());
         lengthtypes.add(new StringType("", "str"));
         lengthparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
-        entities.put("string.length", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "string.length"),
+        entities.put("string.length", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(64, "string.length"),
                                                                                 lengthtypes)),
                                                 "string.length",
                                                 lengthparams,
@@ -80,9 +80,9 @@ public class ToplevelScope extends Scope {
 
         ParamTypes substringtypes = new ParamTypes(new ArrayList<Type>(), false);
         Params substringparams = new Params(new ArrayList<Parameter>());
-        substringtypes.add(new IntegerType(32, "left"));
+        substringtypes.add(new IntegerType(64, "left"));
         substringparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("left")), "left"));
-        substringtypes.add(new IntegerType(32, "right"));
+        substringtypes.add(new IntegerType(64, "right"));
         substringparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("right")), "right"));
         substringtypes.add(new StringType("", "str"));
         substringparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
@@ -98,7 +98,7 @@ public class ToplevelScope extends Scope {
         Params parseIntparams = new Params(new ArrayList<Parameter>());
         parseInttypes.add(new StringType("", "str"));
         parseIntparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
-        entities.put("string.parseInt", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "parseInt"),
+        entities.put("string.parseInt", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(64, "parseInt"),
                                                                                 parseInttypes)),
                                                 "string.parseInt",
                                                 parseIntparams,
@@ -108,11 +108,11 @@ public class ToplevelScope extends Scope {
 
         ParamTypes ordtypes = new ParamTypes(new ArrayList<Type>(), false);
         Params ordparams = new Params(new ArrayList<Parameter>());
-        ordtypes.add(new IntegerType(32, "pos"));
+        ordtypes.add(new IntegerType(64, "pos"));
         ordparams.addParameter(new Parameter(new TypeNode(new IntegerTypeRef("pos")), "pos"));
         ordtypes.add(new StringType("", "str"));
         ordparams.addParameter(new Parameter(new TypeNode(new StringTypeRef("str")), "str"));
-        entities.put("string.ord", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "string.ord"),
+        entities.put("string.ord", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(64, "string.ord"),
                                                                                 ordtypes)),
                                                 "string.ord",
                                                 ordparams,
@@ -123,9 +123,9 @@ public class ToplevelScope extends Scope {
 
         ParamTypes sizetypes = new ParamTypes(new ArrayList<Type>(), false);
         Params sizeparams = new Params(new ArrayList<Parameter>());
-        sizetypes.add(new ArrayType(new IntegerType(32, "size"), 32));
+        sizetypes.add(new ArrayType(new IntegerType(64, "size"), 32));
         sizeparams.addParameter(new Parameter(new TypeNode(new ArrayTypeRef(new IntegerTypeRef("arr"))), "arr"));
-        entities.put("_array.size", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "_array.size"),
+        entities.put("_array.size", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(64, "_array.size"),
                                                                                 sizetypes)),
                                                 "_array.size",
                                                 sizeparams,

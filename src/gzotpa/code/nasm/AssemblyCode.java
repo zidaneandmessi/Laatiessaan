@@ -55,7 +55,11 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
     }
 
     void db(String s) {
-        assemblies.add(new Instruction("db \"" + s + "\", 0, 0"));
+        assemblies.add(new Instruction("db\t\"" + s + "\", 0, 0"));
+    }
+
+    void db(long n) {
+        assemblies.add(new Instruction("db\t" + Long.toString(n) + ", 0, 0"));
     }
 
     void dq(long n) {
