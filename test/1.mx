@@ -1,4 +1,14 @@
 int main() {
-string s = "gzotpa";
-    println(toString(s.ord(5)));
+    int la = 5;
+    int[] a = new int[la];
+
+    int cnt = 0;
+    int i;
+    for (i = 0; i < la; ++i)
+        a[i] = ++cnt;
+
+    int sum = 0;
+    for (i = 0; i < la; ++i) sum = sum + a[i];
+
+    return sum;
 }

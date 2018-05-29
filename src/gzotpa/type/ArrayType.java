@@ -87,14 +87,13 @@ public class ArrayType extends Type {
         }
         else {
             if (baseType instanceof ArrayType) {
-                return new BinaryOpNode(
-                                        ((ArrayType)baseType).exprAllocSize(),
+                return new BinaryOpNode(((ArrayType)baseType).exprAllocSize(),
                                          "*",
                                          exprLen);
             }
             else {
                 return new BinaryOpNode(new IntegerType(32, "int"),
-                                        new IntegerLiteralNode(IntegerTypeRef.intRef(), baseType.allocSize()),
+                                        new IntegerLiteralNode(new IntegerType(32, "int"), IntegerTypeRef.intRef(), baseType.allocSize()),
                                         "*",
                                         exprLen);
             }

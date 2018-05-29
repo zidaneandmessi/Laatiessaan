@@ -13,6 +13,12 @@ public class IntegerLiteralNode extends LiteralNode {
         super(null, ref);
         this.value = value;
     }
+
+    public IntegerLiteralNode(Type type, TypeRef ref, long value) {
+        super(null, ref);
+        this.typeNode.setType(type);
+        this.value = value;
+    }
     
     public long value() {
         return value;
