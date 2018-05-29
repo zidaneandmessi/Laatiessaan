@@ -86,6 +86,7 @@ class DereferenceChecker extends Visitor {
 
     public Void visit(FuncallNode node) {
         super.visit(node);
+        System.err.println(node.expr().type());
         if (!node.expr().isCallable()) {
             throw new Error("Gzotpa! Calling object is not a function!");
         }

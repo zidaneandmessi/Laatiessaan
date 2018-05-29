@@ -644,10 +644,15 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(ConditionJump node) {
-        visit(node.cond());
-        as.test(rax(), rax());
-        as.jnz(node.thenLabel());
-        as.jmp(node.elseLabel());
+        if (node.cond() != null) {
+            visit(node.cond());
+            as.test(rax(), rax());
+            as.jnz(node.thenLabel());
+            as.jmp(node.elseLabel());
+        }
+        else {
+            as.jmp(node.thenLabel());
+        }
         return null;
     }
 

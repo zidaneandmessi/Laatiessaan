@@ -20,7 +20,7 @@ public class New extends Expr {
     }
 
     public Expr exprSize() {
-        return exprLen;
+        return exprSize;
     }
 
     public Expr exprLen() {
