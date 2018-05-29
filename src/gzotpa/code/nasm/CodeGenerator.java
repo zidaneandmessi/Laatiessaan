@@ -25,6 +25,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.extern(new Label("puts"));
         code.extern(new Label("sprintf"));
         code.extern(new Label("scanf"));
+        code.extern(new Label("strlen"));
+        code.extern(new Label("strcmp"));
         code.label(new Label("_int_format"));
         code.db("%d");
         code.label(new Label("_str_format"));
@@ -383,34 +385,88 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.sar(left, rcx(8));
             break;
         case EQ:
-            as.cmp(left, right);
-            as.sete(rax(8));
-            as.movzx(left, rax(8));
+            if (stringBin) {
+                as.mov(rdi(), left);
+                as.mov(rsi(), right);
+                as.call("strcmp");
+                as.sete(rax(8));
+                as.movzx(left, rax(8));
+            }
+            else {
+                as.cmp(left, right);
+                as.sete(rax(8));
+                as.movzx(left, rax(8));
+            }
             break;
         case NEQ:
-            as.cmp(left, right);
-            as.setne(rax(8));
-            as.movzx(left, rax(8));
+            if (stringBin) {
+                as.mov(rdi(), left);
+                as.mov(rsi(), right);
+                as.call("strcmp");
+                as.setne(rax(8));
+                as.movzx(left, rax(8));
+            }
+            else {
+                as.cmp(left, right);
+                as.setne(rax(8));
+                as.movzx(left, rax(8));
+            }
             break;
         case GT:
-            as.cmp(left, right);
-            as.setg(rax(8));
-            as.movzx(left, rax(8));
+            if (stringBin) {
+                as.mov(rdi(), left);
+                as.mov(rsi(), right);
+                as.call("strcmp");
+                as.setg(rax(8));
+                as.movzx(left, rax(8));
+            }
+            else {
+                as.cmp(left, right);
+                as.setg(rax(8));
+                as.movzx(left, rax(8));
+            }
             break;
         case GTEQ:
-            as.cmp(left, right);
-            as.setge(rax(8));
-            as.movzx(left, rax(8));
+            if (stringBin) {
+                as.mov(rdi(), left);
+                as.mov(rsi(), right);
+                as.call("strcmp");
+                as.setge(rax(8));
+                as.movzx(left, rax(8));
+            }
+            else {
+                as.cmp(left, right);
+                as.setge(rax(8));
+                as.movzx(left, rax(8));
+            }
             break;
         case LT:
-            as.cmp(left, right);
-            as.setl(rax(8));
-            as.movzx(left, rax(8));
+            if (stringBin) {
+                as.mov(rdi(), left);
+                as.mov(rsi(), right);
+                as.call("strcmp");
+                as.setl(rax(8));
+                as.movzx(left, rax(8));
+            }
+            else {
+                as.cmp(left, right);
+                as.setl(rax(8));
+                as.movzx(left, rax(8));
+            }
             break;
         case LTEQ:
-            as.cmp(left, right);
-            as.setle(rax(8));
-            as.movzx(left, rax(8));
+            if (stringBin) {
+                as.mov(rdi(), left);
+                as.mov(rsi(), right);
+                as.call("strcmp");
+                as.setle(rax(8));
+                as.movzx(left, rax(8));
+            }
+            else {
+                as.cmp(left, right);
+                as.setle(rax(8));
+                as.movzx(left, rax(8));
+            }
             break;
         }
     }
@@ -503,6 +559,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.xor(rax(), rax());
             as.call("scanf");
             as.pop(rax());
+        }
+        else if (name.equals("string.length")) {
+            Expr arg = node.args().get(0);
+            visit(arg);
+            as.mov(rdi(), rax());
+            as.call("strlen");
         }
         else
         {

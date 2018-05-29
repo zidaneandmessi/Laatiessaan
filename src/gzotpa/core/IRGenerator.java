@@ -189,7 +189,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         Expr right = visitExpr(node.right());
         Expr left = visitExpr(node.left());
         Op op = Op.internBinary(node.operator());
-        Type t = node.type();
+        Type t = node.left().type();
         if (t instanceof IntegerType)
             return new Bin(op, left, right);
         else if (t instanceof StringType)
@@ -296,7 +296,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
             args.add(0, visitExpr(arg));
         }
         Expr call = new Call(visitExpr(node.expr()), args);
-        if (isStatement()) {System.err.println("ESADFXSDFA");
+        if (isStatement()) {
             stmts.add(new ExprStmt(node.location(), call));
             return null;
         }
