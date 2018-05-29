@@ -14,12 +14,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public AssemblyCode generateAssemblyCode(IR ir) {
-        for (DefinedVariable var : ir.defvars()) {
-            code.global(new Label(var.name())); 
-        }
-        for (DefinedFunction func : ir.defuns()) {
-            code.global(new Label(func.name())); 
-        }
+        code.global(new Label("main"));
         code.extern(new Label("malloc"));
         code.extern(new Label("printf"));
         code.extern(new Label("puts"));
@@ -27,6 +22,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.extern(new Label("scanf"));
         code.extern(new Label("strlen"));
         code.extern(new Label("strcmp"));
+        code.extern(new Label("strncpy"));
         code.label(new Label("_int_format"));
         code.db("%d");
         code.label(new Label("_str_format"));
@@ -44,18 +40,25 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.section(".data");
         for (DefinedVariable var : vars) {
             code.label(new Label(var.name()));
-            generateImmediate(code, var.ir());
+            generateImmediate(code, var);
         }
     }
 
-    private void generateImmediate(AssemblyCode code, Expr node) {
-        if (node instanceof Int) {
-            if (node == null) code.dq(0);
-            else code.dq(((Int)node).value());
+    private void generateImmediate(AssemblyCode code, DefinedVariable var) {
+        Expr node = var.ir();
+        if (node == null) {
+            if (var.type() instanceof StringType) {
+                code.db("\\0");
+            }
+            else {
+                code.dq(0);
+            }
+        }
+        else if (node instanceof Int) {
+            code.dq(((Int)node).value());
         }
         else if (node instanceof Str) {
-            if (node == null) code.db("\0");
-            else code.db(((Str)node).value());
+            code.db(((Str)node).value());
         }
     }
 
@@ -352,7 +355,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 as.pop(rcx());
                 as.pop(rdx());
                 as.push(rax());
-                as.mov(rdi(), mem(rsp()));
+                as.mov(rdi(), rax());
                 as.mov(rsi(), new ImmediateValue(new Label("_str_str_format")));
                 as.xor(rax(), rax());
                 as.call("sprintf");
@@ -551,10 +554,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.mov(rdi(), new ImmediateValue(20));
             as.call("malloc");
             as.push(rax());
+            as.mov(rdi(), rax());
             Expr arg = node.args().get(0);
             visit(arg);
             as.mov(rdx(), rax());
-            as.mov(rdi(), mem(rsp()));
             as.mov(rsi(), new ImmediateValue(new Label("_int_format")));
             as.xor(rax(), rax());
             as.call("sprintf");
@@ -564,7 +567,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.mov(rdi(), new ImmediateValue(500));
             as.call("malloc");
             as.push(rax());
-            as.mov(rsi(), mem(rsp()));
+            as.mov(rsi(), rax());
             as.mov(rdi(), new ImmediateValue(new Label("_str_format")));
             as.xor(rax(), rax());
             as.call("scanf");
@@ -584,6 +587,30 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.mov(rdi(), rax());
             as.call("strlen");
         }
+        else if (name.equals("string.substring")) {
+            Expr arg = node.args().get(2);
+            visit(arg);
+            as.mov(rsi(), rax());
+            arg = node.args().get(0);
+            visit(arg);
+            as.add(rsi(), rax());
+            as.mov(rcx(), rax());
+            arg = node.args().get(1);
+            visit(arg);
+            as.sub(rax(), rcx());
+            as.add(rax(), new ImmediateValue(1));
+            as.mov(rdx(), rax());
+            as.push(rdx());
+            as.push(rsi());
+            as.mov(rdi(), new ImmediateValue(500));
+            as.call("malloc");
+            as.pop(rsi());
+            as.pop(rdx());
+            as.push(rax());
+            as.mov(rdi(), rax());
+            as.call("strncpy");
+            as.pop(rax());
+        }
         else if (name.equals("string.ord")) {
             Expr arg = node.args().get(0);
             visit(arg);
@@ -592,6 +619,17 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             visit(arg);
             as.mov(rax(), mem(rax(), rcx()));
             as.movzx(rax(), rax(8));
+        }
+        else if (name.equals("_array.size")) {
+            Expr arg = node.args().get(0);
+            visit(arg);
+            ArrayType type = (ArrayType)((Var)arg).entity().type();
+            if (type.exprLen() != null) {
+                //visit(type.ExprLen());
+            }
+            else {
+                as.mov(rax(), new ImmediateValue(type.length()));
+            }
         }
         else
         {
@@ -667,7 +705,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(Str node) {
     	code.addData(new Label("_const_string_" + constStrCnt));
-        code.addData(new Instruction("db \"" + node.value() + "\", 0, 0"));
+        code.addData(new Instruction("db \"" + node.originValue() + "\", 0, 0"));
         as.mov(rax(), new ImmediateValue(new Label("_const_string_" + constStrCnt)));
         constStrCnt++;
         return null;

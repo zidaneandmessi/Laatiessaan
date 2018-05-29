@@ -69,7 +69,7 @@ public class ArrayType extends Type {
     }
 
     public String typeName() {
-        return "array";
+        return "_array";
     }
 
     public long size() {

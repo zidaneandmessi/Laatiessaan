@@ -47,6 +47,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     private Expr visitExpr(ExprNode node) {
+        if (node == null) return null;
         exprNestLevel++;
         Expr e = node.accept(this);
         exprNestLevel--;
@@ -233,6 +234,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     public Void visit(ExprStmtNode node) {
+        if (node.expr() == null) return null;
         Expr e = node.expr().accept(this); // not visitExpr(node.expr()) because it will increase nest level!!!
         return null;
     }
@@ -389,7 +391,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     public Expr visit(StringLiteralNode node) {
-        return new Str(node.value());
+        return new Str(node.value(), node.originValue());
     }
 
     public Expr visit(SuffixOpNode node) {

@@ -125,9 +125,9 @@ public class ToplevelScope extends Scope {
         Params sizeparams = new Params(new ArrayList<Parameter>());
         sizetypes.add(new ArrayType(new IntegerType(32, "size"), 32));
         sizeparams.addParameter(new Parameter(new TypeNode(new ArrayTypeRef(new IntegerTypeRef("arr"))), "arr"));
-        entities.put("array.size", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "array.size"),
+        entities.put("_array.size", new DefinedFunction(new TypeNode(new FunctionType(new IntegerType(32, "_array.size"),
                                                                                 sizetypes)),
-                                                "array.size",
+                                                "_array.size",
                                                 sizeparams,
                                                 new BlockNode(new ArrayList<DefinedVariable>(),
                                                                 new ArrayList<StmtNode>(),

@@ -182,6 +182,7 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         assemblies.add(new Instruction("xor", a, b));
     }
 
+
     class VirtualStack {
         private long size;
         private long maxSize;

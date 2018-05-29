@@ -1,5 +1,4 @@
 package gzotpa.asm;
-
 public class StringLiteral extends Literal {
     protected String value;
 

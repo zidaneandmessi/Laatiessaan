@@ -587,7 +587,8 @@ ExprNode primary():
         {
             return new StringLiteralNode(location(t),
                 new StringTypeRef(stringValue(t.image), location(t)),
-                stringValue(t.image));
+                stringValue(t.image),
+                t.image.substring(1, t.image.length() - 1));
         }
     | t=<IDENTIFIER>
         {
