@@ -194,7 +194,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void locateGlobalVariables(List<DefinedVariable> vars) {
         for (DefinedVariable var : vars) {
             if (var.type() instanceof IntegerType) {
-                var.setMemref(new IndirectMemoryReference(0, new ImmediateValue(new Label(var.name()))));
+                var.setMemref(new IndirectMemoryReference(new ImmediateValue(new Label(var.name())), 0));
                 var.setAddress(new DirectMemoryReference(new LabelLiteral(new Label(var.name()))));
             }
             else 
@@ -209,7 +209,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void locateParameters(List<Parameter> params) {
         long numWords = PARAM_START_WORD;
         for (Parameter param : params) {
-            param.setMemref(mem(numWords * STACK_WORD_SIZE, rbp()));
+            param.setMemref(mem(rbp(), numWords * STACK_WORD_SIZE));
             numWords++;
         }
     }
@@ -282,11 +282,19 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     private IndirectMemoryReference mem(Register reg) {
-        return mem(0, reg);
+        return mem(reg, 0);
     }
 
-    private IndirectMemoryReference mem(long offset, Register reg) {
-        return new IndirectMemoryReference(offset, reg);
+    private IndirectMemoryReference mem(Register reg, long offset) {
+        return new IndirectMemoryReference(reg, offset);
+    }
+
+    private IndirectMemoryReference mem(Register reg, Register reg2) {
+        return mem(reg, reg2, 1);
+    }
+
+    private IndirectMemoryReference mem(Register reg, Register reg2, long offset) {
+        return new IndirectMemoryReference(reg, reg2, offset);
     }
 
     private void extendStack(AssemblyCode code, long len) {
@@ -310,7 +318,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         for (DefinedVariable var : scope.localVariables()) {
             if (var instanceof Parameter) continue;
             size = alignStack(size + var.allocSize() / 8, STACK_WORD_SIZE);
-            var.setMemref(new IndirectMemoryReference(-size, rbp(), false)); //offset value changeable
+            var.setMemref(new IndirectMemoryReference(rbp(), -size, false)); //offset value changeable
         }
         long maxSize = size;
         for (LocalScope s : scope.children()) {
@@ -344,7 +352,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 as.pop(rcx());
                 as.pop(rdx());
                 as.push(rax());
-                as.mov(rdi(), new IndirectMemoryReference(0, rsp()));
+                as.mov(rdi(), mem(rsp()));
                 as.mov(rsi(), new ImmediateValue(new Label("_str_str_format")));
                 as.xor(rax(), rax());
                 as.call("sprintf");
@@ -546,10 +554,20 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             Expr arg = node.args().get(0);
             visit(arg);
             as.mov(rdx(), rax());
-            as.mov(rdi(), new IndirectMemoryReference(0, rsp()));
+            as.mov(rdi(), mem(rsp()));
             as.mov(rsi(), new ImmediateValue(new Label("_int_format")));
             as.xor(rax(), rax());
             as.call("sprintf");
+            as.pop(rax());
+        }
+        else if (name.equals("getString")) {
+            as.mov(rdi(), new ImmediateValue(500));
+            as.call("malloc");
+            as.push(rax());
+            as.mov(rsi(), mem(rsp()));
+            as.mov(rdi(), new ImmediateValue(new Label("_str_format")));
+            as.xor(rax(), rax());
+            as.call("scanf");
             as.pop(rax());
         }
         else if (name.equals("getInt")) {
@@ -565,6 +583,15 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             visit(arg);
             as.mov(rdi(), rax());
             as.call("strlen");
+        }
+        else if (name.equals("string.ord")) {
+            Expr arg = node.args().get(0);
+            visit(arg);
+            as.mov(rcx(), rax());
+            arg = node.args().get(1);
+            visit(arg);
+            as.mov(rax(), mem(rax(), rcx()));
+            as.movzx(rax(), rax(8));
         }
         else
         {

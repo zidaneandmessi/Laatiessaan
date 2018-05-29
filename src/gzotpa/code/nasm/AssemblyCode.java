@@ -218,7 +218,7 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         }
 
         IndirectMemoryReference top() {
-            IndirectMemoryReference mem = new IndirectMemoryReference(-size, new Register(RegisterClass.RBP, 64), false);
+            IndirectMemoryReference mem = new IndirectMemoryReference(new Register(RegisterClass.RBP, 64), -size, false);
             memrefs.add(mem);
             return mem;
         }

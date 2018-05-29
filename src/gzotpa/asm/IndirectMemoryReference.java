@@ -1,21 +1,31 @@
 package gzotpa.asm;
 
 public class IndirectMemoryReference extends MemoryReference {
-    IntegerLiteral offset;
     Operand base;
+    Operand mulBase;
+    IntegerLiteral offset;
     boolean fixed;
 
-    public IndirectMemoryReference(long offset, Operand base) {
-        this(new IntegerLiteral(offset), base, true);
+    public IndirectMemoryReference(Operand base, long offset)  {
+        this(base, null, new IntegerLiteral(offset), true);
     }
 
-    public IndirectMemoryReference(long offset, Operand base, boolean fixed) {
-        this(new IntegerLiteral(offset), base, fixed);
+    public IndirectMemoryReference(Operand base, Operand mulBase, long offset) {
+        this(base, mulBase, new IntegerLiteral(offset), true);
     }
 
-    private IndirectMemoryReference(IntegerLiteral offset, Operand base, boolean fixed) {
-        this.offset = offset;
+    public IndirectMemoryReference(Operand base, long offset, boolean fixed) {
+        this(base, null, new IntegerLiteral(offset), fixed);
+    }
+
+    private IndirectMemoryReference(Operand base, IntegerLiteral offset, boolean fixed) {
+        this(base, null, offset, fixed);
+    }
+
+    private IndirectMemoryReference(Operand base, Operand mulBase, IntegerLiteral offset, boolean fixed) {
         this.base = base;
+        this.mulBase = mulBase;
+        this.offset = offset;
         this.fixed = fixed;
     }
 
@@ -25,6 +35,10 @@ public class IndirectMemoryReference extends MemoryReference {
 
     public Operand base() {
         return base;
+    }
+
+    public Operand mulBase() {
+        return mulBase;
     }
 
     public boolean fixed() {
@@ -46,15 +60,33 @@ public class IndirectMemoryReference extends MemoryReference {
     }
     
     public String print() {
-        if (base != null && offset != null && offset.value() > 0)
-            return "[" + base.print() + "+" + offset.print() + "]";
-        else if (base != null && offset != null && offset.value() < 0)
-            return "[" + base.print() + "-" + (-offset.value()) + "]";
-        else if (base != null && offset != null && offset.value() == 0)
-            return "[" + base.print() + "]";
-        else if (offset != null)
-            return "[" + offset.print() + "]";
-        else
-            return "[" + base.print() + "]";
+        if (mulBase != null) {
+            if (base != null && offset != null && offset.value() > 1)
+                return "[" + base.print() + "+" + mulBase.print() + "*" + offset.print() + "]";
+            if (base != null && offset != null && offset.value() == 1)
+                return "[" + base.print() + "+" + mulBase.print() + "]";
+            else if (base != null && offset != null && offset.value() < -1)
+                return "[" + base.print() + "-" + mulBase.print() + "*" + (-offset.value()) + "]";
+            else if (base != null && offset != null && offset.value() == -1)
+                return "[" + base.print() + "-" + mulBase.print() + "]";
+            else if (base != null && offset != null && offset.value() == 0)
+                return "[" + base.print() + "]";
+            else if (offset != null)
+                return "[" + mulBase.print() + "*" + offset.print() + "]";
+            else
+                return "[" + base.print() + "]";
+        }
+        else {
+            if (base != null && offset != null && offset.value() > 0)
+                return "[" + base.print() + "+" + offset.print() + "]";
+            else if (base != null && offset != null && offset.value() < 0)
+                return "[" + base.print() + "-" + (-offset.value()) + "]";
+            else if (base != null && offset != null && offset.value() == 0)
+                return "[" + base.print() + "]";
+            else if (offset != null)
+                return "[" + offset.print() + "]";
+            else
+                return "[" + base.print() + "]";
+        }
     }
 }

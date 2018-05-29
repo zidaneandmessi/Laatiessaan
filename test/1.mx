@@ -1,6 +1,4 @@
 int main() {
-    string s = "gzotpa";
-    string ss  = "gzotqa";
-    if(s<ss) println("gzotpa");
-    else println("pazotg");
+string s = "gzotpa";
+    println(toString(s.ord(5)));
 }
