@@ -25,7 +25,7 @@ public class ArefNode extends LHSNode {
         else return expr;
     }
 
-    protected Type origType() {
+    public Type origType() {
         return expr.origType().baseType();
     }
     

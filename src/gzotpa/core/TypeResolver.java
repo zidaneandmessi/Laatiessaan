@@ -99,9 +99,6 @@ public class TypeResolver extends Visitor implements EntityVisitor<Void>, ClassV
             visitExpr(((ArrayTypeRef)node.typeRef()).exprLen());
         }
         bindType(node.typeNode());
-        if (node.type() instanceof ArrayType) {
-            ((ArrayType)node.type()).setExprLen(((ArrayTypeRef)node.typeRef()).exprLen());
-        }
         return null;
     }
 

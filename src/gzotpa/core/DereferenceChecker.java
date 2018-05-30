@@ -86,7 +86,6 @@ class DereferenceChecker extends Visitor {
 
     public Void visit(FuncallNode node) {
         super.visit(node);
-        System.err.println(node.expr().type());
         if (!node.expr().isCallable()) {
             throw new Error("Gzotpa! Calling object is not a function!");
         }
@@ -143,11 +142,14 @@ class DereferenceChecker extends Visitor {
     private void handleImplicitAddress(LHSNode node) {
         if (!node.isLoadable()) {
             Type t = node.type();
+            if (t.isPointer() && ((PointerType)t).handled()) return;
             if (t.isArray()) {
                 node.setType(typeTable.pointerTo(t.baseType()));
+                ((PointerType)(node.type())).handle();
             }
             else {
                 node.setType(typeTable.pointerTo(t));
+                ((PointerType)(node.type())).handle();
             }
         }
     }

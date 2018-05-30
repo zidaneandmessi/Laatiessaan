@@ -13,7 +13,7 @@ abstract public class LHSNode extends ExprNode {
         this.type = t;
     }
 
-    abstract protected Type origType();
+    abstract public Type origType();
 
     public boolean isLoadable() {
         Type t = origType();

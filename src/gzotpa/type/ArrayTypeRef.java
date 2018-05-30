@@ -48,6 +48,8 @@ public class ArrayTypeRef extends TypeRef {
     }
     
     public boolean equals(Object other) {
+        if (exprLen != null && !exprLen.equals(((ArrayTypeRef)other).exprLen))
+            return false;
         return (other instanceof ArrayTypeRef) &&
             (length == ((ArrayTypeRef)other).length);
     }

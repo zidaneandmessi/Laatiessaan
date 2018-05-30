@@ -48,6 +48,7 @@ public class TypeTable {
                 Type t = new ArrayType(get(aref.baseType()),
                                        aref.length(),
                                        pointerSize);
+                ((ArrayType)t).setExprLen(aref.exprLen());
                 table.put(aref, t);
                 return t;
             }

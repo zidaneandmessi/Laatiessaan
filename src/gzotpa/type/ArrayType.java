@@ -103,6 +103,8 @@ public class ArrayType extends Type {
     public boolean equals(Object other) {
         if (!(other instanceof ArrayType)) return false;
         ArrayType type = (ArrayType)other;
+        if (exprLen != null && !exprLen.equals(type.exprLen))
+            return false;
         return (baseType.equals(type.baseType) && length == type.length);
     }
 }

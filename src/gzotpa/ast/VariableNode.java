@@ -86,7 +86,7 @@ public class VariableNode extends LHSNode {
         return entity().isParameter();
     }
 
-    protected Type origType() {
+    public Type origType() {
         return entity().type();
     }
 

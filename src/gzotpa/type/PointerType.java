@@ -3,6 +3,7 @@ package gzotpa.type;
 public class PointerType extends Type {
     protected long size;
     protected Type baseType;
+    private boolean handled = false;
 
     public PointerType(long size, Type baseType) {
         this.size = size;
@@ -18,6 +19,14 @@ public class PointerType extends Type {
 
     public Type baseType() {
         return baseType;
+    }
+
+    public boolean handled() {
+        return handled;
+    }
+
+    public void handle() {
+        handled = true;
     }
     
     public boolean isType(Type type) {
