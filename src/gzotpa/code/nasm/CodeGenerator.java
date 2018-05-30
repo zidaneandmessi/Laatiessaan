@@ -81,8 +81,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             System.err.println(((New)(var.ir())).exprLen());
             code.resq(1);
             code.label(new Label("__data_" + var.name()));
-            code.resq(((Int)((New)(var.ir())).exprLen()).value());
-            var.reserve();
+            code.resq(((Int)((New)(var.ir())).exprLen()).value() + 1);
         }
         else {
             code.resq(1);
@@ -220,6 +219,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             for (DefinedVariable var : ir.defvars()) {
                 if (var.type() instanceof ArrayType && var.hasInitializer()) {
                     code.mov(rcx(), new ImmediateValue(new Label("__data_" + var.name())));
+                    code.mov(rax(), new ImmediateValue(((Int)((New)(var.ir())).exprLen()).value()));
+                    code.mov(mem(rcx()), rax());
+                    code.add(rcx(), new ImmediateValue(8));
                     code.mov(rax(), var.address());
                     code.mov(mem(rax()), rcx());
                 }
@@ -711,13 +713,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         else if (name.equals("_array.size")) {
             Expr arg = node.args().get(0);
             visit(arg);
-            if (arg instanceof Var && ((DefinedVariable)((Var)arg).entity()).reserved()) {
-                DefinedVariable var = (DefinedVariable)((Var)arg).entity();
-                as.mov(rax(), new ImmediateValue(((Int)((New)(var.ir())).exprLen()).value()));
-            }
-            else {
-                as.mov(rax(), mem(rax(), -8));
-            }
+            as.mov(rax(), mem(rax(), -8));
         }
         else
         {

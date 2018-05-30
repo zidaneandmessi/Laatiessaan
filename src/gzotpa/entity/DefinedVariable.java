@@ -7,7 +7,6 @@ import gzotpa.type.Type;
 public class DefinedVariable extends Variable {
     protected ExprNode initializer;
     protected Expr ir;
-    protected boolean reserved = false;
 
     public DefinedVariable(TypeNode type, String name) {
         super(type, name);
@@ -25,14 +24,6 @@ public class DefinedVariable extends Variable {
 
     public boolean hasInitializer() {
         return (initializer != null);
-    }
-
-    public boolean reserved() {
-        return reserved;
-    }
-
-    public void reserve() {
-        reserved = true;
     }
 
     public ExprNode initializer() {
