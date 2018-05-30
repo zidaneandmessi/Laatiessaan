@@ -33,14 +33,16 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         generateDataSection(code, ir.defvars());
         generateBssSection(code, ir.defvars());
         locateGlobalVariables(ir.defvars());
-        generateTextSection(code, ir.defuns());
+        generateTextSection(code, ir.defuns(), ir);
         return code;
     }
 
     private void generateDataSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".data");
         for (DefinedVariable var : vars) {
-            if (var.hasInitializer()) {
+            if (!(var.type() instanceof ArrayType) &&
+                !(var.type() instanceof ClassType) &&
+                var.hasInitializer()) {
                 code.label(new Label("_" + var.name()));
                 generateImmediate(code, var);
             }
@@ -50,10 +52,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private void generateImmediate(AssemblyCode code, DefinedVariable var) {
         Expr node = var.ir();
-        if (node instanceof Int) {
+        if (var.type() instanceof IntegerType) {
             code.dq(((Int)node).value());
         }
-        else if (node instanceof Str) {
+        else if (var.type() instanceof StringType) {
             String s = ((Str)node).originValue();
             code.setDataIndex();
             generateStringData(code, s);
@@ -63,7 +65,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void generateBssSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".bss");
         for (DefinedVariable var : vars) {
-            if (!var.hasInitializer()) {
+            if (var.type() instanceof ArrayType ||
+                var.type() instanceof ClassType ||
+                !(var.hasInitializer())) {
                 code.label(new Label("_" + var.name()));
                 generateReserveData(code, var);
             }
@@ -71,13 +75,21 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     private void generateReserveData(AssemblyCode code, DefinedVariable var) {
-        code.resq(1);
+        if (var.type() instanceof ArrayType && var.hasInitializer()) {
+            code.resq(1);
+            code.label(new Label("__data_" + var.name()));
+            code.resq(((Int)((New)(var.ir())).exprLen()).value());
+            var.reserve();
+        }
+        else {
+            code.resq(1);
+        }
     }
 
-    private void generateTextSection(AssemblyCode code, List<DefinedFunction> funcs) {
+    private void generateTextSection(AssemblyCode code, List<DefinedFunction> funcs, IR ir) {
         code.section(".text");
         for (DefinedFunction func : funcs) 
-            compileFunctionBody(code, func);
+            compileFunctionBody(code, func, ir);
     }
 
     static final private long STACK_WORD_SIZE = 8;
@@ -191,7 +203,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         public long frameSize() { return saveRegsSize() + localVarSize + tempSize; }
     }   
 
-    private void compileFunctionBody(AssemblyCode code, DefinedFunction func) {
+    private void compileFunctionBody(AssemblyCode code, DefinedFunction func, IR ir) {
         StackFrame frame = new StackFrame();
         locateParameters(func.parameters());
         frame.localVarSize = locateLocalVariables(func.localVarScope(), 0);
@@ -200,8 +212,16 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         frame.tempSize = body.virtualStack.maxSize();
         fixLocalVariableOffsets(func.localVarScope(), frame.localVarOffset());
         fixTempVariableOffsets(body, frame.tempVarOffset());
-        if (func.name().equals("main"))
+        if (func.name().equals("main")) {
             code.label(new Label(func.name()));
+            for (DefinedVariable var : ir.defvars()) {
+                if (var.type() instanceof ArrayType && var.hasInitializer()) {
+                    code.mov(rcx(), new ImmediateValue(new Label("__data_" + var.name())));
+                    code.mov(rax(), var.address());
+                    code.mov(mem(rax()), rcx());
+                }
+            }
+        }
         else
             code.label(new Label("_" + func.name()));
         generateFunctionBody(code, body, frame);
@@ -215,7 +235,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 var.setMemref(new IndirectMemoryReference(new ImmediateValue(new Label("_" + var.name())), 0));
                 var.setAddress(new DirectMemoryReference(new LabelLiteral(new Label("_" + var.name()))));
             }
-            else if(var.hasInitializer()) {
+            else if(!(var.type() instanceof ArrayType) &&
+                    !(var.type() instanceof ClassType) &&
+                    var.hasInitializer()) {
                 DirectMemoryReference memref = new DirectMemoryReference(new LabelLiteral(new Label("_" + var.name())));
                 var.setMemref(memref);
                 var.setAddress(memref);
@@ -296,8 +318,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         for (Register reg : savedRegs) {
             as.virtualPop(reg);
         }
-        //as.mov(rsp(), rbp());
-        //as.pop(rbp());
         as.leave();
         as.ret();
     }
@@ -678,7 +698,13 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         else if (name.equals("_array.size")) {
             Expr arg = node.args().get(0);
             visit(arg);
-            as.mov(rax(), mem(rax(), -8));
+            if (arg instanceof Var && ((DefinedVariable)((Var)arg).entity()).reserved()) {
+                DefinedVariable var = (DefinedVariable)((Var)arg).entity();
+                as.mov(rax(), new ImmediateValue(((Int)((New)(var.ir())).exprLen()).value()));
+            }
+            else {
+                as.mov(rax(), mem(rax(), -8));
+            }
         }
         else
         {
