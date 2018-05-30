@@ -76,6 +76,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private void generateReserveData(AssemblyCode code, DefinedVariable var) {
         if (var.type() instanceof ArrayType && var.hasInitializer()) {
+            System.err.println(var);
+            System.err.println(((ArrayType)var.type()).baseType());
+            System.err.println(((New)(var.ir())).exprLen());
             code.resq(1);
             code.label(new Label("__data_" + var.name()));
             code.resq(((Int)((New)(var.ir())).exprLen()).value());

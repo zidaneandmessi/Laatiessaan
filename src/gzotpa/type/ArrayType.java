@@ -83,7 +83,7 @@ public class ArrayType extends Type {
 
     public ExprNode exprAllocSize() {
         if (exprLen == null) {
-            return new IntegerLiteralNode(IntegerTypeRef.intRef(), pointerSize);
+            return new IntegerLiteralNode(new IntegerType(64, "int"), IntegerTypeRef.intRef(), pointerSize);
         }
         else {
             if (baseType instanceof ArrayType) {

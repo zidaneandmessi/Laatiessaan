@@ -330,10 +330,10 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
 
     public Expr visit(LogicalOrNode node) {
         Label rightLabel = new Label("_logic_or_right_" + logicOrCnt);
-        Label endLabel = new Label("_logic_or_end_" + logicOrCnt);
+        Label endLabel = new Label("_logic_or_end_" + (logicOrCnt++));
         DefinedVariable var = tmpVar(node.type());
         assign(node.left().location(), ref(var), visitExpr(node.left()));
-        stmts.add(new ConditionJump(node.location(), ref(var), rightLabel, endLabel));
+        stmts.add(new ConditionJump(node.location(), ref(var), endLabel, rightLabel));
         stmts.add(new LabelStmt(null, rightLabel));
         assign(node.right().location(), ref(var), visitExpr(node.right()));
         stmts.add(new LabelStmt(null, endLabel));

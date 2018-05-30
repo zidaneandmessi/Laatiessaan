@@ -14,6 +14,7 @@ import gzotpa.exception.*;
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -255,21 +256,28 @@ TypeRef newtyperef():
 {
     TypeRef ref;
     ExprNode e;
+    LinkedList<ExprNode> stack = new LinkedList<ExprNode>();
 }
 {
     ref=typeref_base()
     ( LOOKAHEAD(2)
     "[" e=expr() "]"
         {
-            ref = new ArrayTypeRef(ref, e);
+            stack.addLast(e);
         }
     )*
     ( "[" "]"
         {
-            ref = new ArrayTypeRef(ref);
+            stack.addLast(null);
         }
     )*
         {
+            while (!stack.isEmpty())
+            {
+                e = stack.removeLast();
+                if (e == null) ref = new ArrayTypeRef(ref, e);
+                else ref = new ArrayTypeRef(ref, e);
+            }
             return ref;
         }
 }
