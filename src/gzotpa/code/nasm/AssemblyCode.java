@@ -130,6 +130,14 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         assemblies.add(new Instruction("pop", reg));
     }
 
+    void resb(long n) {
+        assemblies.add(new Instruction("resb", new ImmediateValue(n)));
+    }
+
+    void resq(long n) {
+        assemblies.add(new Instruction("resq", new ImmediateValue(n)));
+    }
+
     void ret() {
         assemblies.add(new Instruction("ret"));
     }

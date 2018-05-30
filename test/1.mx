@@ -1,8 +1,7 @@
-//input: 1 2 3 4
-
-int[] a = new int[4];
+string s;
 int main()
 {
-    println(toString(a.size()));
+    s="gzotpa";
+    println(s);
     return 0;
 }

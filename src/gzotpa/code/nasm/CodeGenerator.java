@@ -31,7 +31,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.label(new Label("_str_str_format"));
         code.db("%s%s");
         generateDataSection(code, ir.defvars());
-        code.setDataIndex();
+        generateBssSection(code, ir.defvars());
         locateGlobalVariables(ir.defvars());
         generateTextSection(code, ir.defuns());
         return code;
@@ -40,27 +40,38 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void generateDataSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".data");
         for (DefinedVariable var : vars) {
-            code.label(new Label("_" + var.name()));
-            generateImmediate(code, var);
+            if (var.hasInitializer()) {
+                code.label(new Label("_" + var.name()));
+                generateImmediate(code, var);
+            }
         }
+        code.setDataIndex();
     }
 
     private void generateImmediate(AssemblyCode code, DefinedVariable var) {
         Expr node = var.ir();
-        if (node == null) {
-            if (var.type() instanceof StringType) {
-                code.db(0);
-            }
-            else {
-                code.dq(0);
-            }
-        }
-        else if (node instanceof Int) {
+        if (node instanceof Int) {
             code.dq(((Int)node).value());
         }
         else if (node instanceof Str) {
-            code.db(((Str)node).value());
+            String s = ((Str)node).originValue();
+            code.setDataIndex();
+            generateStringData(code, s);
         }
+    }
+
+    private void generateBssSection(AssemblyCode code, List<DefinedVariable> vars) {
+        code.section(".bss");
+        for (DefinedVariable var : vars) {
+            if (!var.hasInitializer()) {
+                code.label(new Label("_" + var.name()));
+                generateReserveData(code, var);
+            }
+        }
+    }
+
+    private void generateReserveData(AssemblyCode code, DefinedVariable var) {
+        code.resq(1);
     }
 
     private void generateTextSection(AssemblyCode code, List<DefinedFunction> funcs) {
@@ -204,11 +215,14 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 var.setMemref(new IndirectMemoryReference(new ImmediateValue(new Label("_" + var.name())), 0));
                 var.setAddress(new DirectMemoryReference(new LabelLiteral(new Label("_" + var.name()))));
             }
-            else 
-            {
+            else if(var.hasInitializer()) {
                 DirectMemoryReference memref = new DirectMemoryReference(new LabelLiteral(new Label("_" + var.name())));
                 var.setMemref(memref);
                 var.setAddress(memref);
+            }
+            else {
+                var.setMemref(new IndirectMemoryReference(new ImmediateValue(new Label("_" + var.name())), 0));
+                var.setAddress(new DirectMemoryReference(new LabelLiteral(new Label("_" + var.name()))));
             }
         }
     }
@@ -511,6 +525,43 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         }
     }
 
+    private void generateStringData(AssemblyCode code, String s) {
+        int st = 0, i = 0;
+        for (i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\\' && i < s.length() - 1) {
+                char c = s.charAt(i + 1);
+                switch(c) {
+                case '\"':
+                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    code.addData(new Instruction("db\t34"));
+                    st = i + 2;
+                    i++;
+                    break;
+                case '\\':
+                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    code.addData(new Instruction("db\t92"));
+                    st = i + 2;
+                    i++;
+                    break;
+                case '\'':
+                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    code.addData(new Instruction("db\t39"));
+                    st = i + 2;
+                    i++;
+                    break;
+                case 'n':
+                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    code.addData(new Instruction("db\t10"));
+                    st = i + 2;
+                    i++;
+                    break;
+                default:;
+                }
+            }
+        }
+        code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\", 0, 0"));
+    }
+
     static private int constStrCnt = 0;
     
     public Void visit(Addr node) {
@@ -717,40 +768,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     public Void visit(Str node) {
     	code.addData(new Label("_const_string_" + constStrCnt));
         String s = node.originValue();
-        int st = 0, i = 0;
-        for (i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '\\' && i < s.length() - 1) {
-                char c = s.charAt(i + 1);
-                switch(c) {
-                case '\"':
-                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
-                    code.addData(new Instruction("db\t34"));
-                    st = i + 2;
-                    i++;
-                    break;
-                case '\\':
-                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
-                    code.addData(new Instruction("db\t92"));
-                    st = i + 2;
-                    i++;
-                    break;
-                case '\'':
-                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
-                    code.addData(new Instruction("db\t39"));
-                    st = i + 2;
-                    i++;
-                    break;
-                case 'n':
-                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
-                    code.addData(new Instruction("db\t10"));
-                    st = i + 2;
-                    i++;
-                    break;
-                default:;
-                }
-            }
-        }
-        code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\", 0, 0"));
+        generateStringData(code, s);
         as.mov(rax(), new ImmediateValue(new Label("_const_string_" + constStrCnt)));
         constStrCnt++;
         return null;

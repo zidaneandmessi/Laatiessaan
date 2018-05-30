@@ -7,8 +7,12 @@ public class DirectMemoryReference extends MemoryReference {
         this.name = name;
     }
 
+    public DirectMemoryReference(Literal name, boolean reserved) {
+        this.name = name;
+    }
+
     public Literal name() {
-        return this.name;
+        return name;
     }
 
     public void fixOffset(long diff) {
