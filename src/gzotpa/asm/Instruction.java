@@ -29,6 +29,13 @@ public class Instruction extends Assembly {
         return this.name;
     }
 
+    public boolean isText() {
+        return name.equals("section") &&
+            operands[0] instanceof ImmediateValue &&
+            ((ImmediateValue)operands[0]).val() instanceof LabelLiteral &&
+            ((LabelLiteral)((ImmediateValue)operands[0]).val()).value().equals(".text");
+    }
+
     public int numOperands() {
         return this.operands.length;
     }

@@ -671,7 +671,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.add(rsi(), rax());
             as.mov(rcx(), rax());
             arg = node.args().get(1);
+            as.push(rcx());
             visit(arg);
+            as.pop(rcx());
             as.sub(rax(), rcx());
             as.add(rax(), new ImmediateValue(1));
             as.mov(rdx(), rax());
@@ -694,6 +696,14 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             visit(arg);
             as.mov(rax(), mem(rax(), rcx()));
             as.movzx(rax(), rax(8));
+        }
+        else if (name.equals("string.parseInt")) {
+            code.setTextIndex();
+            code.addParseIntFunction();
+            Expr arg = node.args().get(0);
+            visit(arg);
+            as.mov(rdi(), rax());
+            as.call("__parseInt");
         }
         else if (name.equals("_array.size")) {
             Expr arg = node.args().get(0);

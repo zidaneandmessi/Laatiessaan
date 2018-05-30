@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 public class AssemblyCode extends gzotpa.asm.AssemblyCode {
     private int dataIndex = 0;
+    private int textIndex = 0;
 
     public AssemblyCode() {
         assemblies = new LinkedList<Assembly>();
@@ -24,6 +25,16 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         for (Assembly as : assemblies) dataIndex++;
     }
 
+    void setTextIndex() {
+        for (Assembly as : assemblies) {
+            if (as instanceof Instruction && ((Instruction)as).isText()) {
+                textIndex++;
+                break;
+            }
+            textIndex++;
+        }
+    }
+
     void addData(Assembly as) {
         assemblies.add((dataIndex++), as);
     }
@@ -32,6 +43,31 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         assemblies.addAll(ass);
         for (Assembly as : ass)
             as.statisticRegister(this);
+    }
+
+    void addParseIntFunction() {
+        assemblies.add((textIndex++), new Label("__parseInt"));
+        assemblies.add((textIndex++), new Instruction(("movzx"), new Label("edx, byte [rdi]")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("eax, [rdx-30H]")));
+        assemblies.add((textIndex++), new Instruction(("cmp"), new Label("al, 9")));
+        assemblies.add((textIndex++), new Instruction(("ja"), new Label("__parseInt_002")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("ecx, 0")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("eax, 0")));
+        assemblies.add((textIndex++), new Label("__parseInt_001"));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("eax, [rax+rax*4]")));
+        assemblies.add((textIndex++), new Instruction(("movsx"), new Label("edx, dl")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("eax, [rdx+rax*2-30H]")));
+        assemblies.add((textIndex++), new Instruction(("add"), new Label("ecx, 1")));
+        assemblies.add((textIndex++), new Instruction(("movsxd"), new Label("rdx, ecx")));
+        assemblies.add((textIndex++), new Instruction(("movzx"), new Label("edx, byte [rdi+rdx]")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("esi, [rdx-30H]")));
+        assemblies.add((textIndex++), new Instruction(("cmp"), new Label("sil, 9")));
+        assemblies.add((textIndex++), new Instruction(("jbe"), new Label("__parseInt_001")));
+        assemblies.add((textIndex++), new Instruction(("DB"), new Label("0F3H")));
+        assemblies.add((textIndex++), new Instruction("ret"));
+        assemblies.add((textIndex++), new Label("__parseInt_002"));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("eax, 0")));
+        assemblies.add((textIndex++), new Instruction("ret"));
     }
 
     void add(Operand a, Operand b) {
