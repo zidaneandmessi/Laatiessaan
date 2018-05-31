@@ -28,15 +28,6 @@ class DereferenceChecker extends Visitor {
 
     private void checkToplevelVariable(DefinedVariable var) {
         checkVariable(var);
-        if (var.hasInitializer()) {
-            checkConstant(var.initializer());
-        }
-    }
-
-    private void checkConstant(ExprNode expr) {
-        if (!expr.isConstant()) {
-            throw new Error("Gzotpa! Not a constant!");
-        }
     }
 
     private void checkVariable(DefinedVariable var) {

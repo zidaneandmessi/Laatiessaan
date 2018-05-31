@@ -53,13 +53,65 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void generateImmediate(AssemblyCode code, DefinedVariable var) {
         Expr node = var.ir();
         if (var.type() instanceof IntegerType) {
-            code.dq(((Int)node).value());
+            if (node instanceof Int) {
+                code.dq(((Int)node).value());
+            }
+            else {
+                long value = calcImmediate(node);
+                code.dq(value);
+            }
         }
         else if (var.type() instanceof StringType) {
             String s = ((Str)node).originValue();
             code.setDataIndex();
             generateStringData(code, s);
         }
+    }
+
+    long calcImmediate(Expr node) {
+        if (node instanceof Int) {
+            return ((Int)node).value();
+        }
+        else if (node instanceof Uni) {
+            switch (((Uni)node).op()) {
+            case NEG:
+                return -calcImmediate(((Uni)node).expr());
+            case BIT_NOT:
+                return ~calcImmediate(((Uni)node).expr());
+            case NOT:
+                long x = calcImmediate(((Uni)node).expr());
+                if (x != 0) return 0;
+                else return 1;
+            }
+        }
+        else if (node instanceof Bin) {
+            switch (((Bin)node).op()) {
+            case ADD:
+                return calcImmediate(((Bin)node).left()) + calcImmediate(((Bin)node).right());
+            case SUB:
+                return calcImmediate(((Bin)node).left()) - calcImmediate(((Bin)node).right());
+            case MUL:
+                return calcImmediate(((Bin)node).left()) * calcImmediate(((Bin)node).right());
+            case DIV:
+                return calcImmediate(((Bin)node).left()) / calcImmediate(((Bin)node).right());
+            case MOD:
+                return calcImmediate(((Bin)node).left()) % calcImmediate(((Bin)node).right());
+            case BIT_AND:
+                return calcImmediate(((Bin)node).left()) & calcImmediate(((Bin)node).right());
+            case BIT_OR:
+                return calcImmediate(((Bin)node).left()) | calcImmediate(((Bin)node).right());
+            case BIT_XOR:
+                return calcImmediate(((Bin)node).left()) ^ calcImmediate(((Bin)node).right());
+            case BIT_LSHIFT:
+                return calcImmediate(((Bin)node).left()) << calcImmediate(((Bin)node).right());
+            case ARITH_RSHIFT:
+                return calcImmediate(((Bin)node).left()) >> calcImmediate(((Bin)node).right());
+            }
+        }
+        else if (node instanceof Var) {
+            return calcImmediate(((DefinedVariable)(((Var)node).entity())).ir());
+        }
+        throw new Error("Gzotpa! Unknown global integer initializer!");
     }
 
     private void generateBssSection(AssemblyCode code, List<DefinedVariable> vars) {
@@ -78,7 +130,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         if (var.type() instanceof ArrayType && var.hasInitializer()) {
             code.resq(1);
             code.label(new Label("__data_" + var.name()));
-            code.resq(((Int)((New)(var.ir())).exprLen()).value() + 1);
+            long val = calcImmediate(((New)(var.ir())).exprLen());
+            code.resq(val + 1);
         }
         else {
             code.resq(1);
@@ -221,7 +274,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             for (DefinedVariable var : ir.defvars()) {
                 if (var.type() instanceof ArrayType && var.hasInitializer()) {
                     code.mov(rcx(), new ImmediateValue(new Label("__data_" + var.name())));
-                    code.mov(rax(), new ImmediateValue(((Int)((New)(var.ir())).exprLen()).value()));
+                    long val = calcImmediate(((New)(var.ir())).exprLen());
+                    code.mov(rax(), new ImmediateValue(val));
                     code.mov(mem(rcx()), rax());
                     code.add(rcx(), new ImmediateValue(8));
                     code.mov(rax(), var.address());

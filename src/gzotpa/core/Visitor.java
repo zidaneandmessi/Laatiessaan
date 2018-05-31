@@ -156,6 +156,10 @@ abstract public class Visitor implements ASTVisitor<Void, Void> {
         if(node.type() instanceof ArrayType) {
             ArrayType type = (ArrayType)node.type();
             visitExpr(type.exprLen());
+            while (type.baseType() instanceof ArrayType) {
+                type = (ArrayType)(type.baseType());
+                visitExpr(type.exprLen());
+            }
         }
         return null;
     }
