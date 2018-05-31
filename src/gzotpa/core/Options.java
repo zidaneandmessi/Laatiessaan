@@ -17,6 +17,7 @@ class Options {
     private String outputFileName;
     private List<LdArg> ldArgs;
     private List<SourceFile> sourceFiles;
+    private boolean verbose = false;
 
     CompilerMode mode() {
         return mode;
@@ -71,6 +72,9 @@ class Options {
                 else if (arg.equals("--help")) {
                     printUsage(System.out);
                     System.exit(0);
+                }
+                else if (arg.equals("-v")) {
+                    verbose = true;
                 }
                 else {
                     parseError("unknown option: " + arg);
@@ -133,6 +137,10 @@ class Options {
     
     private void parseError(String msg) {
         throw new OptionParseError(msg);
+    }
+
+    boolean isVerboseMode() {
+        return this.verbose;
     }
 
     void printUsage(PrintStream out) {
