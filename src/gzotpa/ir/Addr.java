@@ -8,8 +8,6 @@ public class Addr extends Expr {
         this.entity = entity;
     }
 
-    public boolean isAddr() { return true; }
-
     public Entity entity() {
         return entity;
     }

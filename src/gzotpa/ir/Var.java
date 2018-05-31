@@ -13,8 +13,6 @@ public class Var extends Expr {
         return entity;
     }
 
-    public boolean isVar() { return true; }
-
     public Expr addressNode() {
         return new Addr(entity);
     }

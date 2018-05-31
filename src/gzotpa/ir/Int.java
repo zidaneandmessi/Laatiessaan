@@ -11,7 +11,6 @@ public class Int extends Expr {
         return value;
     }
 
-    public boolean isConstant() { return true; }
 
     public <S,E> E accept(IRVisitor<S,E> visitor) {
         return visitor.visit(this);

@@ -5,8 +5,6 @@ abstract public class Expr implements Dumpable {
 
     Expr() {}
 
-    public boolean isVar() { return false; }
-    
     public Expr addressNode() {
         throw new Error("Gzotpa! Address for expr callded!");
     }

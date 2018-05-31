@@ -40,9 +40,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void generateDataSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".data");
         for (DefinedVariable var : vars) {
-            if (!(var.type() instanceof ArrayType) &&
-                !(var.type() instanceof ClassType) &&
-                var.hasInitializer()) {
+            if (!(var.type() instanceof ArrayType)
+                && !(var.type() instanceof ClassType)
+                && var.hasInitializer()) {
                 code.label(new Label("_" + var.name()));
                 generateImmediate(code, var);
             }
@@ -117,9 +117,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void generateBssSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".bss");
         for (DefinedVariable var : vars) {
-            if (var.type() instanceof ArrayType ||
-                var.type() instanceof ClassType ||
-                !(var.hasInitializer())) {
+            if (var.type() instanceof ArrayType
+                || var.type() instanceof ClassType
+                || !(var.hasInitializer())) {
                 code.label(new Label("_" + var.name()));
                 generateReserveData(code, var);
             }
@@ -296,9 +296,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 var.setMemref(new IndirectMemoryReference(new ImmediateValue(new Label("_" + var.name())), 0));
                 var.setAddress(new DirectMemoryReference(new LabelLiteral(new Label("_" + var.name()))));
             }
-            else if(!(var.type() instanceof ArrayType) &&
-                    !(var.type() instanceof ClassType) &&
-                    var.hasInitializer()) {
+            else if(!(var.type() instanceof ArrayType)
+                    && !(var.type() instanceof ClassType)
+                    && var.hasInitializer()) {
                 DirectMemoryReference memref = new DirectMemoryReference(new LabelLiteral(new Label("_" + var.name())));
                 var.setMemref(memref);
                 var.setAddress(memref);
@@ -662,11 +662,36 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(Bin node) {
         Op op = node.op();
-        visit(node.right());
-        as.virtualPush(rax());
-        visit(node.left());
-        as.virtualPop(rcx());
-        compileBinaryOp(op, rax(), rcx(), node.stringBin());
+        if (node.right() instanceof Int) {
+            visit(node.left());
+            as.mov(rcx(), new ImmediateValue(((Int)(node.right())).value()));
+            compileBinaryOp(op, rax(), rcx(), node.stringBin());
+        }
+        else if (node.right() instanceof Var) {
+            visit(node.left());
+            as.mov(rcx(), ((Var)(node.right())).memref());
+            compileBinaryOp(op, rax(), rcx(), node.stringBin());
+        }
+        else if (node.right() instanceof Addr) {
+            visit(node.left());
+            loadAddress(((Addr)(node.right())).entity(), rcx());
+            compileBinaryOp(op, rax(), rcx(), node.stringBin());
+        }
+        else if (node.left() instanceof Int
+                || node.left() instanceof Var
+                || node.left() instanceof Addr) {
+            visit(node.right());
+            as.mov(rcx(), rax());
+            visit(node.left());
+            compileBinaryOp(op, rax(), rcx(), node.stringBin());
+        }
+        else {
+            visit(node.right());
+            as.virtualPush(rax());
+            visit(node.left());
+            as.virtualPop(rcx());
+            compileBinaryOp(op, rax(), rcx(), node.stringBin());
+        }
         return null;
     }
 
