@@ -363,7 +363,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         long size = parentStackSize;
         for (DefinedVariable var : scope.localVariables()) {
             if (var instanceof Parameter) continue;
-            size = alignStack(size + var.allocSize() / 8, STACK_WORD_SIZE);
+            size = alignStack(size + STACK_WORD_SIZE, STACK_WORD_SIZE);
             var.setMemref(new IndirectMemoryReference(rbp(), -size, false)); //offset value changeable
         }
         long maxSize = size;

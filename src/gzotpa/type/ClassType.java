@@ -32,18 +32,7 @@ public class ClassType extends NamedType {
     public long size() {
         long size = 0;
         for (DefinedVariable var : decls.defvars()) {
-            if (var.type() instanceof IntegerType) {
-                size += 64;
-            }
-            else if (var.type() instanceof StringType) {
-                size += var.type().size();
-            }
-            else if (var.type() instanceof ArrayType) {
-                size += var.type().allocSize();
-            }
-            else if (var.type() instanceof ClassType) {
-                size += 64;
-            }
+            size += 64;
         }
         return size;
     }
