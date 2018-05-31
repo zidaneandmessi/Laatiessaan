@@ -56,6 +56,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             if (node instanceof Int) {
                 code.dq(((Int)node).value());
             }
+            else if (node instanceof Call) {
+                code.dq(0);
+                var.setWaiting(true);
+            }
             else {
                 long value = calcImmediate(node);
                 code.dq(value);
@@ -280,6 +284,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                     code.add(rcx(), new ImmediateValue(8));
                     code.mov(rax(), var.address());
                     code.mov(mem(rax()), rcx());
+                }
+                else if (var.waitingForInit()) {
+                    visit(var.ir());
+                    loadAddress(var, rcx());
+                    as.mov(mem(rcx()), rax());
+                    var.setWaiting(false);
                 }
             }
         }

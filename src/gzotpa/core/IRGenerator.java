@@ -17,6 +17,11 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         this.typeTable = typeTable;
     }
 
+    List<Stmt> stmts;
+    LinkedList<LocalScope> scopeStack;
+    LinkedList<Label> breakStack;
+    LinkedList<Label> continueStack;
+
     public IR generate(AST ast) {
         for (DefinedVariable var : ast.definedVariables()) {
             if (var.hasInitializer()) {
@@ -33,12 +38,6 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         }
         return ast.ir();
     }
-
-    List<Stmt> stmts;
-    LinkedList<LocalScope> scopeStack;
-    LinkedList<Label> breakStack;
-    LinkedList<Label> continueStack;
-
     private int exprNestLevel = 0;
 
     private void visitStmt(StmtNode node) {
@@ -308,6 +307,9 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         if (isStatement()) {
             stmts.add(new ExprStmt(node.location(), call));
             return null;
+        }
+        else if (scopeStack == null) {
+            return call;
         }
         else {
             DefinedVariable tmp = tmpVar(node.type());

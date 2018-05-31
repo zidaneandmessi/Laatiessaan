@@ -7,15 +7,18 @@ import gzotpa.type.Type;
 public class DefinedVariable extends Variable {
     protected ExprNode initializer;
     protected Expr ir;
+    protected boolean waitingForInit;
 
     public DefinedVariable(TypeNode type, String name) {
         super(type, name);
         initializer = null;
+        waitingForInit = false;
     }
 
     public DefinedVariable(TypeNode type, String name, ExprNode init) {
         super(type, name);
         initializer = init;
+        waitingForInit = false;
     }
 
     public boolean isDefined() {
@@ -36,6 +39,14 @@ public class DefinedVariable extends Variable {
 
     public void deletInitializer() {
         this.initializer = null;
+    }
+
+    public void setWaiting(boolean waitingForInit) {
+        this.waitingForInit = waitingForInit;
+    }
+
+    public boolean waitingForInit() {
+        return waitingForInit;
     }
 
     public Expr ir() {
