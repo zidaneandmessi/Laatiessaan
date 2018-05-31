@@ -92,7 +92,7 @@ public class ClassType extends NamedType {
         boolean isVariable = hasMemberVariable(name);
         boolean isFunction = hasMemberFunction(name);
         if (!isVariable && !isFunction) {
-            throw new Error("Gzotpa! Class has no such member!");
+            throw new Error("Gzotpa! Class has no such member!" + name);
         }
         else if (isVariable) {
             for (DefinedVariable var : decls.defvars()) {
@@ -100,10 +100,10 @@ public class ClassType extends NamedType {
                     return offset;
                 offset += 64;
             }
-            throw new Error("Gzotpa! Class has no such member!");
+            throw new Error("Gzotpa! Class has no such member!" + name);
         }
         else {
-            throw new Error("Gzotpa! Member function offset cannot be computed!");
+            throw new Error("Gzotpa! Member function offset cannot be computed!" + name);
         }
         /**/
     }

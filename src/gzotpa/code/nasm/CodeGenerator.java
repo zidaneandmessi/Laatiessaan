@@ -1,6 +1,6 @@
 package gzotpa.code.nasm;
 import gzotpa.asm.*;
-import gzotpa.ast.Location;
+import gzotpa.ast.*;
 import gzotpa.entity.*;
 import gzotpa.ir.*;
 import gzotpa.type.*;
@@ -33,7 +33,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         generateDataSection(code, ir.defvars());
         generateBssSection(code, ir.defvars());
         locateGlobalVariables(ir.defvars());
-        generateTextSection(code, ir.defuns(), ir);
+        generateTextSection(code, ir);
         return code;
     }
 
@@ -76,9 +76,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private void generateReserveData(AssemblyCode code, DefinedVariable var) {
         if (var.type() instanceof ArrayType && var.hasInitializer()) {
-            System.err.println(var);
-            System.err.println(((ArrayType)var.type()).baseType());
-            System.err.println(((New)(var.ir())).exprLen());
             code.resq(1);
             code.label(new Label("__data_" + var.name()));
             code.resq(((Int)((New)(var.ir())).exprLen()).value() + 1);
@@ -88,9 +85,14 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         }
     }
 
-    private void generateTextSection(AssemblyCode code, List<DefinedFunction> funcs, IR ir) {
+    private void generateTextSection(AssemblyCode code, IR ir) {
         code.section(".text");
-        for (DefinedFunction func : funcs) 
+        for (ClassNode cls : ir.defcls()) {
+            for (DefinedFunction func : cls.decls().defuns()) {
+                compileFunctionBody(code, func, ir);
+            }
+        }
+        for (DefinedFunction func : ir.defuns()) 
             compileFunctionBody(code, func, ir);
     }
 

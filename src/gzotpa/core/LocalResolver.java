@@ -12,6 +12,7 @@ public class LocalResolver extends Visitor {
     private boolean inFunc;
     private int inLoop;
     private ClassNode currentClass;
+    private DefinedVariable currentThis;
 
     public LocalResolver() {
         this.scopeStack = new LinkedList<Scope>();
@@ -72,9 +73,9 @@ public class LocalResolver extends Visitor {
     private void declareClassEntities(ClassNode cl, ToplevelScope toplevel) throws SemanticException {
         List<DefinedVariable> vars = cl.decls().defvars();
         List<DefinedFunction> funcs = cl.decls().defuns();
-        for (DefinedVariable v : vars) {
-            if (v.hasInitializer()) {
-                throw new Error("Gzotpa! Class member variable should not have initializer! " + v.name());
+        for (DefinedVariable var : vars) {
+            if (var.hasInitializer()) {
+                throw new Error("Gzotpa! Class member variable should not have initializer! " + var.name());
             }
         }
         for (DefinedFunction func : funcs) {
@@ -85,15 +86,20 @@ public class LocalResolver extends Visitor {
     private void resolveClass(ClassNode cl, ToplevelScope toplevel) throws SemanticException {
         List<DefinedVariable> vars = cl.decls().defvars();
         List<DefinedFunction> funcs = cl.decls().defuns();
-        vars.add(new DefinedVariable(cl.typeNode(), "this"));
         pushScope(vars);
         for (DefinedFunction func : funcs) {
             pushScope(func.parameters());
+            for (Parameter param : func.parameters()) {
+                if (param.name().equals("this")) {
+                    currentThis = (DefinedVariable)param;
+                }
+            }
             inFunc = true;
             resolve(func.body());
             func.setScope(popScope());
         }
         popScope();
+        currentThis = null;
     }
 
     public Void visit(BreakNode node) {
@@ -137,7 +143,7 @@ public class LocalResolver extends Visitor {
                     scope.defineVariable(var);
                     scope = popScope();
                 }
-                else if(b == false) {
+                else if (b == false) {
                     scopeStack.addLast(scope);
                     StmtNode stmt = stmts.next();
                     if (stmt != null)
@@ -201,10 +207,6 @@ public class LocalResolver extends Visitor {
         node.expr().accept(this);
         if (node.expr() instanceof VariableNode) {
             VariableNode var = (VariableNode)node.expr();
-            if (var.implicitThis()) {
-                node.addArg(new VariableNode("this"));
-                var.setImplicitThis(false);
-            }
         }
         for (ExprNode e : node.args()) {
             e.accept(this);
@@ -248,7 +250,13 @@ public class LocalResolver extends Visitor {
             }
             if (currentClass != null && currentScope().has(currentClass.name() + "." + node.name())) {
                 node.setName(currentClass.name() + "." + node.name());
-                node.setImplicitThis(true);
+            }
+            else if (currentClass != null &&
+                        !node.name().contains(".") &&
+                        currentScope() instanceof LocalScope &&
+                        !((LocalScope)currentScope()).isDefinedLocally(node.name())
+                        && ((ClassType)(currentClass.type())).hasMemberVariable(node.name())) {
+                node.setMemVarBase(new MemberNode(new VariableNode(currentThis), node.name()));
             }
             Entity ent = currentScope().get(node.name());
             ent.refered();

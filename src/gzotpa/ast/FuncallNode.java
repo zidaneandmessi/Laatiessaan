@@ -29,8 +29,9 @@ public class FuncallNode extends ExprNode {
     }
 
     public FunctionType functionType() {
-        if (expr.type() instanceof FunctionType)
+        if (expr.type() instanceof FunctionType) {
             return (FunctionType)(expr.type());
+        }
         return expr.type().getPointerType().baseType().getFunctionType();
     }
 

@@ -23,8 +23,13 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
                 var.setIR(visitExpr(var.initializer()));
             }
         }
-        for (DefinedFunction f : ast.definedFunctions()) {
-            f.setIR(compileFunctionBody(f));
+        for (DefinedFunction func : ast.definedFunctions()) {
+            func.setIR(compileFunctionBody(func));
+        }
+        for (ClassNode cls : ast.definedClasses()) {
+            for (DefinedFunction func : cls.decls().defuns()) {
+                func.setIR(compileFunctionBody(func));
+            }
         }
         return ast.ir();
     }
@@ -424,6 +429,9 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     public Expr visit(VariableNode node) {
+        if (node.memVarBase() != null) {
+            return visit(node.memVarBase());
+        }
         Var var = ref(node.entity());
         if (node.isLoadable()) return var;
         else return addressOf(var);

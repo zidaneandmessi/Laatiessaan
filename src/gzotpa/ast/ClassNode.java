@@ -8,10 +8,10 @@ public class ClassNode extends TypeDefinitionNode {
 
     public ClassNode(Location loc, TypeRef ref, String name, Declarations decls) {
         super(loc, ref, name);
-        for (DefinedFunction f : decls.defuns()) {
-            f.setName(name + "." + f.name());
-            f.parameters().add(new Parameter(this.typeNode(), "class"));
-            ((FunctionTypeRef)(f.typeNode().typeRef())).addParam(ref);
+        for (DefinedFunction func : decls.defuns()) {
+            func.setName(name + "." + func.name());
+            func.parameters().add(new Parameter(this.typeNode(), "this"));
+            ((FunctionTypeRef)(func.typeNode().typeRef())).addParam(ref);
         }
         this.decls = decls;
     }

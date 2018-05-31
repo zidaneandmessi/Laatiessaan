@@ -22,6 +22,7 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
     }
 
     void setDataIndex() {
+        dataIndex = 0;
         for (Assembly as : assemblies) dataIndex++;
     }
 

@@ -2,19 +2,20 @@ package gzotpa.ir;
 import gzotpa.ast.*;
 import gzotpa.entity.*;
 import java.util.List;
-import java.util.ArrayList;
 
 public class IR {
     List<DefinedVariable> defvars;
-    List<DefinedVariable> gvars, comms;
     List<DefinedFunction> defuns;
+    List<ClassNode> defcls; 
     ToplevelScope scope;
 
     public IR(List<DefinedVariable> defvars,
                 List<DefinedFunction> defuns,  
+                List<ClassNode> defcls,  
                 ToplevelScope scope) {
         this.defvars = defvars;
         this.defuns = defuns;
+        this.defcls = defcls;
         this.scope = scope;
     }
 
@@ -24,6 +25,10 @@ public class IR {
 
     public List<DefinedFunction> defuns() {
         return defuns;
+    }
+
+    public List<ClassNode> defcls() {
+        return defcls;
     }
 
     public ToplevelScope scope() {

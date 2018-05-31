@@ -1,4 +1,5 @@
 package gzotpa.ast;
+import gzotpa.ast.ClassNode;
 import gzotpa.entity.*;
 import gzotpa.ir.*;
 import java.util.List;
@@ -70,6 +71,6 @@ public class AST extends Node {
     }
 
     public IR ir() {
-        return new IR(definedVariables(), definedFunctions(), scope());
+        return new IR(definedVariables(), definedFunctions(), definedClasses(), scope());
     }
 }
