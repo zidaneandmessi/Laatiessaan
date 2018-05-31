@@ -199,7 +199,6 @@ class TypeChecker extends Visitor {
     }
 
     public Void visit(FuncallNode node) {
-        super.visit(node);
         FunctionType type = node.functionType();
         if (type.argc() != node.argc()) {
             throw new Error("Gzotpa! Wrong number of function arguments!");

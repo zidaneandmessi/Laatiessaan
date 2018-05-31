@@ -207,6 +207,10 @@ public class LocalResolver extends Visitor {
         node.expr().accept(this);
         if (node.expr() instanceof VariableNode) {
             VariableNode var = (VariableNode)node.expr();
+            if (var.implicitThis()) {   
+                 node.addArg(new VariableNode("this")); 
+                 var.setImplicitThis(false);    
+             }
         }
         for (ExprNode e : node.args()) {
             e.accept(this);
@@ -250,6 +254,7 @@ public class LocalResolver extends Visitor {
             }
             if (currentClass != null && currentScope().has(currentClass.name() + "." + node.name())) {
                 node.setName(currentClass.name() + "." + node.name());
+                node.setImplicitThis(true);
             }
             else if (currentClass != null &&
                         !node.name().contains(".") &&
