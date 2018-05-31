@@ -345,15 +345,13 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
 
     public Expr visit(MemberNode node) {
         Expr expr = addressOf(visitExpr(node.expr()));  
-        Expr offset = new Int(node.offset());
+        Expr offset = new Int(node.offset() / 8);
         Expr addr = new Bin(Op.ADD, expr, offset);
         if (node.isLoadable()) return new Mem(addr);
         else return addr;
     }
 
     public Expr visit(NewTypeNode node) {
-        System.err.println(node.type());
-        System.err.println(node.type().allocSize());
         if (node.type() instanceof ArrayType) {
             ArrayType type = (ArrayType)(node.type());
             Expr exprSize = visitExpr(type.exprAllocSize());
