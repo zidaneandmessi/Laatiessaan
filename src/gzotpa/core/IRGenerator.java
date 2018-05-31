@@ -156,7 +156,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
             return new Bin(Op.ADD,
                             visitExpr(node.index()),
                             new Bin(Op.MUL,
-                                    new Int(node.length()),
+                                    new Int(node.length() / 8),
                                     transformIndex((ArefNode)node.expr())));
         }
         else {

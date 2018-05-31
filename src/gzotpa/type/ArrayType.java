@@ -78,7 +78,7 @@ public class ArrayType extends Type {
 
     public long allocSize() {
         if (length == undefined) return pointerSize;
-        else return baseType.allocSize() * length;
+        else return 64 * length;
     }
 
     public ExprNode exprAllocSize() {
@@ -93,7 +93,7 @@ public class ArrayType extends Type {
             }
             else {
                 return new BinaryOpNode(new IntegerType(64, "int"),
-                                        new IntegerLiteralNode(new IntegerType(64, "int"), IntegerTypeRef.intRef(), baseType.allocSize()),
+                                        new IntegerLiteralNode(new IntegerType(64, "int"), IntegerTypeRef.intRef(), 64),
                                         "*",
                                         exprLen);
             }

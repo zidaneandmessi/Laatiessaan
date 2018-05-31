@@ -25,7 +25,7 @@ public class StringType extends Type {
     }
 
     public long allocSize() {
-        return 32;
+        return 64;
     }
 
     public String toString() {

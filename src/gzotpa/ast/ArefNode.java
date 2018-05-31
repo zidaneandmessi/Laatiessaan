@@ -34,7 +34,7 @@ public class ArefNode extends LHSNode {
     }
     
     public long length() {
-        return ((ArrayType)expr.origType()).length();
+        return 64;
     }
     
     public Location location() {
