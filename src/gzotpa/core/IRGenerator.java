@@ -195,6 +195,8 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
             return new Bin(op, left, right);
         else if (t instanceof StringType)
             return new Bin(op, left, right, true);
+        else if (node.right() instanceof NullNode)
+            return new Bin(op, left, new Int(0));
         else
             throw new Error("Gzotpa! Unknown binary operator expr type! " + t);
     }
@@ -362,7 +364,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     }
     
     public Expr visit(NullNode node) {
-        return null;
+        return new Int(0);
     }
     
     public Expr visit(OpAssignNode node) {
