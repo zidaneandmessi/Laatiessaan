@@ -30,11 +30,7 @@ public class ClassType extends NamedType {
     }
 
     public long size() {
-        long size = 0;
-        for (DefinedVariable var : decls.defvars()) {
-            size += 64;
-        }
-        return size;
+        return 64;
     }
 
     public boolean isClass() { return true; }
