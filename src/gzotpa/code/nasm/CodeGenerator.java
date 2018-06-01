@@ -34,6 +34,29 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         generateBssSection(code, ir.defvars());
         locateGlobalVariables(ir.defvars());
         generateTextSection(code, ir);
+        return optimize(code);
+    }
+
+    private AssemblyCode optimize(AssemblyCode code) {
+        Assembly last = null;
+        Iterator<Assembly> lastIter = code.assemblies().iterator();
+        for (Iterator<Assembly> iter = code.assemblies().iterator(); iter.hasNext();) {
+            Assembly as = last;
+            Assembly nt = iter.next();
+            if (as == null);
+            else if (as instanceof Instruction) {
+                Instruction inst = (Instruction)as;
+                if (inst.name().equals("mov")) {
+                    if (nt instanceof Instruction
+                        && ((Instruction)nt).name().equals("mov")
+                        && inst.operand1().equals(((Instruction)nt).operand1())) {
+                        lastIter.remove();
+                    }
+                }
+            }
+            last = nt;
+            lastIter = iter;
+        }
         return code;
     }
 
