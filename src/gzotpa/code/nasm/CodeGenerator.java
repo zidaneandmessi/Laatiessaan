@@ -150,10 +150,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void generateReserveData(AssemblyCode code, DefinedVariable var) {
         if (var.type() instanceof ArrayType && var.hasInitializer()) {
             code.resq(1);
-            var.setWaiting(true);
-            //code.label(new Label("__data_" + var.name()));
-            //long val = calcImmediate(((New)(var.ir())).exprLen());
-            //code.resq(val + 1);
         }
         else {
             code.resq(1);
@@ -916,6 +912,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             visit(node.exprLen());
             as.mov(rdi(), rax());
             as.push(rdi());
+            as.sal(rdi(), new ImmediateValue(3));
             as.add(rdi(), new ImmediateValue(8));
             as.call("malloc");
             as.pop(rdi());
