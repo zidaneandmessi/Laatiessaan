@@ -150,19 +150,6 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         }
     }
 
-    private Expr transformIndex(ArefNode node) {
-        if (node.isMultiDimension()) {
-            return new Bin(Op.ADD,
-                            visitExpr(node.index()),
-                            new Bin(Op.MUL,
-                                    new Int(node.length() / 8),
-                                    transformIndex((ArefNode)node.expr())));
-        }
-        else {
-            return visitExpr(node.index());
-        }
-    }
-
     private Expr transformOpAssign(Location loc, Op op, Type lhsType, Expr lhs, Expr rhs) {
         assign(loc, lhs, new Bin(op, lhs, rhs));
         if (isStatement()) return null;
@@ -171,7 +158,7 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
 
     public Expr visit(ArefNode node) {
         Expr expr = visitExpr(node.baseExpr());
-        Expr offset = new Bin(Op.MUL, new Int(node.elementSize() / 8), transformIndex(node));
+        Expr offset = new Bin(Op.MUL, new Int(node.elementSize() / 8), visitExpr(node.index()));
         Bin addr = new Bin(Op.ADD, expr, offset);
         return new Mem(addr);
     }
@@ -391,7 +378,6 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         Label bodyLabel = new Label("_for_body_" + forCnt);
         Label continueLabel = new Label("_for_continue_" + forCnt);
         Label endLabel = new Label("_for_end_" + (forCnt++));
-
         visitStmt(node.init());
         stmts.add(new LabelStmt(null, beginLabel));
         stmts.add(new ConditionJump(node.location(), visitExpr(node.cond()), bodyLabel, endLabel));

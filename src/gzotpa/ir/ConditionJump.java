@@ -13,6 +13,13 @@ public class ConditionJump extends Stmt {
         this.elseLabel = elseLabel;
     }
 
+    public ConditionJump(Expr cond, Label thenLabel, Label elseLabel) {
+        super(null);
+        this.cond = cond;
+        this.thenLabel = thenLabel;
+        this.elseLabel = elseLabel;
+    }
+
     public Expr cond() {
         return cond;
     }

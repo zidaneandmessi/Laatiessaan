@@ -276,23 +276,48 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         public long localVarOffset() { return saveRegsSize(); }
         public long tempVarOffset() { return saveRegsSize() + localVarSize; }
         public long frameSize() { return saveRegsSize() + localVarSize + tempSize; }
-    }   
+    }
+
+    static private long forCnt = 0;
+    LinkedList<Var> loopVarStack = new LinkedList<Var>();
+
+    private LinkedList<Stmt> generateMultiDimArrayInitStmtList(int index, ArrayType type, DefinedFunction func, DefinedVariable var, AssemblyCode code) {
+        New ir = (New)(var.ir());
+        LinkedList<Stmt> stmts = new LinkedList<Stmt>();
+        Expr forTimes = ir.lenStack().get(index);
+        LocalScope scope = func.scope();
+        Label beginLabel = new Label("_virtual_for_begin_" + forCnt);
+        Label bodyLabel = new Label("_virtual_for_body_" + forCnt);
+        Label continueLabel = new Label("_virtual_for_continue_" + forCnt);
+        Label endLabel = new Label("_virtual_for_end_" + (forCnt++));
+        Var loopVar = new Var(scope.allocateTmp(new IntegerType(64, "_virtual_loop_var")));
+        loopVarStack.addLast(loopVar);
+        stmts.add(new Assign(loopVar.addressNode(), new Int(0)));
+        stmts.add(new LabelStmt(null, beginLabel));
+        stmts.add(new ConditionJump(new Bin(Op.LT, loopVar, forTimes), bodyLabel, endLabel));
+        stmts.add(new LabelStmt(null, bodyLabel));
+        LinkedList<Expr> lenStack = new LinkedList<Expr>();
+        lenStack.addLast(ir.lenStack().get(index - 1));
+        New n = new New(lenStack);
+
+
+        if (index > 1) {
+            stmts.addAll(generateMultiDimArrayInitStmtList(index - 1, (ArrayType)(type.baseType()), func, var, code));
+        }
+        stmts.add(new LabelStmt(null, continueLabel));
+        stmts.add(new Assign(loopVar.addressNode(), new Bin(Op.ADD, loopVar, new Int(1))));
+        stmts.add(new Jump(null, beginLabel));
+        stmts.add(new LabelStmt(null, endLabel));
+        return stmts;
+    }
 
     private void compileFunctionBody(AssemblyCode code, DefinedFunction func, IR ir) {
-        StackFrame frame = new StackFrame();
-        locateParameters(func.parameters());
-        frame.localVarSize = locateLocalVariables(func.localVarScope(), 0);
-        AssemblyCode body = compileStmts(func);
-        frame.saveRegs = usedCalleeSaveRegisters(body);
-        frame.tempSize = body.virtualStack.maxSize();
-        fixLocalVariableOffsets(func.localVarScope(), frame.localVarOffset());
-        fixTempVariableOffsets(body, frame.tempVarOffset());
+
         if (func.name().equals("main")) {
             code.label(new Label(func.name()));
             for (DefinedVariable var : ir.defvars()) {
                 if (var.type() instanceof ArrayType && var.hasInitializer()) {
                     long val = calcImmediate(((New)(var.ir())).exprLen());
-                    ((New)(var.ir())).lenStack().removeLast();
                     code.mov(rdi(), new ImmediateValue(val));
                     code.push(rdi());
                     code.sal(rdi(), new ImmediateValue(3));
@@ -304,12 +329,16 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                     code.mov(rcx(), var.address());
                     code.mov(mem(rcx()), rax());
                     ArrayType type = (ArrayType)(var.type());
-                    while (type.baseType() instanceof ArrayType) {
-                        type = (ArrayType)(((ArrayType)var.type()).baseType());
-                        if (((New)(var.ir())).lenStack().isEmpty()) break;
-                        visit(((New)(var.ir())).exprLen());
-                        ((New)(var.ir())).lenStack().removeLast();
+                    if (((New)(var.ir())).lenStack().size() > 1) {
+                        LinkedList<Stmt> multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(var.ir())).lenStack().size() - 1, type, func, var, code);
+                        for (Stmt stmt : multiDimArrayInitStmtList) stmt.dump(new Dumper(System.err));
                     }
+                    // while (type.baseType() instanceof ArrayType) {
+                    //     type = (ArrayType)(((ArrayType)var.type()).baseType());
+                    //     if (((New)(var.ir())).lenStack().isEmpty()) break;
+                    //     visit(((New)(var.ir())).exprLen());
+                    //     ((New)(var.ir())).lenStack().removeLast();
+                    // }
                 }
                 else if (var.waitingForInit()) {
                     visit(var.ir());
@@ -319,8 +348,17 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 }
             }
         }
-        else
+        else {
             code.label(new Label("_" + func.name()));
+        }
+        StackFrame frame = new StackFrame();
+        locateParameters(func.parameters());
+        frame.localVarSize = locateLocalVariables(func.localVarScope(), 0);
+        AssemblyCode body = compileStmts(func);
+        frame.saveRegs = usedCalleeSaveRegisters(body);
+        frame.tempSize = body.virtualStack.maxSize();
+        fixLocalVariableOffsets(func.localVarScope(), frame.localVarOffset());
+        fixTempVariableOffsets(body, frame.tempVarOffset());
         generateFunctionBody(code, body, frame);
     }
 
@@ -649,25 +687,25 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 char c = s.charAt(i + 1);
                 switch(c) {
                 case '\"':
-                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    if(i >= st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
                     code.addData(new Instruction("db\t34"));
                     st = i + 2;
                     i++;
                     break;
                 case '\\':
-                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    if(i >= st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
                     code.addData(new Instruction("db\t92"));
                     st = i + 2;
                     i++;
                     break;
                 case '\'':
-                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    if(i >= st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
                     code.addData(new Instruction("db\t39"));
                     st = i + 2;
                     i++;
                     break;
                 case 'n':
-                    if(i > st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
+                    if(i >= st + 1) code.addData(new Instruction("db\t\"" + s.substring(st, i) + "\""));
                     code.addData(new Instruction("db\t10"));
                     st = i + 2;
                     i++;
