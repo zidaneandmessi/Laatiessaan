@@ -17,7 +17,7 @@ public class Str extends Expr {
     public String originValue() { 
         return originValue;
     }
-    
+
     public <S,E> E accept(IRVisitor<S,E> visitor) {
         return visitor.visit(this);
     }

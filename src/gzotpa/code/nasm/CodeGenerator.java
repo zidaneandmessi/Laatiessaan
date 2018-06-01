@@ -661,12 +661,24 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(Assign node) {
-        visit(node.rhs());
-        as.virtualPush(rax());
-        visit(node.lhs());
-        as.mov(rcx(), rax());
-        as.virtualPop(rax());
-        as.mov(mem(rcx()), rax());
+        if (node.lhs() instanceof Addr && ((Addr)node.lhs()).memref() != null) {
+            visit(node.rhs());
+            as.mov(((Addr)node.lhs()).memref(), rax());
+        }
+        else if (node.rhs() instanceof Int) {
+            visit(node.lhs());
+            as.mov(rcx(), rax());
+            as.mov(rax(), new ImmediateValue(((Int)(node.rhs())).value()));
+            as.mov(mem(rcx()), rax());
+        }
+        else {
+            visit(node.rhs());
+            as.virtualPush(rax());
+            visit(node.lhs());
+            as.mov(rcx(), rax());
+            as.virtualPop(rax());
+            as.mov(mem(rcx()), rax());
+        }
         return null;
     }
 

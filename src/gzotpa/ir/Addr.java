@@ -1,4 +1,5 @@
 package gzotpa.ir;
+import gzotpa.asm.MemoryReference;
 import gzotpa.entity.Entity;
 
 public class Addr extends Expr {
@@ -10,6 +11,10 @@ public class Addr extends Expr {
 
     public Entity entity() {
         return entity;
+    }
+
+    public MemoryReference memref() {
+        return entity.memref();
     }
 
     public <S,E> E accept(IRVisitor<S,E> visitor) {

@@ -1,9 +1,13 @@
-int lol (int x) {
-return x + 1;
+int gcd(int x, int y) {
+  if (x%y == 0) return y;
+  else return gcd(y, x%y);
 }
 
-int c = 123;
-int x = lol(c);
-int main () {
-return x;
+int main() {
+    println(toString(gcd(10,1)));
+    println(toString(gcd(34986,3087)));
+    println(toString(gcd(2907,1539)));
+
+    return 0;
 }
+
