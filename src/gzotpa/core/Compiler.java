@@ -181,7 +181,7 @@ public class Compiler {
             new DereferenceChecker(types).check(ast);
             new TypeChecker(types).check(ast);
             IR ir = new IRGenerator(types).generate(ast);
-            AssemblyCode code = new CodeGenerator().generateAssemblyCode(ir);
+            AssemblyCode code = new CodeGenerator(types).generateAssemblyCode(ir);
             if (opts.isVerboseMode()) code.dump();
             code.print();
             return true;

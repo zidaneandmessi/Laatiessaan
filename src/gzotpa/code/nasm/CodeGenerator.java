@@ -1,15 +1,18 @@
 package gzotpa.code.nasm;
 import gzotpa.asm.*;
 import gzotpa.ast.*;
+import gzotpa.core.IRGenerator;
 import gzotpa.entity.*;
 import gzotpa.ir.*;
 import gzotpa.type.*;
 import java.util.*;
 
 public class CodeGenerator implements IRVisitor<Void,Void> {
+    TypeTable typeTable;
     AssemblyCode code;
 
-    public CodeGenerator() {
+    public CodeGenerator(TypeTable typeTable) {
+        this.typeTable = typeTable;
         code = new AssemblyCode();
     }
 
@@ -279,7 +282,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     static private long forCnt = 0;
-    LinkedList<Var> loopVarStack = new LinkedList<Var>();
+    LinkedList<DefinedVariable> loopVarStack = new LinkedList<DefinedVariable>();
 
     private LinkedList<Stmt> generateMultiDimArrayInitStmtList(int index, ArrayType type, DefinedFunction func, DefinedVariable var, AssemblyCode code) {
         New ir = (New)(var.ir());
@@ -290,60 +293,67 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         Label bodyLabel = new Label("_virtual_for_body_" + forCnt);
         Label continueLabel = new Label("_virtual_for_continue_" + forCnt);
         Label endLabel = new Label("_virtual_for_end_" + (forCnt++));
-        Var loopVar = new Var(scope.allocateTmp(new IntegerType(64, "_virtual_loop_var")));
+        DefinedVariable loopVar = scope.allocateTmp(new IntegerType(64, "_virtual_loop_var"));
+        Var loopVarVar = new Var(loopVar);
         loopVarStack.addLast(loopVar);
-        stmts.add(new Assign(loopVar.addressNode(), new Int(0)));
+        stmts.add(new Assign(loopVarVar.addressNode(), new Int(0)));
         stmts.add(new LabelStmt(null, beginLabel));
-        stmts.add(new ConditionJump(new Bin(Op.LT, loopVar, forTimes), bodyLabel, endLabel));
+        stmts.add(new ConditionJump(new Bin(Op.LT, loopVarVar, forTimes), bodyLabel, endLabel));
         stmts.add(new LabelStmt(null, bodyLabel));
         LinkedList<Expr> lenStack = new LinkedList<Expr>();
         lenStack.addLast(ir.lenStack().get(index - 1));
         New n = new New(lenStack);
 
+        ArefNode node = null;
+        for (int i = 0; i < loopVarStack.size(); i++) {
+            DefinedVariable tmpLoopVar = loopVarStack.get(i);
+            if (i == 0) node = new ArefNode(new VariableNode(var), new VariableNode(tmpLoopVar));
+            else node = new ArefNode(node, new VariableNode(tmpLoopVar));
+        }
+        Expr mem = new IRGenerator(typeTable).visit(node);
+
+        stmts.add(new Assign(mem.addressNode(), n));
 
         if (index > 1) {
             stmts.addAll(generateMultiDimArrayInitStmtList(index - 1, (ArrayType)(type.baseType()), func, var, code));
         }
         stmts.add(new LabelStmt(null, continueLabel));
-        stmts.add(new Assign(loopVar.addressNode(), new Bin(Op.ADD, loopVar, new Int(1))));
+        stmts.add(new Assign(loopVarVar.addressNode(), new Bin(Op.ADD, loopVarVar, new Int(1))));
         stmts.add(new Jump(null, beginLabel));
         stmts.add(new LabelStmt(null, endLabel));
         return stmts;
     }
 
     private void compileFunctionBody(AssemblyCode code, DefinedFunction func, IR ir) {
-
+        as = new AssemblyCode();
         if (func.name().equals("main")) {
             code.label(new Label(func.name()));
             for (DefinedVariable var : ir.defvars()) {
                 if (var.type() instanceof ArrayType && var.hasInitializer()) {
-                    long val = calcImmediate(((New)(var.ir())).exprLen());
-                    code.mov(rdi(), new ImmediateValue(val));
-                    code.push(rdi());
-                    code.sal(rdi(), new ImmediateValue(3));
-                    code.add(rdi(), new ImmediateValue(8));
-                    code.call("malloc");
-                    code.pop(rdi());
-                    code.mov(mem(rax()), rdi());
-                    code.add(rax(), new ImmediateValue(8));
-                    code.mov(rcx(), var.address());
-                    code.mov(mem(rcx()), rax());
-                    ArrayType type = (ArrayType)(var.type());
                     if (((New)(var.ir())).lenStack().size() > 1) {
+                        ArrayType type = (ArrayType)(var.type());
                         LinkedList<Stmt> multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(var.ir())).lenStack().size() - 1, type, func, var, code);
-                        for (Stmt stmt : multiDimArrayInitStmtList) stmt.dump(new Dumper(System.err));
+                        //for (Stmt stmt : multiDimArrayInitStmtList) code.addAssembly(stmt);
                     }
-                    // while (type.baseType() instanceof ArrayType) {
-                    //     type = (ArrayType)(((ArrayType)var.type()).baseType());
-                    //     if (((New)(var.ir())).lenStack().isEmpty()) break;
-                    //     visit(((New)(var.ir())).exprLen());
-                    //     ((New)(var.ir())).lenStack().removeLast();
-                    // }
+                    else {
+                        long val = calcImmediate(((New)(var.ir())).exprLen());
+                        code.mov(rdi(), new ImmediateValue(val));
+                        code.push(rdi());
+                        code.sal(rdi(), new ImmediateValue(3));
+                        code.add(rdi(), new ImmediateValue(8));
+                        code.call("malloc");
+                        code.pop(rdi());
+                        code.mov(mem(rax()), rdi());
+                        code.add(rax(), new ImmediateValue(8));
+                        code.mov(rcx(), var.address());
+                        code.mov(mem(rcx()), rax());
+                    }
                 }
                 else if (var.waitingForInit()) {
                     visit(var.ir());
                     loadAddress(var, rcx());
                     as.mov(mem(rcx()), rax());
+                    code.addAll(as.assemblies());
                     var.setWaiting(false);
                 }
             }

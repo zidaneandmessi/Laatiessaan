@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Collections;
 
-class IRGenerator implements ASTVisitor<Void, Expr> {
+public class IRGenerator implements ASTVisitor<Void, Expr> {
     private final TypeTable typeTable;
 
     public IRGenerator(TypeTable typeTable) {
