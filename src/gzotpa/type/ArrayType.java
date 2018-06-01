@@ -1,5 +1,6 @@
 package gzotpa.type;
 import gzotpa.ast.*;
+import java.util.LinkedList;
 
 public class ArrayType extends Type {
     protected Type baseType;
@@ -98,6 +99,15 @@ public class ArrayType extends Type {
                                         exprLen);
             }
         }
+    }
+
+    public LinkedList<ExprNode> lenStack() {
+        LinkedList<ExprNode> stack = new LinkedList<ExprNode>();
+        stack.addLast(exprLen);
+        if (baseType instanceof ArrayType) {
+            stack.addAll(((ArrayType)baseType).lenStack());
+        }
+        return stack;
     }
 
     public boolean equals(Object other) {

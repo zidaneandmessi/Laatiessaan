@@ -19,6 +19,11 @@ public class Label extends Assembly {
     public boolean isLabel() {
         return true;
     }
+
+    public boolean equals(Object other) {
+        return (other instanceof Label)
+                && name.equals(((Label)other).name());
+    }
     
     public void statisticRegister(AssemblyCode as) {}
 

@@ -475,9 +475,14 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
     public Expr visit(NewTypeNode node) {
         if (node.type() instanceof ArrayType) {
             ArrayType type = (ArrayType)(node.type());
-            Expr exprSize = visitExpr(type.exprAllocSize());
-            Expr exprLen = visitExpr(type.exprLen());
-            return new New(exprSize, exprLen);
+            LinkedList<ExprNode> lenStack = type.lenStack();
+            LinkedList<Expr> stack = new LinkedList<Expr>();
+            while (!lenStack.isEmpty()) {
+                ExprNode e = lenStack.removeLast();
+                stack.addLast(visitExpr(e));
+            }
+            System.err.println(stack);
+            return new New(stack);
         }
         else return new New(node.type().allocSize());
     }

@@ -1,22 +1,10 @@
+
+    int[][] f = new int[5][5];
 int main()
 {
-    int k;
-    k = getInt();
-    print("p cnf ");
-    println(toString(k * 2 + 1) + " " + toString(k));
-    int i;
-    int last;
-    last = 1;
-    string t;
-    for(i = 0; i < k; ++i)
-    {
-        t = toString(last) + " " + toString(last + 1) + " " + toString(-(last + 2));
-        if(i % 100000 == 0)
-        {
-            println(t);
-        }
-        last = last + 2;
-    }
+f[3][4]=1;
+f[4][2]=55;
+println(toString(f[3][4]));
+println(toString(f[4][2]));
     return 0;
 }
-

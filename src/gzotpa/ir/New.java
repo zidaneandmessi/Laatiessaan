@@ -1,30 +1,29 @@
 package gzotpa.ir;
+import java.util.LinkedList;
 
 public class New extends Expr {
-    protected Expr exprSize;
-    protected Expr exprLen;
+    protected LinkedList<Expr> lenStack;
     protected long length;
     protected boolean sizeKnown;
 
-    public New(Expr exprSize, Expr exprLen) {
-        this.exprSize = exprSize;
-        this.exprLen = exprLen;
+    public New(LinkedList<Expr> lenStack) {
+        this.lenStack = lenStack;
         this.length = 0;
         this.sizeKnown = false;
     }
 
     public New(long length) {
-        this.exprLen = null;
+        this.lenStack = null;
         this.length = length;
         this.sizeKnown = true;
     }
 
-    public Expr exprSize() {
-        return exprSize;
+    public LinkedList<Expr> lenStack() {
+        return lenStack;
     }
 
     public Expr exprLen() {
-        return exprLen;
+        return lenStack.getLast();
     }
 
     public long length() {
@@ -41,6 +40,6 @@ public class New extends Expr {
 
     protected void _dump(Dumper d) {
         if (sizeKnown) d.printMember("length", length);
-        else d.printMember("exprLen", exprLen);
+        else d.printMember("exprLen", exprLen());
     }
 }
