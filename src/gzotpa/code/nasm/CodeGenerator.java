@@ -295,10 +295,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             code.label(new Label(func.name()));
             for (DefinedVariable var : ir.defvars()) {
                 if (var.type() instanceof ArrayType && var.hasInitializer()) {
-                    visit(((New)(var.ir())).exprLen());
+                    long val = calcImmediate(((New)(var.ir())).exprLen());
                     ((New)(var.ir())).lenStack().removeLast();
-                    code.mov(rdi(), rax());
+                    code.mov(rdi(), new ImmediateValue(val));
                     code.push(rdi());
+                    code.sal(rdi(), new ImmediateValue(3));
                     code.add(rdi(), new ImmediateValue(8));
                     code.call("malloc");
                     code.pop(rdi());
@@ -309,11 +310,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                     ArrayType type = (ArrayType)(var.type());
                     while (type.baseType() instanceof ArrayType) {
                         type = (ArrayType)(((ArrayType)var.type()).baseType());
-                        if (((New)(var.ir())).lenStack().isEmpty())
-                            break;
+                        if (((New)(var.ir())).lenStack().isEmpty()) break;
                         visit(((New)(var.ir())).exprLen());
                         ((New)(var.ir())).lenStack().removeLast();
-
                     }
                 }
                 else if (var.waitingForInit()) {
@@ -915,10 +914,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         }
         else {
             visit(node.exprLen());
-            as.sar(rax(), new ImmediateValue(3));
             as.mov(rdi(), rax());
-            visit(node.exprLen());
-            as.push(rax());
+            as.push(rdi());
             as.add(rdi(), new ImmediateValue(8));
             as.call("malloc");
             as.pop(rdi());

@@ -481,7 +481,6 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
                 ExprNode e = lenStack.removeLast();
                 stack.addLast(visitExpr(e));
             }
-            System.err.println(stack);
             return new New(stack);
         }
         else return new New(node.type().allocSize());

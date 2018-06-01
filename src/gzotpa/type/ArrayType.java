@@ -103,6 +103,7 @@ public class ArrayType extends Type {
 
     public LinkedList<ExprNode> lenStack() {
         LinkedList<ExprNode> stack = new LinkedList<ExprNode>();
+        if (exprLen == null) return stack;
         stack.addLast(exprLen);
         if (baseType instanceof ArrayType) {
             stack.addAll(((ArrayType)baseType).lenStack());
