@@ -195,8 +195,120 @@ class IRGenerator implements ASTVisitor<Void, Expr> {
         Expr left = visitExpr(node.left());
         Op op = Op.internBinary(node.operator());
         Type t = node.left().type();
-        if (t instanceof IntegerType)
+        if (right instanceof Int) {
+            long val = ((Int)right).value();
+            if ((op == Op.ADD || op == Op.SUB) && val == 0) {
+                return left;
+            }
+            else if (op == Op.MUL && val == 0) {
+                return new Int(0);
+            }
+            else if ((op == Op.MUL || op == Op.DIV) && val == 1) {
+                return left;
+            }
+            else if ((op == Op.MUL || op == Op.DIV) && val == -1) {
+                return new Uni(Op.NEG, left);
+            }
+            else if (op == Op.MUL) {
+                if (val == (1 << 1)) return new Bin(Op.BIT_LSHIFT, left, new Int(1));
+                else if (val == (1 << 2)) return new Bin(Op.BIT_LSHIFT, left, new Int(2));
+                else if (val == (1 << 3)) return new Bin(Op.BIT_LSHIFT, left, new Int(3));
+                else if (val == (1 << 4)) return new Bin(Op.BIT_LSHIFT, left, new Int(4));
+                else if (val == (1 << 5)) return new Bin(Op.BIT_LSHIFT, left, new Int(5));
+                else if (val == (1 << 6)) return new Bin(Op.BIT_LSHIFT, left, new Int(6));
+                else if (val == (1 << 7)) return new Bin(Op.BIT_LSHIFT, left, new Int(7));
+                else if (val == (1 << 8)) return new Bin(Op.BIT_LSHIFT, left, new Int(8));
+                else if (val == (1 << 9)) return new Bin(Op.BIT_LSHIFT, left, new Int(9));
+                else if (val == (1 << 10)) return new Bin(Op.BIT_LSHIFT, left, new Int(10));
+                else if (val == (1 << 11)) return new Bin(Op.BIT_LSHIFT, left, new Int(11));
+                else if (val == (1 << 12)) return new Bin(Op.BIT_LSHIFT, left, new Int(12));
+                else if (val == (1 << 13)) return new Bin(Op.BIT_LSHIFT, left, new Int(13));
+                else if (val == (1 << 14)) return new Bin(Op.BIT_LSHIFT, left, new Int(14));
+                else if (val == (1 << 15)) return new Bin(Op.BIT_LSHIFT, left, new Int(15));
+                else if (val == (1 << 16)) return new Bin(Op.BIT_LSHIFT, left, new Int(16));
+                else if (val == (1 << 17)) return new Bin(Op.BIT_LSHIFT, left, new Int(17));
+                else if (val == (1 << 18)) return new Bin(Op.BIT_LSHIFT, left, new Int(18));
+                else if (val == (1 << 19)) return new Bin(Op.BIT_LSHIFT, left, new Int(19));
+                else if (val == (1 << 20)) return new Bin(Op.BIT_LSHIFT, left, new Int(20));
+                else if (val == (1 << 21)) return new Bin(Op.BIT_LSHIFT, left, new Int(21));
+                else if (val == (1 << 22)) return new Bin(Op.BIT_LSHIFT, left, new Int(22));
+                else if (val == (1 << 23)) return new Bin(Op.BIT_LSHIFT, left, new Int(23));
+                else if (val == (1 << 24)) return new Bin(Op.BIT_LSHIFT, left, new Int(24));
+                else if (val == (1 << 25)) return new Bin(Op.BIT_LSHIFT, left, new Int(25));
+                else if (val == (1 << 26)) return new Bin(Op.BIT_LSHIFT, left, new Int(26));
+                else if (val == (1 << 27)) return new Bin(Op.BIT_LSHIFT, left, new Int(27));
+                else if (val == (1 << 28)) return new Bin(Op.BIT_LSHIFT, left, new Int(28));
+                else if (val == (1 << 29)) return new Bin(Op.BIT_LSHIFT, left, new Int(29));
+                else if (val == (1 << 30)) return new Bin(Op.BIT_LSHIFT, left, new Int(30));
+            }
+            else if (op == Op.DIV) {
+                if (val == (1 << 1)) return new Bin(Op.ARITH_RSHIFT, left, new Int(1));
+                else if (val == (1 << 2)) return new Bin(Op.ARITH_RSHIFT, left, new Int(2));
+                else if (val == (1 << 3)) return new Bin(Op.ARITH_RSHIFT, left, new Int(3));
+                else if (val == (1 << 4)) return new Bin(Op.ARITH_RSHIFT, left, new Int(4));
+                else if (val == (1 << 5)) return new Bin(Op.ARITH_RSHIFT, left, new Int(5));
+                else if (val == (1 << 6)) return new Bin(Op.ARITH_RSHIFT, left, new Int(6));
+                else if (val == (1 << 7)) return new Bin(Op.ARITH_RSHIFT, left, new Int(7));
+                else if (val == (1 << 8)) return new Bin(Op.ARITH_RSHIFT, left, new Int(8));
+                else if (val == (1 << 9)) return new Bin(Op.ARITH_RSHIFT, left, new Int(9));
+                else if (val == (1 << 10)) return new Bin(Op.ARITH_RSHIFT, left, new Int(10));
+                else if (val == (1 << 11)) return new Bin(Op.ARITH_RSHIFT, left, new Int(11));
+                else if (val == (1 << 12)) return new Bin(Op.ARITH_RSHIFT, left, new Int(12));
+                else if (val == (1 << 13)) return new Bin(Op.ARITH_RSHIFT, left, new Int(13));
+                else if (val == (1 << 14)) return new Bin(Op.ARITH_RSHIFT, left, new Int(14));
+                else if (val == (1 << 15)) return new Bin(Op.ARITH_RSHIFT, left, new Int(15));
+                else if (val == (1 << 16)) return new Bin(Op.ARITH_RSHIFT, left, new Int(16));
+                else if (val == (1 << 17)) return new Bin(Op.ARITH_RSHIFT, left, new Int(17));
+                else if (val == (1 << 18)) return new Bin(Op.ARITH_RSHIFT, left, new Int(18));
+                else if (val == (1 << 19)) return new Bin(Op.ARITH_RSHIFT, left, new Int(19));
+                else if (val == (1 << 20)) return new Bin(Op.ARITH_RSHIFT, left, new Int(20));
+                else if (val == (1 << 21)) return new Bin(Op.ARITH_RSHIFT, left, new Int(21));
+                else if (val == (1 << 22)) return new Bin(Op.ARITH_RSHIFT, left, new Int(22));
+                else if (val == (1 << 23)) return new Bin(Op.ARITH_RSHIFT, left, new Int(23));
+                else if (val == (1 << 24)) return new Bin(Op.ARITH_RSHIFT, left, new Int(24));
+                else if (val == (1 << 25)) return new Bin(Op.ARITH_RSHIFT, left, new Int(25));
+                else if (val == (1 << 26)) return new Bin(Op.ARITH_RSHIFT, left, new Int(26));
+                else if (val == (1 << 27)) return new Bin(Op.ARITH_RSHIFT, left, new Int(27));
+                else if (val == (1 << 28)) return new Bin(Op.ARITH_RSHIFT, left, new Int(28));
+                else if (val == (1 << 29)) return new Bin(Op.ARITH_RSHIFT, left, new Int(29));
+                else if (val == (1 << 30)) return new Bin(Op.ARITH_RSHIFT, left, new Int(30));
+            }
+            else if (op == Op.MOD) {
+                if (val == (1 << 1)) return new Bin(Op.BIT_AND, left, new Int((1 << 1) - 1));
+                else if (val == (1 << 2)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 2) - 1));
+                else if (val == (1 << 3)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 3) - 1));
+                else if (val == (1 << 4)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 4) - 1));
+                else if (val == (1 << 5)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 5) - 1));
+                else if (val == (1 << 6)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 6) - 1));
+                else if (val == (1 << 7)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 7) - 1));
+                else if (val == (1 << 8)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 8) - 1));
+                else if (val == (1 << 9)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 9) - 1));
+                else if (val == (1 << 10)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 10) - 1));
+                else if (val == (1 << 11)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 11) - 1));
+                else if (val == (1 << 12)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 12) - 1));
+                else if (val == (1 << 13)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 13) - 1));
+                else if (val == (1 << 14)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 14) - 1));
+                else if (val == (1 << 15)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 15) - 1));
+                else if (val == (1 << 16)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 16) - 1));
+                else if (val == (1 << 17)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 17) - 1));
+                else if (val == (1 << 18)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 18) - 1));
+                else if (val == (1 << 19)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 19) - 1));
+                else if (val == (1 << 20)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 20) - 1));
+                else if (val == (1 << 21)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 21) - 1));
+                else if (val == (1 << 22)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 22) - 1));
+                else if (val == (1 << 23)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 23) - 1));
+                else if (val == (1 << 24)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 24) - 1));
+                else if (val == (1 << 25)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 25) - 1));
+                else if (val == (1 << 26)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 26) - 1));
+                else if (val == (1 << 27)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 27) - 1));
+                else if (val == (1 << 28)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 28) - 1));
+                else if (val == (1 << 29)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 29) - 1));
+                else if (val == (1 << 30)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 30) - 1));
+            }
+        }
+        if (t instanceof IntegerType) {
             return new Bin(op, left, right);
+        }
         else if (t instanceof StringType)
             return new Bin(op, left, right, true);
         else if (node.right() instanceof NullNode)
