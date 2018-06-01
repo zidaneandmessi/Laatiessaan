@@ -291,7 +291,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         LocalScope scope = func.scope();
         Label beginLabel = new Label("_virtual_for_begin_" + forCnt);
         Label bodyLabel = new Label("_virtual_for_body_" + forCnt);
-        Label continueLabel = new Label("_virtual_for_continue_" + forCnt);
+        // Label continueLabel = new Label("_virtual_for_continue_" + forCnt);
         Label endLabel = new Label("_virtual_for_end_" + (forCnt++));
         DefinedVariable loopVar = scope.allocateTmp(new IntegerType(64, "_virtual_loop_var"));
         Var loopVarVar = new Var(loopVar);
@@ -317,7 +317,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         if (index > 1) {
             stmts.addAll(generateMultiDimArrayInitStmtList(index - 1, (ArrayType)(type.baseType()), func, var, code));
         }
-        stmts.add(new LabelStmt(null, continueLabel));
+        // stmts.add(new LabelStmt(null, continueLabel));
         stmts.add(new Assign(loopVarVar.addressNode(), new Bin(Op.ADD, loopVarVar, new Int(1))));
         stmts.add(new Jump(null, beginLabel));
         stmts.add(new LabelStmt(null, endLabel));
@@ -325,28 +325,25 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     private void compileFunctionBody(AssemblyCode code, DefinedFunction func, IR ir) {
-        as = new AssemblyCode();
+        LinkedList<Stmt> multiDimArrayInitStmtList = null;
         if (func.name().equals("main")) {
             code.label(new Label(func.name()));
             for (DefinedVariable var : ir.defvars()) {
                 if (var.type() instanceof ArrayType && var.hasInitializer()) {
+                    long val = calcImmediate(((New)(var.ir())).exprLen());
+                    code.mov(rdi(), new ImmediateValue(val));
+                    code.push(rdi());
+                    code.sal(rdi(), new ImmediateValue(3));
+                    code.add(rdi(), new ImmediateValue(8));
+                    code.call("malloc");
+                    code.pop(rdi());
+                    code.mov(mem(rax()), rdi());
+                    code.add(rax(), new ImmediateValue(8));
+                    code.mov(rcx(), var.address());
+                    code.mov(mem(rcx()), rax());
+                    ArrayType type = (ArrayType)(var.type());
                     if (((New)(var.ir())).lenStack().size() > 1) {
-                        ArrayType type = (ArrayType)(var.type());
-                        LinkedList<Stmt> multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(var.ir())).lenStack().size() - 1, type, func, var, code);
-                        //for (Stmt stmt : multiDimArrayInitStmtList) code.addAssembly(stmt);
-                    }
-                    else {
-                        long val = calcImmediate(((New)(var.ir())).exprLen());
-                        code.mov(rdi(), new ImmediateValue(val));
-                        code.push(rdi());
-                        code.sal(rdi(), new ImmediateValue(3));
-                        code.add(rdi(), new ImmediateValue(8));
-                        code.call("malloc");
-                        code.pop(rdi());
-                        code.mov(mem(rax()), rdi());
-                        code.add(rax(), new ImmediateValue(8));
-                        code.mov(rcx(), var.address());
-                        code.mov(mem(rcx()), rax());
+                        multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(var.ir())).lenStack().size() - 1, type, func, var, code);
                     }
                 }
                 else if (var.waitingForInit()) {
@@ -364,7 +361,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         StackFrame frame = new StackFrame();
         locateParameters(func.parameters());
         frame.localVarSize = locateLocalVariables(func.localVarScope(), 0);
-        AssemblyCode body = compileStmts(func);
+        AssemblyCode body = compileStmts(func, multiDimArrayInitStmtList);
         frame.saveRegs = usedCalleeSaveRegisters(body);
         frame.tempSize = body.virtualStack.maxSize();
         fixLocalVariableOffsets(func.localVarScope(), frame.localVarOffset());
@@ -517,9 +514,13 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private AssemblyCode as;
     private Label epilogue;
 
-    private AssemblyCode compileStmts(DefinedFunction func) {
+    private AssemblyCode compileStmts(DefinedFunction func, List<Stmt> multiDimArrayInitStmtList) {
         as = new AssemblyCode();
         epilogue = new Label("_end_" + func.name());
+        if (multiDimArrayInitStmtList != null) {
+            for (Stmt stmt : multiDimArrayInitStmtList)
+                stmt.accept(this);
+        }
         for (Stmt stmt : func.ir()) {
             stmt.accept(this);
         }

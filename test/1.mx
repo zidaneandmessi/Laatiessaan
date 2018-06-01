@@ -1,4 +1,4 @@
-int [][]x = new int [3][5];
+int [][]x = new int [3][20];
 int main()
 {
     x[2][3]=5;
