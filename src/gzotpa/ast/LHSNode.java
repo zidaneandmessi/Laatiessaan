@@ -17,13 +17,13 @@ abstract public class LHSNode extends ExprNode {
 
     public boolean isLoadable() {
         Type t = origType();
-        return !t.isArray() && !t.isFunction();
+        return !t.isFunction();
     }
     
     public boolean isAssignable() {
         if (this instanceof VariableNode && ((VariableNode)this).name().equals("this"))
             return false;
         Type t = origType();
-        return !t.isArray() && !t.isFunction();
+        return !t.isFunction();
     }
 }

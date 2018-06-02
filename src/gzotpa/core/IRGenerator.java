@@ -80,7 +80,12 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     private void assign(Location loc, Expr lhs, Expr rhs) {
-        stmts.add(new Assign(loc, addressOf(lhs), rhs));
+        if (lhs instanceof Bin || lhs instanceof Addr) {
+            stmts.add(new Assign(loc, lhs, rhs));
+        }
+        else {
+            stmts.add(new Assign(loc, addressOf(lhs), rhs));
+        }
     }
 
     private DefinedVariable tmpVar(Type t) {

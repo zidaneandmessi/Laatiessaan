@@ -32,6 +32,10 @@ public class ClassType extends NamedType {
     public long size() {
         return 64;
     }
+    
+    public boolean isAssignable() {
+        return true;
+    }
 
     public boolean isClass() { return true; }
 

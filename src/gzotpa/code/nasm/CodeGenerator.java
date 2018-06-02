@@ -30,7 +30,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.extern(new Label("strcpy"));
         code.extern(new Label("strncpy"));
         code.label(new Label("_int_format"));
-        code.db("%d");
+        code.db("%ld");
         code.label(new Label("_str_format"));
         code.db("%s");
         code.label(new Label("_str_str_format"));
@@ -327,6 +327,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         stmts.add(new Assign(loopVarVar.addressNode(), new Bin(Op.ADD, loopVarVar, new Int(1))));
         stmts.add(new Jump(null, beginLabel));
         stmts.add(new LabelStmt(null, endLabel));
+        localLoopVarStack.addLast(loopVar);
         return stmts;
     }
 

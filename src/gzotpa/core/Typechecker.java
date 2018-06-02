@@ -77,7 +77,8 @@ class TypeChecker extends Visitor {
             throw new Error("Gzotpa! Variable type invalid! " + var.type());
         }
         if (var.hasInitializer()) {
-            if (isInvalidLHSType(var.type())) {
+            if (var.initializer() instanceof NewTypeNode);
+            else if (isInvalidLHSType(var.type())) {
                 throw new Error("Gzotpa! Variable is not a valid LHS type! " + var.type());
             }
             check(var.initializer());
@@ -88,10 +89,10 @@ class TypeChecker extends Visitor {
         }
     }
     private boolean isInvalidVariableType(Type t) {
-        return t.isVoid() || (t.isArray() && ! t.isAllocatedArray());
+        return t.isVoid();
     }
     private boolean isInvalidLHSType(Type t) {
-        return t.isVoid() || t.isArray();
+        return t.isVoid();
     }
     private boolean isInvalidRHSType(Type t) {
         return t.isVoid();
@@ -167,6 +168,12 @@ class TypeChecker extends Visitor {
 
     public Void visit(AssignNode node) {
         super.visit(node);
+        if (node.rhs() instanceof NewTypeNode) {
+            if (!node.lhs().type().isEqualType(node.rhs().type())) {
+                throw new Error("Gzotpa! Cannot assign from a different type!");
+            }
+            return null;
+        }
         if (!node.lhs().isParameter() && isInvalidLHSType(node.lhs().type())) {
             throw new Error("Gzotpa! Invalid LHS type!");
         }

@@ -23,6 +23,10 @@ public class ArrayType extends Type {
         this.exprLen = null;
     }
 
+    public boolean isAssignable() {
+        return true;
+    }
+
     public Type baseType() {
         return baseType;
     }
@@ -35,11 +39,14 @@ public class ArrayType extends Type {
         return exprLen;
     }
 
+    public boolean isArray() {
+        return true;
+    }
+
     public void setExprLen(ExprNode exprLen) {
         this.exprLen = exprLen;
     }
 
-    public boolean isPointer() { return true; }
     public boolean isAllocatedArray() {
         return length != undefined &&
             (!baseType.isArray() || baseType.isAllocatedArray());
@@ -56,8 +63,9 @@ public class ArrayType extends Type {
 
     public boolean isEqualType(Type type) { // is array with same dimension
         if (type instanceof NullType) return true;
-        if (!(type instanceof ArrayType)) return false;
-        return baseType.isEqualType(((ArrayType)type).baseType());
+        if (!(type instanceof ArrayType) && !(type instanceof PointerType)) return false;
+        if (type instanceof ArrayType) return baseType.isEqualType(((ArrayType)type).baseType());
+        else return baseType.isEqualType(((PointerType)type).baseType());
     }
     
     public String toString() {

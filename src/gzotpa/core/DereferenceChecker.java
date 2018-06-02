@@ -53,14 +53,16 @@ class DereferenceChecker extends Visitor {
     }
 
     private void checkAssignment(AbstractAssignNode node) {
+        if (node.rhs() instanceof NewTypeNode || node.rhs() instanceof NullNode) return;
         if (!node.lhs().isAssignable()) {
+            System.err.println(node.lhs());
             throw new Error("Gzotpa! Invalid lhs expression");
         }
     }
 
     public Void visit(ArefNode node) {
         super.visit(node);
-        if (!node.expr().isPointer()) {
+        if (!(node.expr().type() instanceof ArrayType) && !node.expr().isPointer()) {
             throw new Error("Gzotpa! Indexing non-array/pointer expression!");
         }
         handleImplicitAddress(node);
@@ -126,7 +128,7 @@ class DereferenceChecker extends Visitor {
 
     public Void visit(VariableNode node) {
         super.visit(node);
-        handleImplicitAddress(node);
+        //handleImplicitAddress(node);
         return null;
     }
 
