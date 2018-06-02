@@ -755,8 +755,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.mov(rcx(), rax());
             as.virtualPop(rax());
             as.mov(mem(rcx()), rax());
-            as.push(rax());
-            as.call("_" + node.lhs().entity().type().typeName() + "." + node.lhs().entity().type().typeName());
+            if (((New)(node.rhs())).type() instanceof ClassType && ((ClassType)(((New)(node.rhs())).type())).hasConstruct()) {
+                as.push(rax());
+                as.call("_" + ((New)(node.rhs())).type().typeName() + "." + ((New)(node.rhs())).type().typeName());
+                rewindStack(as, STACK_WORD_SIZE);
+            }
         }
         else if (node.rhs() instanceof New && ((New)(node.rhs())).lenStack() != null && ((New)(node.rhs())).lenStack().size() > 1) {
             visit(((New)(node.rhs())).exprLen());

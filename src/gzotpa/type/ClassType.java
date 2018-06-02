@@ -43,6 +43,13 @@ public class ClassType extends NamedType {
         return isType(type);
     }
 
+    public boolean hasConstruct() {
+        for (DefinedFunction func :  decls.defuns())
+            if (func.name().equals(name + "." + name()))
+                return true;
+        return false;
+    }
+
     public DefinedVariable getMemberVariable(String name) {
         for (DefinedVariable var : decls.defvars()) {
             if (name.equals(var.name()))
