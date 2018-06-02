@@ -736,7 +736,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(Assign node) {
-        if (node.rhs() instanceof New && ((New)(node.rhs())).lenStack().size() > 1) {
+        /*if (node.rhs() instanceof New && ((New)(node.rhs())).lenStack().size() > 1) {
             visit(((New)(node.rhs())).exprLen());
             as.mov(rdi(), rax());
             as.push(rdi());
@@ -756,7 +756,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                     stmt.accept(this);
             }
         }
-        else if (node.lhs() instanceof Addr && ((Addr)node.lhs()).memref() != null) {
+        else */if (node.lhs() instanceof Addr && ((Addr)node.lhs()).memref() != null) {
             visit(node.rhs());
             as.mov(((Addr)node.lhs()).memref(), rax());
         }
