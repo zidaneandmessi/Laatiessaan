@@ -453,7 +453,7 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
     public Expr visit(MemberNode node) {
         Expr expr = visitExpr(node.expr());  
         Expr offset = new Int(node.offset() / 8);
-        Expr addr = new Bin(Op.ADD, expr, offset);
+        Expr addr = new Bin(Op.ADD, expr, offset, node);
         if (node.isLoadable()) return new Mem(addr);
         else return addr;
     }

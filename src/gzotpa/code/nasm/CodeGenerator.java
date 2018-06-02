@@ -290,7 +290,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     LinkedList<DefinedVariable> localLoopVarStack = new LinkedList<DefinedVariable>();
     LinkedList<DefinedVariable> loopVarStack = new LinkedList<DefinedVariable>();
 
-    private LinkedList<Stmt> generateMultiDimArrayInitStmtList(int index, ArrayType type, DefinedFunction func, Entity ent, New ir, boolean global) {
+    private LinkedList<Stmt> generateMultiDimArrayInitStmtList(int index, ArrayType type, DefinedFunction func, ExprNode baseExpr, New ir, boolean global) {
         LinkedList<Stmt> stmts = new LinkedList<Stmt>();
         Expr forTimes = ir.lenStack().get(index);
         LocalScope scope = func.scope();
@@ -316,13 +316,13 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         ArefNode node = null;
         for (int i = 0; i < loopVarStack.size(); i++) {
             DefinedVariable tmpLoopVar = loopVarStack.get(i);
-            if (i == 0) node = new ArefNode(new VariableNode(ent), new VariableNode(tmpLoopVar));
+            if (i == 0) node = new ArefNode(baseExpr, new VariableNode(tmpLoopVar));
             else node = new ArefNode(node, new VariableNode(tmpLoopVar));
         }
         Expr mem = new IRGenerator(typeTable).visit(node);
         stmts.add(new Assign(mem.addressNode(), n));
         if (index > 1) {
-            stmts.addAll(generateMultiDimArrayInitStmtList(index - 1, (ArrayType)(type.baseType()), func, ent, ir, global));
+            stmts.addAll(generateMultiDimArrayInitStmtList(index - 1, (ArrayType)(type.baseType()), func, baseExpr, ir, global));
         }
         stmts.add(new Assign(loopVarVar.addressNode(), new Bin(Op.ADD, loopVarVar, new Int(1))));
         stmts.add(new Jump(null, beginLabel));
@@ -350,7 +350,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                     ArrayType type = (ArrayType)(var.type());
                     if (((New)(var.ir())).lenStack().size() > 1) {
                         while (!loopVarStack.isEmpty()) loopVarStack.removeLast();
-                        multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(var.ir())).lenStack().size() - 1, type, func, var, (New)(var.ir()), true);
+                        multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(var.ir())).lenStack().size() - 1, type, func, new VariableNode(var), (New)(var.ir()), true);
                     }
                 }
                 else if (var.waitingForInit()) {
@@ -748,7 +748,17 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(Assign node) {
-        if (node.rhs() instanceof New && ((New)(node.rhs())).lenStack() != null && ((New)(node.rhs())).lenStack().size() > 1) {
+        if (node.rhs() instanceof New && ((New)(node.rhs())).lenStack() == null) {
+            visit(node.rhs());
+            as.virtualPush(rax());
+            visit(node.lhs());
+            as.mov(rcx(), rax());
+            as.virtualPop(rax());
+            as.mov(mem(rcx()), rax());
+            as.push(rax());
+            as.call("_" + node.lhs().entity().type().typeName() + "." + node.lhs().entity().type().typeName());
+        }
+        else if (node.rhs() instanceof New && ((New)(node.rhs())).lenStack() != null && ((New)(node.rhs())).lenStack().size() > 1) {
             visit(((New)(node.rhs())).exprLen());
             as.mov(rdi(), rax());
             as.push(rdi());
@@ -758,13 +768,25 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.pop(rdi());
             as.mov(mem(rax()), rdi());
             as.add(rax(), new ImmediateValue(8));
-            Entity ent = node.lhs().entity();
-            as.lea(rcx(), ent.memref());
-            as.mov(mem(rcx()), rax());
-            ArrayType type = (ArrayType)(ent.type());
+            ArrayType type;
+            ExprNode lhs;
+            if (node.lhs() instanceof Bin) {
+                as.mov(rcx(), rax());
+                lhs = node.lhs().lhsBase();
+                visit(node.lhs());
+                as.mov(mem(rax()), rcx());
+                type = (ArrayType)(lhs.type());
+            }
+            else {
+                Entity ent = node.lhs().entity();
+                lhs = new VariableNode(ent);
+                as.lea(rcx(), ent.memref());
+                as.mov(mem(rcx()), rax());
+                type = (ArrayType)(ent.type());
+            }
             if (((New)(node.rhs())).lenStack().size() > 1) {
                 while (!loopVarStack.isEmpty()) loopVarStack.removeLast();
-                LinkedList<Stmt> multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(node.rhs())).lenStack().size() - 1, type, currentFunc, ent, (New)(node.rhs()), false);
+                LinkedList<Stmt> multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(node.rhs())).lenStack().size() - 1, type, currentFunc, lhs, (New)(node.rhs()), false);
                 for (Stmt stmt : multiDimArrayInitStmtList)
                     stmt.accept(this);
             }

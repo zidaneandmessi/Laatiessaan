@@ -1,4 +1,5 @@
 package gzotpa.ir;
+import gzotpa.ast.LHSNode;
 import gzotpa.entity.*;
 
 abstract public class Expr implements Dumpable {
@@ -6,7 +7,11 @@ abstract public class Expr implements Dumpable {
     Expr() {}
 
     public Expr addressNode() {
-        throw new Error("Gzotpa! Address for expr callded!");
+        throw new Error("Gzotpa! Address for expr called!");
+    }
+
+    public LHSNode lhsBase() {
+        throw new Error("Gzotpa! LHSBase for expr called!");
     }
 
     abstract public Entity entity();
