@@ -55,7 +55,6 @@ class DereferenceChecker extends Visitor {
     private void checkAssignment(AbstractAssignNode node) {
         if (node.rhs() instanceof NewTypeNode || node.rhs() instanceof NullNode) return;
         if (!node.lhs().isAssignable()) {
-            System.err.println(node.lhs());
             throw new Error("Gzotpa! Invalid lhs expression");
         }
     }

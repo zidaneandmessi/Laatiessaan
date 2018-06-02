@@ -162,7 +162,7 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     public Expr visit(ArefNode node) {
-        Expr expr = visitExpr(node.baseExpr());
+        Expr expr = visitExpr(node.expr());
         Expr offset = new Bin(Op.MUL, new Int(node.elementSize() / 8), visitExpr(node.index()));
         Bin addr = new Bin(Op.ADD, expr, offset);
         return new Mem(addr);

@@ -63,9 +63,8 @@ public class ArrayType extends Type {
 
     public boolean isEqualType(Type type) { // is array with same dimension
         if (type instanceof NullType) return true;
-        if (!(type instanceof ArrayType) && !(type instanceof PointerType)) return false;
-        if (type instanceof ArrayType) return baseType.isEqualType(((ArrayType)type).baseType());
-        else return baseType.isEqualType(((PointerType)type).baseType());
+        if (!(type instanceof ArrayType)) return false;
+        return baseType.isEqualType(((ArrayType)type).baseType());
     }
     
     public String toString() {

@@ -1,65 +1,68 @@
-//考察点：section 9 函数，包括函数定义，内建函数
-//算法：斜堆
-//样例输入：
-//5 5
-//ABCDE
-//1 2 3 4 5
-//样例输出：
-//5 E
-//10
 int N;
-int M;
-string ch;
+int head;
+int startx;
+int starty;
+int targetx;
+int targety;
+int x;
+int y;
+int[] xlist = new int[12000];
+int[] ylist = new int[12000];
+int tail;
+int ok;
+int now;
+int[][] step;
+int i;
+int j;
 
-int[] l;
-int[] r;
-int[] w;
-
-int merge(int x,int y)
+void origin(int N)
 {
-    if (0 == x) return y;
-    if (0 == y) return x;
-    if (w[x] < w[y]) {
-        int e = x;
-        x = y;
-        y = e;
-    }
-    r[x] = merge(r[x],y);
-    int e = l[x];
-    l[x] = r[x];
-    r[x] = e;   
-    return x;
+    step = new int[N][];
+    for (i = 0; i < N; i ++ ) {
+        step[i] = new int[N];
+        for (j = 0; j < N; j ++ )
+        step[i][j] = 0;
+    }   
 }
 
-int main()
-{
+bool check(int a, int N) {
+    return ((a < N) && (a >= 0));
+}
+
+void addList(int x, int y) {
+    if (check(x, N) && check(y, N) && step[x][y] == -1) {
+        tail = tail + 1;
+        xlist[tail] = x;
+        ylist[tail] = y;
+        step[x][y] = now + 1;
+        if ((x == targetx) && (y == targety)) ok = 1;
+    }
+}
+
+int main() {
+    origin(106);
     N = getInt();
-    M = getInt();
-    ch = getString();
-    l = new int[N+M+5];
-    r = new int[N+M+5];
-    w = new int[N+M+5];
-    int i;
-    for (i=1;i <= N;i++) {
-        w[i] = getInt();
-        l[i] = 0;
-        r[i] = 0;
+    targety  = N - 1;
+    targetx = targety;
+    for (i = 0; i < N; i ++)
+        for (j = 0; j < N; j ++)
+        step[i][j] = -1;
+    while (head <= tail) {
+        x = xlist[head];
+        y = ylist[head];
+        now = step[x][y];
+        addList(x-1, y-2);
+        addList(x-1, y+2);
+        addList(x+1, y-2);
+        addList(x+1, y+2);
+        addList(x-2, y-1);
+        addList(x-2, y+1);
+        addList(x+2, y-1);
+        addList(x+2, y+1);
+        if (ok == 1) break;
+        head = head + 1;
     }
-    for (i=1;i <= M;i++) {
-        w[i + N] = ch.ord(i-1);
-        l[i + N] = 0;
-        r[i + N] = 0;
-    }
-    int rt0 = 1;
-    int rt1 = N + 1;
-    for (i = 2;i <= N;i++) 
-        rt0 = merge(rt0,i);
-    for (i = N+2;i<= N+M;i++)
-        rt1 = merge(rt1,i);
-    print(toString(w[rt0]));
-    print(" ");
-    print(ch.substring(rt1-N-1,rt1-N-1));
-    print("\n");
-    println(toString(merge(rt0,rt1)));
+    if (ok == 1) println(toString(step[targetx][targety]));
+    else print("no solution!\n");
     return 0;
 }
