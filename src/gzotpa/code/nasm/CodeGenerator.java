@@ -775,10 +775,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             ArrayType type;
             ExprNode lhs;
             if (node.lhs() instanceof Bin) {
-                as.mov(rcx(), rax());
+                as.mov(r8(), rax());
                 lhs = node.lhs().lhsBase();
                 visit(node.lhs());
-                as.mov(mem(rax()), rcx());
+                as.mov(mem(rax()), r8());
                 type = (ArrayType)(lhs.type());
             }
             else {

@@ -72,7 +72,7 @@ public class TypeTable {
 
     public Type getParamType(TypeRef ref) {
         Type t = get(ref);
-        return t.isArray() ? pointerTo(t.baseType()) : t;
+        return t;
     }
 
     public int intSize() {

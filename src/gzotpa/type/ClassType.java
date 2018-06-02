@@ -112,7 +112,6 @@ public class ClassType extends NamedType {
         else {
             throw new Error("Gzotpa! Member function offset cannot be computed!" + name);
         }
-        /**/
     }
 
     public String toString() {

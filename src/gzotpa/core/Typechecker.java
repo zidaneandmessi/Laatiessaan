@@ -45,14 +45,7 @@ class TypeChecker extends Visitor {
         }
     }
 
-    private void checkReturnType(DefinedFunction f) {
-        if (isInvalidReturnType(f.returnType())) {
-            throw new Error("Gzotpa! Return type invalid!");
-        }
-    }
-    private boolean isInvalidReturnType(Type t) {
-        return t.isArray();
-    }
+    private void checkReturnType(DefinedFunction f) {}
     private void checkParamTypes(DefinedFunction f) {
         for (Parameter param : f.parameters()) {
             if (isInvalidParameterType(param.type())) {

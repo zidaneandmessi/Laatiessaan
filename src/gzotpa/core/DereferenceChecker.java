@@ -127,12 +127,12 @@ class DereferenceChecker extends Visitor {
 
     public Void visit(VariableNode node) {
         super.visit(node);
-        //handleImplicitAddress(node);
+        handleImplicitAddress(node);
         return null;
     }
 
     private void handleImplicitAddress(LHSNode node) {
-        if (!node.isLoadable()) {
+        /*if (!node.isLoadable()) {
             Type t = node.type();
             if (t.isPointer() && ((PointerType)t).handled()) return;
             if (t.isArray()) {
@@ -143,6 +143,6 @@ class DereferenceChecker extends Visitor {
                 node.setType(typeTable.pointerTo(t));
                 ((PointerType)(node.type())).handle();
             }
-        }
+        }*/
     }
 }
