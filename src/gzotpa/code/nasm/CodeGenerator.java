@@ -287,16 +287,23 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     static private long forCnt = 0;
+    LinkedList<DefinedVariable> localLoopVarStack = new LinkedList<DefinedVariable>();
     LinkedList<DefinedVariable> loopVarStack = new LinkedList<DefinedVariable>();
 
-    private LinkedList<Stmt> generateMultiDimArrayInitStmtList(int index, ArrayType type, DefinedFunction func, Entity ent, New ir) {
+    private LinkedList<Stmt> generateMultiDimArrayInitStmtList(int index, ArrayType type, DefinedFunction func, Entity ent, New ir, boolean global) {
         LinkedList<Stmt> stmts = new LinkedList<Stmt>();
         Expr forTimes = ir.lenStack().get(index);
         LocalScope scope = func.scope();
         Label beginLabel = new Label("_virtual_for_begin_" + forCnt);
         Label bodyLabel = new Label("_virtual_for_body_" + forCnt);
         Label endLabel = new Label("_virtual_for_end_" + (forCnt++));
-        DefinedVariable loopVar = scope.allocateTmp(new IntegerType(64, "_virtual_loop_var"));
+        DefinedVariable loopVar;
+        if (!global) {
+            loopVar = localLoopVarStack.removeLast();
+        }
+        else {
+            loopVar = scope.allocateTmp(new IntegerType(64, "_virtual_loop_var"));
+        }
         Var loopVarVar = new Var(loopVar);
         loopVarStack.addLast(loopVar);
         stmts.add(new Assign(loopVarVar.addressNode(), new Int(0)));
@@ -315,7 +322,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         Expr mem = new IRGenerator(typeTable).visit(node);
         stmts.add(new Assign(mem.addressNode(), n));
         if (index > 1) {
-            stmts.addAll(generateMultiDimArrayInitStmtList(index - 1, (ArrayType)(type.baseType()), func, ent, ir));
+            stmts.addAll(generateMultiDimArrayInitStmtList(index - 1, (ArrayType)(type.baseType()), func, ent, ir, global));
         }
         stmts.add(new Assign(loopVarVar.addressNode(), new Bin(Op.ADD, loopVarVar, new Int(1))));
         stmts.add(new Jump(null, beginLabel));
@@ -342,7 +349,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                     code.mov(mem(rcx()), rax());
                     ArrayType type = (ArrayType)(var.type());
                     if (((New)(var.ir())).lenStack().size() > 1) {
-                        multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(var.ir())).lenStack().size() - 1, type, func, var, (New)(var.ir()));
+                        while (!loopVarStack.isEmpty()) loopVarStack.removeLast();
+                        multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(var.ir())).lenStack().size() - 1, type, func, var, (New)(var.ir()), true);
                     }
                 }
                 else if (var.waitingForInit()) {
@@ -358,8 +366,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         else {
             code.label(new Label("_" + func.name()));
         }
-        StackFrame frame = new StackFrame();
         locateParameters(func.parameters());
+        while (!localLoopVarStack.isEmpty()) localLoopVarStack.removeLast();
+        for (int i = 0; i < 11; i++) {
+            localLoopVarStack.addLast(func.scope().allocateTmp(new IntegerType(64, "_virtual_loop_var")));
+        }
+        StackFrame frame = new StackFrame();
         frame.localVarSize = locateLocalVariables(func.localVarScope(), 0);
         AssemblyCode body = compileStmts(func, multiDimArrayInitStmtList);
         frame.saveRegs = usedCalleeSaveRegisters(body);
@@ -736,7 +748,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(Assign node) {
-        /*if (node.rhs() instanceof New && ((New)(node.rhs())).lenStack().size() > 1) {
+        if (node.rhs() instanceof New && ((New)(node.rhs())).lenStack() != null && ((New)(node.rhs())).lenStack().size() > 1) {
             visit(((New)(node.rhs())).exprLen());
             as.mov(rdi(), rax());
             as.push(rdi());
@@ -747,16 +759,17 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.mov(mem(rax()), rdi());
             as.add(rax(), new ImmediateValue(8));
             Entity ent = node.lhs().entity();
-            as.mov(rcx(), ent.address());
+            as.lea(rcx(), ent.memref());
             as.mov(mem(rcx()), rax());
             ArrayType type = (ArrayType)(ent.type());
             if (((New)(node.rhs())).lenStack().size() > 1) {
-                LinkedList<Stmt> multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(node.rhs())).lenStack().size() - 1, type, currentFunc, ent, (New)(node.rhs()));
+                while (!loopVarStack.isEmpty()) loopVarStack.removeLast();
+                LinkedList<Stmt> multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(node.rhs())).lenStack().size() - 1, type, currentFunc, ent, (New)(node.rhs()), false);
                 for (Stmt stmt : multiDimArrayInitStmtList)
                     stmt.accept(this);
             }
         }
-        else */if (node.lhs() instanceof Addr && ((Addr)node.lhs()).memref() != null) {
+        else if (node.lhs() instanceof Addr && ((Addr)node.lhs()).memref() != null) {
             visit(node.rhs());
             as.mov(((Addr)node.lhs()).memref(), rax());
         }
