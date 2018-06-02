@@ -1,10 +1,9 @@
-int [][]x = new int [3][20];
-int main()
-{
-    x[2][3]=5;
-    x[2][5]=50;
-    x[2][19]=46513;
-    println(toString(x[2][3]));
-    println(toString(x[2][5]));
-    println(toString(x[2][19]));
+int lol (int x) {
+return x + 1;
+}
+
+int c = 123;
+int x = lol(c);
+int main () {
+return x;
 }

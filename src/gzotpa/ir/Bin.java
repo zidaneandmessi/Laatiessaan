@@ -1,4 +1,5 @@
 package gzotpa.ir;
+import gzotpa.entity.Entity;
 
 public class Bin extends Expr {
     protected Op op;
@@ -17,6 +18,10 @@ public class Bin extends Expr {
         this.left = left;
         this.right = right;
         this.stringBin = stringBin;
+    }
+
+    public Entity entity() {
+        throw new Error("Gzotpa! IR node has no entity!");
     }
 
     public Expr left() { 

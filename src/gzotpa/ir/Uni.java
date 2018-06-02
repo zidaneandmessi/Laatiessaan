@@ -1,4 +1,6 @@
 package gzotpa.ir;
+import gzotpa.entity.Entity;
+
 public class Uni extends Expr {
     protected Op op;
     protected Expr expr;
@@ -14,6 +16,10 @@ public class Uni extends Expr {
     
     public Expr expr() {
         return expr;
+    }
+
+    public Entity entity() {
+        throw new Error("Gzotpa! IR node has no entity!");
     }
 
     public <S,E> E accept(IRVisitor<S,E> visitor) {

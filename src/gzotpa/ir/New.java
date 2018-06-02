@@ -1,5 +1,6 @@
 package gzotpa.ir;
 import java.util.LinkedList;
+import gzotpa.entity.Entity;
 
 public class New extends Expr {
     protected LinkedList<Expr> lenStack;
@@ -32,6 +33,10 @@ public class New extends Expr {
 
     public boolean sizeKnown() {
         return sizeKnown;
+    }
+
+    public Entity entity() {
+        throw new Error("Gzotpa! IR node has no entity!");
     }
 
     public <S,E> E accept(IRVisitor<S,E> visitor) {

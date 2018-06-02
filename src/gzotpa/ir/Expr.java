@@ -9,6 +9,8 @@ abstract public class Expr implements Dumpable {
         throw new Error("Gzotpa! Address for expr callded!");
     }
 
+    abstract public Entity entity();
+
     abstract public <S,E> E accept(IRVisitor<S,E> visitor);
     
     public void dump(Dumper d) {

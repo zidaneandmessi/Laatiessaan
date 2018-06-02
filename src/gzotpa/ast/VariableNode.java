@@ -27,18 +27,18 @@ public class VariableNode extends LHSNode {
         this.implicitThis = false;
     }
 
-    public VariableNode(Location loc, DefinedVariable var) {
+    public VariableNode(Location loc, Entity ent) {
         this.location = loc;
-        this.entity = var;
-        this.name = var.name();
+        this.entity = ent;
+        this.name = ent.name();
         this.memFuncBase = null;
         this.memVarBase = null;
         this.implicitThis = false;
     }
 
-    public VariableNode(DefinedVariable var) {
-        this.entity = var;
-        this.name = var.name();
+    public VariableNode(Entity ent) {
+        this.entity = ent;
+        this.name = ent.name();
         this.memFuncBase = null;
         this.memVarBase = null;
         this.implicitThis = false;

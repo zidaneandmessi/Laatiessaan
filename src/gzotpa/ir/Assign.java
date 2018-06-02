@@ -1,5 +1,6 @@
 package gzotpa.ir;
 import gzotpa.ast.Location;
+import gzotpa.entity.Entity;
 
 public class Assign extends Stmt {
     protected Expr lhs, rhs;

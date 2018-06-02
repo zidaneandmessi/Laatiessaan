@@ -1,5 +1,6 @@
 package gzotpa.ir;
 import gzotpa.asm.ImmediateValue;
+import gzotpa.entity.Entity;
 
 public class Str extends Expr {
     protected String value;
@@ -16,6 +17,10 @@ public class Str extends Expr {
 
     public String originValue() { 
         return originValue;
+    }
+
+    public Entity entity() {
+        throw new Error("Gzotpa! IR node has no entity!");
     }
 
     public <S,E> E accept(IRVisitor<S,E> visitor) {

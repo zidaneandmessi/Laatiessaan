@@ -1,6 +1,7 @@
 package gzotpa.ir;
 import gzotpa.asm.Label;
 import gzotpa.ast.Location;
+import gzotpa.entity.Entity;
 
 public class ConditionJump extends Stmt {
     protected Expr cond;

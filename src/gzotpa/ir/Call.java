@@ -1,5 +1,6 @@
 package gzotpa.ir;
 import gzotpa.entity.Function;
+import gzotpa.entity.Entity;
 import java.util.List;
 
 public class Call extends Expr {
@@ -13,6 +14,10 @@ public class Call extends Expr {
 
     public Expr expr() {
         return expr;
+    }
+
+    public Entity entity() {
+        throw new Error("Gzotpa! IR node has no entity!");
     }
 
     public long numArgs() {

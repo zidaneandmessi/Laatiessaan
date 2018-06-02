@@ -10,10 +10,12 @@ import java.util.*;
 public class CodeGenerator implements IRVisitor<Void,Void> {
     TypeTable typeTable;
     AssemblyCode code;
+    DefinedFunction currentFunc;
 
     public CodeGenerator(TypeTable typeTable) {
         this.typeTable = typeTable;
         code = new AssemblyCode();
+        currentFunc = null;
     }
 
     public AssemblyCode generateAssemblyCode(IR ir) {
@@ -163,11 +165,14 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.section(".text");
         for (ClassNode cls : ir.defcls()) {
             for (DefinedFunction func : cls.decls().defuns()) {
+                currentFunc = func;
                 compileFunctionBody(code, func, ir);
             }
         }
-        for (DefinedFunction func : ir.defuns()) 
+        for (DefinedFunction func : ir.defuns()) {
+            currentFunc = func;
             compileFunctionBody(code, func, ir);
+        }
     }
 
     static final private long STACK_WORD_SIZE = 8;
@@ -284,14 +289,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     static private long forCnt = 0;
     LinkedList<DefinedVariable> loopVarStack = new LinkedList<DefinedVariable>();
 
-    private LinkedList<Stmt> generateMultiDimArrayInitStmtList(int index, ArrayType type, DefinedFunction func, DefinedVariable var, AssemblyCode code) {
-        New ir = (New)(var.ir());
+    private LinkedList<Stmt> generateMultiDimArrayInitStmtList(int index, ArrayType type, DefinedFunction func, Entity ent, New ir) {
         LinkedList<Stmt> stmts = new LinkedList<Stmt>();
         Expr forTimes = ir.lenStack().get(index);
         LocalScope scope = func.scope();
         Label beginLabel = new Label("_virtual_for_begin_" + forCnt);
         Label bodyLabel = new Label("_virtual_for_body_" + forCnt);
-        // Label continueLabel = new Label("_virtual_for_continue_" + forCnt);
         Label endLabel = new Label("_virtual_for_end_" + (forCnt++));
         DefinedVariable loopVar = scope.allocateTmp(new IntegerType(64, "_virtual_loop_var"));
         Var loopVarVar = new Var(loopVar);
@@ -303,21 +306,17 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         LinkedList<Expr> lenStack = new LinkedList<Expr>();
         lenStack.addLast(ir.lenStack().get(index - 1));
         New n = new New(lenStack);
-
         ArefNode node = null;
         for (int i = 0; i < loopVarStack.size(); i++) {
             DefinedVariable tmpLoopVar = loopVarStack.get(i);
-            if (i == 0) node = new ArefNode(new VariableNode(var), new VariableNode(tmpLoopVar));
+            if (i == 0) node = new ArefNode(new VariableNode(ent), new VariableNode(tmpLoopVar));
             else node = new ArefNode(node, new VariableNode(tmpLoopVar));
         }
         Expr mem = new IRGenerator(typeTable).visit(node);
-
         stmts.add(new Assign(mem.addressNode(), n));
-
         if (index > 1) {
-            stmts.addAll(generateMultiDimArrayInitStmtList(index - 1, (ArrayType)(type.baseType()), func, var, code));
+            stmts.addAll(generateMultiDimArrayInitStmtList(index - 1, (ArrayType)(type.baseType()), func, ent, ir));
         }
-        // stmts.add(new LabelStmt(null, continueLabel));
         stmts.add(new Assign(loopVarVar.addressNode(), new Bin(Op.ADD, loopVarVar, new Int(1))));
         stmts.add(new Jump(null, beginLabel));
         stmts.add(new LabelStmt(null, endLabel));
@@ -343,10 +342,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                     code.mov(mem(rcx()), rax());
                     ArrayType type = (ArrayType)(var.type());
                     if (((New)(var.ir())).lenStack().size() > 1) {
-                        multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(var.ir())).lenStack().size() - 1, type, func, var, code);
+                        multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(var.ir())).lenStack().size() - 1, type, func, var, (New)(var.ir()));
                     }
                 }
                 else if (var.waitingForInit()) {
+                    as = new AssemblyCode();
                     visit(var.ir());
                     loadAddress(var, rcx());
                     as.mov(mem(rcx()), rax());
@@ -736,7 +736,27 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public Void visit(Assign node) {
-        if (node.lhs() instanceof Addr && ((Addr)node.lhs()).memref() != null) {
+        if (node.rhs() instanceof New && ((New)(node.rhs())).lenStack().size() > 1) {
+            visit(((New)(node.rhs())).exprLen());
+            as.mov(rdi(), rax());
+            as.push(rdi());
+            as.sal(rdi(), new ImmediateValue(3));
+            as.add(rdi(), new ImmediateValue(8));
+            as.call("malloc");
+            as.pop(rdi());
+            as.mov(mem(rax()), rdi());
+            as.add(rax(), new ImmediateValue(8));
+            Entity ent = node.lhs().entity();
+            as.mov(rcx(), ent.address());
+            as.mov(mem(rcx()), rax());
+            ArrayType type = (ArrayType)(ent.type());
+            if (((New)(node.rhs())).lenStack().size() > 1) {
+                LinkedList<Stmt> multiDimArrayInitStmtList = generateMultiDimArrayInitStmtList(((New)(node.rhs())).lenStack().size() - 1, type, currentFunc, ent, (New)(node.rhs()));
+                for (Stmt stmt : multiDimArrayInitStmtList)
+                    stmt.accept(this);
+            }
+        }
+        else if (node.lhs() instanceof Addr && ((Addr)node.lhs()).memref() != null) {
             visit(node.rhs());
             as.mov(((Addr)node.lhs()).memref(), rax());
         }
