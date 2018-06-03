@@ -72,7 +72,7 @@ public class Instruction extends Assembly {
 
     public String print() {
         StringBuffer buf = new StringBuffer();
-        if (!name.equals("global") && !name.equals("section") && !name.equals("extern"))
+        if (!name.equals("global") && !name.equals("section") && !name.equals("extern") && !name.equals("ALIGN"))
             buf.append("\t");
         buf.append(name + "\t");
         int cnt = 0;

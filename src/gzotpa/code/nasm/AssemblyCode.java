@@ -27,6 +27,7 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
     }
 
     void setTextIndex() {
+        textIndex = 0;
         for (Assembly as : assemblies) {
             if (as instanceof Instruction && ((Instruction)as).isText()) {
                 textIndex++;
@@ -44,6 +45,119 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
         assemblies.addAll(ass);
         for (Assembly as : ass)
             as.statisticRegister(this);
+    }
+
+    void addToStringFunction() {
+        assemblies.add((textIndex++), new Label("__toString"));
+        assemblies.add((textIndex++), new Instruction(("push"), new Label("rbx")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("ebx, edi")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("edi, 10")));
+        assemblies.add((textIndex++), new Instruction(("call"), new Label("malloc")));
+        assemblies.add((textIndex++), new Instruction(("test"), new Label("ebx, ebx")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("rsi, rax")));
+        assemblies.add((textIndex++), new Instruction(("je"), new Label("__toString_004")));
+        assemblies.add((textIndex++), new Instruction(("js"), new Label("__toString_005")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("rcx, rax")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("rdi, rax")));
+        assemblies.add((textIndex++), new Instruction(("xor"), new Label("r8d, r8d")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("r9d, 1717986919")));
+        assemblies.add((textIndex++), new Instruction(("ALIGN"), new Label("8")));
+        assemblies.add((textIndex++), new Label("__toString_001"));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("eax, ebx")));
+        assemblies.add((textIndex++), new Instruction(("add"), new Label("r8d, 1")));
+        assemblies.add((textIndex++), new Instruction(("add"), new Label("rdi, 1")));
+        assemblies.add((textIndex++), new Instruction(("imul"), new Label("r9d")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("eax, ebx")));
+        assemblies.add((textIndex++), new Instruction(("sar"), new Label("eax, 31")));
+        assemblies.add((textIndex++), new Instruction(("sar"), new Label("edx, 2")));
+        assemblies.add((textIndex++), new Instruction(("sub"), new Label("edx, eax")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("eax, [rdx+rdx*4]")));
+        assemblies.add((textIndex++), new Instruction(("add"), new Label("eax, eax")));
+        assemblies.add((textIndex++), new Instruction(("sub"), new Label("ebx, eax")));
+        assemblies.add((textIndex++), new Instruction(("add"), new Label("ebx, 48")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rdi-1H], bl")));
+        assemblies.add((textIndex++), new Instruction(("test"), new Label("edx, edx")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("ebx, edx")));
+        assemblies.add((textIndex++), new Instruction(("jnz"), new Label("__toString_001")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("edx, r8d")));
+        assemblies.add((textIndex++), new Instruction(("movsxd"), new Label("r8, r8d")));
+        assemblies.add((textIndex++), new Instruction(("sar"), new Label("edx, 1")));
+        assemblies.add((textIndex++), new Instruction(("jz"), new Label("__toString_003")));
+        assemblies.add((textIndex++), new Instruction(("sub"), new Label("edx, 1")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("rax, [rsi+r8-1H]")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("r9, [rsi+rdx+1H]")));
+        assemblies.add((textIndex++), new Instruction(("ALIGN"), new Label("8")));
+        assemblies.add((textIndex++), new Label("__toString_002"));
+        assemblies.add((textIndex++), new Instruction(("movzx"), new Label("edi, byte [rax]")));
+        assemblies.add((textIndex++), new Instruction(("movzx"), new Label("edx, byte [rcx]")));
+        assemblies.add((textIndex++), new Instruction(("add"), new Label("rcx, 1")));
+        assemblies.add((textIndex++), new Instruction(("sub"), new Label("rax, 1")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rcx-1H], dil")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rax+1H], dl")));
+        assemblies.add((textIndex++), new Instruction(("cmp"), new Label("rcx, r9")));
+        assemblies.add((textIndex++), new Instruction(("jnz"), new Label("__toString_002")));
+        assemblies.add((textIndex++), new Label("__toString_003"));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rsi+r8], 0")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("rax, rsi")));
+        assemblies.add((textIndex++), new Instruction(("pop"), new Label("rbx")));
+        assemblies.add((textIndex++), new Instruction(("ret")));
+        assemblies.add((textIndex++), new Instruction(("ALIGN"), new Label("8")));
+        assemblies.add((textIndex++), new Label("__toString_004"));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rax], 48")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rax+1H], 0")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("rax, rsi")));
+        assemblies.add((textIndex++), new Instruction(("pop"), new Label("rbx")));
+        assemblies.add((textIndex++), new Instruction(("ret")));
+        assemblies.add((textIndex++), new Instruction(("ALIGN"), new Label("8")));
+        assemblies.add((textIndex++), new Label("__toString_005"));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("rcx, [rax+1H]")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rax], 45")));
+        assemblies.add((textIndex++), new Instruction(("neg"), new Label("ebx")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("r8d, 1")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("r10d, 1717986919")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("rdi, rcx")));
+        assemblies.add((textIndex++), new Instruction(("jmp"), new Label("__toString_007")));
+        assemblies.add((textIndex++), new Instruction(("ALIGN"), new Label("8")));
+        assemblies.add((textIndex++), new Label("__toString_006"));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("r8d, r9d")));
+        assemblies.add((textIndex++), new Label("__toString_007"));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("eax, ebx")));
+        assemblies.add((textIndex++), new Instruction(("add"), new Label("rdi, 1")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("r9d, [r8+1H]")));
+        assemblies.add((textIndex++), new Instruction(("imul"), new Label("r10d")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("eax, ebx")));
+        assemblies.add((textIndex++), new Instruction(("sar"), new Label("eax, 31")));
+        assemblies.add((textIndex++), new Instruction(("sar"), new Label("edx, 2")));
+        assemblies.add((textIndex++), new Instruction(("sub"), new Label("edx, eax")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("eax, [rdx+rdx*4]")));
+        assemblies.add((textIndex++), new Instruction(("add"), new Label("eax, eax")));
+        assemblies.add((textIndex++), new Instruction(("sub"), new Label("ebx, eax")));
+        assemblies.add((textIndex++), new Instruction(("add"), new Label("ebx, 48")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rdi-1H], bl")));
+        assemblies.add((textIndex++), new Instruction(("test"), new Label("edx, edx")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("ebx, edx")));
+        assemblies.add((textIndex++), new Instruction(("jnz"), new Label("__toString_006")));
+        assemblies.add((textIndex++), new Instruction(("sar"), new Label("r8d, 1")));
+        assemblies.add((textIndex++), new Instruction(("movsxd"), new Label("r9, r9d")));
+        assemblies.add((textIndex++), new Instruction(("jz"), new Label("__toString_009")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("edx, [r8-1H]")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("rax, [rsi+r9-1H]")));
+        assemblies.add((textIndex++), new Instruction(("lea"), new Label("r8, [rsi+rdx+2H]")));
+        assemblies.add((textIndex++), new Instruction(("ALIGN"), new Label("8")));
+        assemblies.add((textIndex++), new Label("__toString_008"));
+        assemblies.add((textIndex++), new Instruction(("movzx"), new Label("edi, byte [rax]")));
+        assemblies.add((textIndex++), new Instruction(("movzx"), new Label("edx, byte [rcx]")));
+        assemblies.add((textIndex++), new Instruction(("add"), new Label("rcx, 1")));
+        assemblies.add((textIndex++), new Instruction(("sub"), new Label("rax, 1")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rcx-1H], dil")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rax+1H], dl")));
+        assemblies.add((textIndex++), new Instruction(("cmp"), new Label("r8, rcx")));
+        assemblies.add((textIndex++), new Instruction(("jnz"), new Label("__toString_008")));
+        assemblies.add((textIndex++), new Label("__toString_009"));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("byte [rsi+r9], 0")));
+        assemblies.add((textIndex++), new Instruction(("mov"), new Label("rax, rsi")));
+        assemblies.add((textIndex++), new Instruction(("pop"), new Label("rbx")));
+        assemblies.add((textIndex++), new Instruction(("ret")));
     }
 
     void addParseIntFunction() {

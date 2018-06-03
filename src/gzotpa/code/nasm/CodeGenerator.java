@@ -404,8 +404,13 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         }
     }
 
+    static final RegisterClass[] ARGS_REGISTERS = {
+        RegisterClass.RDI, RegisterClass.RSI, RegisterClass.RDX, RegisterClass.RCX, RegisterClass.R8, RegisterClass.R9
+    };
+
     private void locateParameters(List<Parameter> params) {
         long numWords = PARAM_START_WORD;
+        int argc = 0;
         for (Parameter param : params) {
             param.setMemref(mem(rbp(), numWords * STACK_WORD_SIZE));
             numWords++;
@@ -851,6 +856,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         return null;
     }
 
+    private boolean toStringAdded = false;
+    private boolean parseIntAdded = false;
+
     public Void visit(Call node) {
         String name = node.function().name();
         if (name.equals("print")) {
@@ -868,7 +876,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.call("puts");
         }
         else if (name.equals("toString")) {
-            as.mov(rdi(), new ImmediateValue(20));
+            /*as.mov(rdi(), new ImmediateValue(20));
             as.call("malloc");
             as.push(rax());
             as.mov(rdi(), rax());
@@ -878,7 +886,16 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.mov(rsi(), new ImmediateValue(new Label("_int_format")));
             as.xor(rax(), rax());
             as.call("sprintf");
-            as.pop(rax());
+            as.pop(rax());*/
+            if (!toStringAdded) {
+                code.setTextIndex();
+                code.addToStringFunction();
+                toStringAdded = true;
+            }
+            Expr arg = node.args().get(0);
+            visit(arg);
+            as.mov(rdi(), rax());
+            as.call("__toString");
         }
         else if (name.equals("getString")) {
             as.mov(rdi(), new ImmediateValue(500));
@@ -940,8 +957,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.movzx(rax(), rax(8));
         }
         else if (name.equals("string.parseInt")) {
-            code.setTextIndex();
-            code.addParseIntFunction();
+            if (!parseIntAdded) {
+                code.setTextIndex();
+                code.addParseIntFunction();
+                parseIntAdded = true;
+            }
             Expr arg = node.args().get(0);
             visit(arg);
             as.mov(rdi(), rax());
@@ -955,13 +975,14 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         else
         {
             List<Expr> argList = node.args();
+            LinkedList<RegisterClass> savedRegisters = new LinkedList<RegisterClass>();
             Collections.reverse(argList);
             for (Expr arg : argList) {
                 visit(arg);
                 as.push(rax());
             }
             as.call("_" + name);
-            rewindStack(as, node.numArgs() * STACK_WORD_SIZE);
+            rewindStack(as, node.numArgs() * STACK_WORD_SIZE); 
         }
         return null;
     }
