@@ -267,35 +267,35 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
             }
             else if (op == Op.MOD) {
                 if (val == (1 << 1)) return new Bin(Op.BIT_AND, left, new Int((1 << 1) - 1));
-                else if (val == (1 << 2)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 2) - 1));
-                else if (val == (1 << 3)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 3) - 1));
-                else if (val == (1 << 4)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 4) - 1));
-                else if (val == (1 << 5)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 5) - 1));
-                else if (val == (1 << 6)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 6) - 1));
-                else if (val == (1 << 7)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 7) - 1));
-                else if (val == (1 << 8)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 8) - 1));
-                else if (val == (1 << 9)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 9) - 1));
-                else if (val == (1 << 10)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 10) - 1));
-                else if (val == (1 << 11)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 11) - 1));
-                else if (val == (1 << 12)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 12) - 1));
-                else if (val == (1 << 13)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 13) - 1));
-                else if (val == (1 << 14)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 14) - 1));
-                else if (val == (1 << 15)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 15) - 1));
-                else if (val == (1 << 16)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 16) - 1));
-                else if (val == (1 << 17)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 17) - 1));
-                else if (val == (1 << 18)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 18) - 1));
-                else if (val == (1 << 19)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 19) - 1));
-                else if (val == (1 << 20)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 20) - 1));
-                else if (val == (1 << 21)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 21) - 1));
-                else if (val == (1 << 22)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 22) - 1));
-                else if (val == (1 << 23)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 23) - 1));
-                else if (val == (1 << 24)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 24) - 1));
-                else if (val == (1 << 25)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 25) - 1));
-                else if (val == (1 << 26)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 26) - 1));
-                else if (val == (1 << 27)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 27) - 1));
-                else if (val == (1 << 28)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 28) - 1));
-                else if (val == (1 << 29)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 29) - 1));
-                else if (val == (1 << 30)) return new Bin(Op.ARITH_RSHIFT, left, new Int((1 << 30) - 1));
+                else if (val == (1 << 2)) return new Bin(Op.BIT_AND, left, new Int((1 << 2) - 1));
+                else if (val == (1 << 3)) return new Bin(Op.BIT_AND, left, new Int((1 << 3) - 1));
+                else if (val == (1 << 4)) return new Bin(Op.BIT_AND, left, new Int((1 << 4) - 1));
+                else if (val == (1 << 5)) return new Bin(Op.BIT_AND, left, new Int((1 << 5) - 1));
+                else if (val == (1 << 6)) return new Bin(Op.BIT_AND, left, new Int((1 << 6) - 1));
+                else if (val == (1 << 7)) return new Bin(Op.BIT_AND, left, new Int((1 << 7) - 1));
+                else if (val == (1 << 8)) return new Bin(Op.BIT_AND, left, new Int((1 << 8) - 1));
+                else if (val == (1 << 9)) return new Bin(Op.BIT_AND, left, new Int((1 << 9) - 1));
+                else if (val == (1 << 10)) return new Bin(Op.BIT_AND, left, new Int((1 << 10) - 1));
+                else if (val == (1 << 11)) return new Bin(Op.BIT_AND, left, new Int((1 << 11) - 1));
+                else if (val == (1 << 12)) return new Bin(Op.BIT_AND, left, new Int((1 << 12) - 1));
+                else if (val == (1 << 13)) return new Bin(Op.BIT_AND, left, new Int((1 << 13) - 1));
+                else if (val == (1 << 14)) return new Bin(Op.BIT_AND, left, new Int((1 << 14) - 1));
+                else if (val == (1 << 15)) return new Bin(Op.BIT_AND, left, new Int((1 << 15) - 1));
+                else if (val == (1 << 16)) return new Bin(Op.BIT_AND, left, new Int((1 << 16) - 1));
+                else if (val == (1 << 17)) return new Bin(Op.BIT_AND, left, new Int((1 << 17) - 1));
+                else if (val == (1 << 18)) return new Bin(Op.BIT_AND, left, new Int((1 << 18) - 1));
+                else if (val == (1 << 19)) return new Bin(Op.BIT_AND, left, new Int((1 << 19) - 1));
+                else if (val == (1 << 20)) return new Bin(Op.BIT_AND, left, new Int((1 << 20) - 1));
+                else if (val == (1 << 21)) return new Bin(Op.BIT_AND, left, new Int((1 << 21) - 1));
+                else if (val == (1 << 22)) return new Bin(Op.BIT_AND, left, new Int((1 << 22) - 1));
+                else if (val == (1 << 23)) return new Bin(Op.BIT_AND, left, new Int((1 << 23) - 1));
+                else if (val == (1 << 24)) return new Bin(Op.BIT_AND, left, new Int((1 << 24) - 1));
+                else if (val == (1 << 25)) return new Bin(Op.BIT_AND, left, new Int((1 << 25) - 1));
+                else if (val == (1 << 26)) return new Bin(Op.BIT_AND, left, new Int((1 << 26) - 1));
+                else if (val == (1 << 27)) return new Bin(Op.BIT_AND, left, new Int((1 << 27) - 1));
+                else if (val == (1 << 28)) return new Bin(Op.BIT_AND, left, new Int((1 << 28) - 1));
+                else if (val == (1 << 29)) return new Bin(Op.BIT_AND, left, new Int((1 << 29) - 1));
+                else if (val == (1 << 30)) return new Bin(Op.BIT_AND, left, new Int((1 << 30) - 1));
             }
         }
         if (t instanceof IntegerType) {
