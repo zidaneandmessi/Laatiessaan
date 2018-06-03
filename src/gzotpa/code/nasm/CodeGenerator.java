@@ -627,11 +627,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 as.mov(rdi(), rax());
                 as.mov(rsi(), new ImmediateValue(new Label("_str_str_format")));
                 as.xor(rax(), rax());
-                Register reg3 = push(r8(), as);
-                Register reg4 = push(r9(), as);
                 as.call("sprintf");
-                pop(reg4, r9(), as);
-                pop(reg3, r8(), as);
                 pop(reg1, rax(), as);
             }
             else {
@@ -833,11 +829,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             pop(reg, rax(), as);
             as.mov(mem(rcx()), rax());
             if (((New)(node.rhs())).type() instanceof ClassType && ((ClassType)(((New)(node.rhs())).type())).hasConstruct()) {
-                reg = push(r8(), as);
-                as.mov(r8(), rax());
+                //reg = push(r8(), as);
+                //as.mov(r8(), rax());
+                as.push(rax());
                 as.call("_" + ((New)(node.rhs())).type().typeName() + "." + ((New)(node.rhs())).type().typeName());
-                //rewindStack(as, STACK_WORD_SIZE);
-                pop(reg, r8(), as);
+                rewindStack(as, STACK_WORD_SIZE);
+                //pop(reg, r8(), as);
             }
         }
         else if (node.rhs() instanceof New && ((New)(node.rhs())).lenStack() != null && ((New)(node.rhs())).lenStack().size() > 1) {
@@ -1085,10 +1082,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(ConditionJump node) {
         if (node.cond() != null) {
-            visit(node.cond());
+            /*visit(node.cond());
             as.test(rax(), rax());
             as.jnz(node.thenLabel());
-            as.jmp(node.elseLabel());
+            as.jmp(node.elseLabel());*/
+
         }
         else {
             as.jmp(node.thenLabel());
