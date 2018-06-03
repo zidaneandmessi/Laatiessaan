@@ -58,7 +58,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 else if (inst.name().equals("mov")) {
                     Assembly nt = code.assemblies().get(i + 1);
                     if (nt instanceof Instruction
-                        && ((Instruction)nt).name().equals("mov")
+                        && nt.name().equals("mov")
                         && inst.operand1() instanceof Register
                         && ((Register)inst.operand1()).equals(((Instruction)nt).operand1())) {
                         if ((inst.operand2() instanceof IndirectMemoryReference
@@ -72,6 +72,27 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                             i--;
                         }
                     }
+                }
+                else if (inst.name().equals("cmp")
+                        && code.assemblies().get(i + 2).name().equals("movzx")
+                        && code.assemblies().get(i + 3).name().equals("test")
+                        && code.assemblies().get(i + 4).name().equals("jnz")) {
+                    if (code.assemblies().get(i + 1).name().equals("sete"))
+                        code.assemblies().add(i + 1, new Instruction("je", ((Instruction)(code.assemblies().get(i + 4))).operand1()));
+                    else if (code.assemblies().get(i + 1).name().equals("setne"))
+                        code.assemblies().add(i + 1, new Instruction("jne", ((Instruction)(code.assemblies().get(i + 4))).operand1()));
+                    else if (code.assemblies().get(i + 1).name().equals("setg"))
+                        code.assemblies().add(i + 1, new Instruction("jg", ((Instruction)(code.assemblies().get(i + 4))).operand1()));
+                    else if (code.assemblies().get(i + 1).name().equals("setge"))
+                        code.assemblies().add(i + 1, new Instruction("jge", ((Instruction)(code.assemblies().get(i + 4))).operand1()));
+                    else if (code.assemblies().get(i + 1).name().equals("setl"))
+                        code.assemblies().add(i + 1, new Instruction("jl", ((Instruction)(code.assemblies().get(i + 4))).operand1()));
+                    else if (code.assemblies().get(i + 1).name().equals("setle"))
+                        code.assemblies().add(i + 1, new Instruction("jle", ((Instruction)(code.assemblies().get(i + 4))).operand1()));
+                    code.assemblies().remove(i + 2);
+                    code.assemblies().remove(i + 2);
+                    code.assemblies().remove(i + 2);
+                    code.assemblies().remove(i + 2);
                 }
             }
         }
@@ -1082,11 +1103,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     public Void visit(ConditionJump node) {
         if (node.cond() != null) {
-            /*visit(node.cond());
+            visit(node.cond());
             as.test(rax(), rax());
             as.jnz(node.thenLabel());
-            as.jmp(node.elseLabel());*/
-
+            as.jmp(node.elseLabel());
         }
         else {
             as.jmp(node.thenLabel());
