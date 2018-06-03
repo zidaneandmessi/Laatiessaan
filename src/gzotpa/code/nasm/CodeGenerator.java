@@ -100,6 +100,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         return code;
     }
 
+    int maxLenStackSize = 11;
+
     private void initFreeRegs() {
         while (!freeRegs.isEmpty()) freeRegs.removeLast();
         freeRegs.addLast(r12());
@@ -449,7 +451,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         }
         locateParameters(func.parameters());
         while (!localLoopVarStack.isEmpty()) localLoopVarStack.removeLast();
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < maxLenStackSize; i++) {
             localLoopVarStack.addLast(func.scope().allocateTmp(new IntegerType(64, "_virtual_loop_var")));
         }
         StackFrame frame = new StackFrame();
@@ -643,9 +645,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         switch (op) {
         case ADD:
             if (stringBin) {
-                // as.mov(rdi(), left);
-                // as.mov(rsi(), right);
-                // as.call("__string.add");
                 Register reg1 = push(left, as);
                 Register reg2 = push(rcx(), as);
                 as.mov(rdi(), new ImmediateValue(500));
@@ -1092,8 +1091,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         if (node.cond() != null) {
             visit(node.cond());
             as.test(rax(), rax());
-            as.jnz(node.thenLabel());
-            as.jmp(node.elseLabel());
+            as.jz(node.elseLabel());
+            as.jmp(node.thenLabel());
         }
         else {
             as.jmp(node.thenLabel());

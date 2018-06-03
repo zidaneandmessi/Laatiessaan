@@ -381,6 +381,14 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
     public Void visit(ForNode node) {
         Label beginLabel = new Label("_for_begin_" + forCnt);
         Label bodyLabel = new Label("_for_body_" + forCnt);
+        Label body2Label = new Label("_for_body2_" + forCnt);
+        Label body3Label = new Label("_for_body3_" + forCnt);
+        Label body4Label = new Label("_for_body4_" + forCnt);
+        Label body5Label = new Label("_for_body5_" + forCnt);
+        Label body6Label = new Label("_for_body6_" + forCnt);
+        Label body7Label = new Label("_for_body7_" + forCnt);
+        Label body8Label = new Label("_for_body8_" + forCnt);
+        Label body9Label = new Label("_for_body9_" + forCnt);
         Label continueLabel = new Label("_for_continue_" + forCnt);
         Label endLabel = new Label("_for_end_" + (forCnt++));
         visitStmt(node.init());
@@ -390,10 +398,51 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
         pushContinue(continueLabel);
         pushBreak(endLabel);
         visitStmt(node.body());
-        popBreak();
-        popContinue();
         stmts.add(new LabelStmt(null, continueLabel));
         visitStmt(node.incr());
+
+        stmts.add(new ConditionJump(node.location(), visitExpr(node.cond()), body2Label, endLabel));
+        stmts.add(new LabelStmt(null, body2Label));
+        visitStmt(node.body());
+        visitStmt(node.incr());
+
+        stmts.add(new ConditionJump(node.location(), visitExpr(node.cond()), body3Label, endLabel));
+        stmts.add(new LabelStmt(null, body3Label));
+        visitStmt(node.body());
+        visitStmt(node.incr());
+
+        stmts.add(new ConditionJump(node.location(), visitExpr(node.cond()), body4Label, endLabel));
+        stmts.add(new LabelStmt(null, body4Label));
+        visitStmt(node.body());
+        visitStmt(node.incr());
+
+        stmts.add(new ConditionJump(node.location(), visitExpr(node.cond()), body5Label, endLabel));
+        stmts.add(new LabelStmt(null, body5Label));
+        visitStmt(node.body());
+        visitStmt(node.incr());
+
+        stmts.add(new ConditionJump(node.location(), visitExpr(node.cond()), body6Label, endLabel));
+        stmts.add(new LabelStmt(null, body6Label));
+        visitStmt(node.body());
+        visitStmt(node.incr());
+
+        stmts.add(new ConditionJump(node.location(), visitExpr(node.cond()), body7Label, endLabel));
+        stmts.add(new LabelStmt(null, body7Label));
+        visitStmt(node.body());
+        visitStmt(node.incr());
+
+        stmts.add(new ConditionJump(node.location(), visitExpr(node.cond()), body8Label, endLabel));
+        stmts.add(new LabelStmt(null, body8Label));
+        visitStmt(node.body());
+        visitStmt(node.incr());
+
+        stmts.add(new ConditionJump(node.location(), visitExpr(node.cond()), body9Label, endLabel));
+        stmts.add(new LabelStmt(null, body9Label));
+        visitStmt(node.body());
+        popBreak();
+        popContinue();
+        visitStmt(node.incr());
+
         stmts.add(new Jump(null, beginLabel));
         stmts.add(new LabelStmt(null, endLabel));
         return null;

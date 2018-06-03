@@ -23,14 +23,12 @@ __string.add:
 	push rsi
 	mov rsi,rdi
 	mov rdi,__string_buffer
-	mov rdx,[rsi-8]
-	push rdx
+	mov rdx,256
 	call memcpy
 	pop rdi
 	pop rsi
 	add rdi,__string_buffer
-	mov rdx,[rsi-8]
-	add rdx,1
+	mov rdx,256
 	call memcpy
 	mov rdi,__string_buffer
 	call __trans_string

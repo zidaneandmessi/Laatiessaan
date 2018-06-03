@@ -240,6 +240,10 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
     void jnz(Label label) {
         assemblies.add(new Instruction("jnz", label));
     }
+    
+    void jz(Label label) {
+        assemblies.add(new Instruction("jz", label));
+    }
 
     void label(Label label) {
         assemblies.add(label);
