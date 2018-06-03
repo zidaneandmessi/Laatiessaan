@@ -54,17 +54,22 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                         i--;
                     }
                 }
-                if (inst.name().equals("mov")) {
+                else if (inst.name().equals("mov")) {
                     Assembly nt = code.assemblies().get(i + 1);
                     if (nt instanceof Instruction
                         && ((Instruction)nt).name().equals("mov")
                         && inst.operand1() instanceof Register
                         && ((Register)inst.operand1()).equals(((Instruction)nt).operand1())) {
-                        if (inst.operand2() instanceof IndirectMemoryReference
-                            && (((Register)inst.operand1()).equals(((IndirectMemoryReference)(inst.operand2())).base())
-                                || ((Register)inst.operand1()).equals(((IndirectMemoryReference)(inst.operand2())).mulBase())));
+                        if ((inst.operand2() instanceof IndirectMemoryReference
+                                && (((Register)inst.operand1()).equals(((IndirectMemoryReference)(inst.operand2())).base())
+                                    || ((Register)inst.operand1()).equals(((IndirectMemoryReference)(inst.operand2())).mulBase())))
+                            || (((Instruction)nt).operand2() instanceof IndirectMemoryReference
+                                && (((Register)((Instruction)nt).operand1()).equals(((IndirectMemoryReference)(((Instruction)nt).operand2())).base())
+                                || ((Register)((Instruction)nt).operand1()).equals(((IndirectMemoryReference)(((Instruction)nt) .operand2())).mulBase()))));
+                        else {
                             code.assemblies().remove(i);
                             i--;
+                        }
                     }
                 }
             }
