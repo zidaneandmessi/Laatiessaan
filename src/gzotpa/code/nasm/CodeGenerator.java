@@ -36,12 +36,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.label(new Label("_str_str_format"));
         code.db("%s%s");
         while (!freeRegs.isEmpty()) freeRegs.removeLast();
-        freeRegs.addLast(r10());
-        freeRegs.addLast(r11());
         freeRegs.addLast(r12());
         freeRegs.addLast(r13());
         freeRegs.addLast(r14());
         freeRegs.addLast(r15());
+        freeRegs.addLast(rbx());
         generateDataSection(code, ir.defvars());
         generateBssSection(code, ir.defvars());
         locateGlobalVariables(ir.defvars());
@@ -316,7 +315,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         return reg;
     }
 
-    private void pop(Register reg, Register op, AssemblyCode as) { // success: reg  fail: null
+    private void pop(Register reg, Register op, AssemblyCode as) {
         if (reg == null) {
             as.virtualPop(op);
             return;
@@ -900,8 +899,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         else {
             visit(node.right());
             Register reg = push(rax(), as);
+            //as.push(rax());
             visit(node.left());
             pop(reg, rcx(), as);
+            //as.pop(rcx());
             compileBinaryOp(op, rax(), rcx(), node.stringBin());
         }
         return null;
