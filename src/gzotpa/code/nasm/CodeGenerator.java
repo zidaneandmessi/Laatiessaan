@@ -463,7 +463,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     };
 
     private void locateParameters(List<Parameter> params) {
-        long numWords = PARAM_START_WORD;
+        /*long numWords = PARAM_START_WORD;
         int cnt = 0;
         int argc = params.size();
         for (Parameter param : params) {
@@ -475,6 +475,12 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 numWords++;
             }
             cnt++;
+        }*/
+        long numWords = PARAM_START_WORD;
+        int argc = 0;
+        for (Parameter param : params) {
+            param.setMemref(mem(rbp(), numWords * STACK_WORD_SIZE));
+            numWords++;
         }
     }
 
@@ -931,26 +937,18 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     public Void visit(Call node) {
         String name = node.function().name();
         if (name.equals("print")) {
-            Register reg1 = push(r8(), as);
-            Register reg2 = push(r9(), as);
             Expr arg = node.args().get(0);
             visit(arg);
             as.mov(rsi(), rax());
             as.mov(rdi(), new ImmediateValue(new Label("_str_format")));
             as.xor(rax(), rax());
             as.call("printf");
-            pop(reg2, r9(), as);
-            pop(reg1, r8(), as);
         }
         else if (name.equals("println")) {
-            Register reg1 = push(r8(), as);
-            Register reg2 = push(r9(), as);
             Expr arg = node.args().get(0);
             visit(arg);
             as.mov(rdi(), rax());
             as.call("puts");
-            pop(reg2, r9(), as);
-            pop(reg1, r8(), as);
         }
         else if (name.equals("toString")) {
             /*as.mov(rdi(), new ImmediateValue(20));
@@ -971,52 +969,34 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             }
             Expr arg = node.args().get(0);
             visit(arg);
-            Register reg1 = push(r8(), as);
-            Register reg2 = push(r9(), as);
             as.mov(rdi(), rax());
             as.call("__toString");
-            pop(reg2, r9(), as);
-            pop(reg1, r8(), as);
         }
         else if (name.equals("getString")) {
             Register reg1 = push(r8(), as);
             Register reg2 = push(r9(), as);
             as.mov(rdi(), new ImmediateValue(500));
             as.call("malloc");
-            pop(reg2, r9(), as);
-            pop(reg1, r8(), as);
             Register reg = push(rax(), as);
             as.mov(rsi(), rax());
             as.mov(rdi(), new ImmediateValue(new Label("_str_format")));
             as.xor(rax(), rax());
-            reg1 = push(r8(), as);
-            reg2 = push(r9(), as);
             as.call("scanf");
-            pop(reg2, r9(), as);
-            pop(reg1, r8(), as);
             pop(reg, rax(), as);
         }
         else if (name.equals("getInt")) {
-            Register reg1 = push(r8(), as);
-            Register reg2 = push(r9(), as);
             as.push(rax());
             as.mov(rsi(), rsp());
             as.mov(rdi(), new ImmediateValue(new Label("_int_format")));
             as.xor(rax(), rax());
             as.call("scanf");
             as.pop(rax());
-            pop(reg2, r9(), as);
-            pop(reg1, r8(), as);
         }
         else if (name.equals("string.length")) {
-            Register reg1 = push(r8(), as);
-            Register reg2 = push(r9(), as);
             Expr arg = node.args().get(0);
             visit(arg);
             as.mov(rdi(), rax());
             as.call("strlen");
-            pop(reg2, r9(), as);
-            pop(reg1, r8(), as);
         }
         else if (name.equals("string.substring")) {
             Expr arg = node.args().get(2);
@@ -1054,8 +1034,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.movzx(rax(), rax(8));
         }
         else if (name.equals("string.parseInt")) {
-            Register reg1 = push(r8(), as);
-            Register reg2 = push(r9(), as);
             if (!parseIntAdded) {
                 code.setTextIndex();
                 code.addParseIntFunction();
@@ -1065,8 +1043,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             visit(arg);
             as.mov(rdi(), rax());
             as.call("__parseInt");
-            pop(reg2, r9(), as);
-            pop(reg1, r8(), as);
         }
         else if (name.equals("_array.size")) {
             Expr arg = node.args().get(0);
@@ -1075,7 +1051,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         }
         else
         {
-            List<Expr> argList = node.args();
+            /*List<Expr> argList = node.args();
             Collections.reverse(argList);
             LinkedList<RegisterClass> savedRegisters = new LinkedList<RegisterClass>();
             int cnt = 0;
@@ -1090,10 +1066,19 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 cnt++;
             }
             as.call("_" + name);
-            if (node.numArgs() > 2) rewindStack(as, (node.numArgs() - 2) * STACK_WORD_SIZE); 
-            for (int i = 0; i < node.numArgs() && i < 2; i++) {
+            if (node.numArgs() > 2) rewindStack(as, (node.numArgs() - 2) * STACK_WORD_SIZE);
+            for (int i = Math.min(cnt, 2) - 1; i >= 0; i--) {
                 pop(reg[i], new Register(ARGS_REGISTERS[i], 64), as);
+            }*/
+            List<Expr> argList = node.args();
+            LinkedList<RegisterClass> savedRegisters = new LinkedList<RegisterClass>();
+            Collections.reverse(argList);
+            for (Expr arg : argList) {
+                visit(arg);
+                as.push(rax());
             }
+            as.call("_" + name);
+            rewindStack(as, node.numArgs() * STACK_WORD_SIZE);
         }
         return null;
     }
