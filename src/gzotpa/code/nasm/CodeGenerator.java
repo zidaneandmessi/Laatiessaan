@@ -223,11 +223,19 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             for (DefinedFunction func : cls.decls().defuns()) {
                 currentFunc = func;
                 compileFunctionBody(code, func, ir);
+                while (!currentRegs.isEmpty()){
+                    Register reg = currentRegs.removeLast();
+                    freeRegs.addLast(reg);
+                }
             }
         }
         for (DefinedFunction func : ir.defuns()) {
             currentFunc = func;
             compileFunctionBody(code, func, ir);
+            while (!currentRegs.isEmpty()){
+                Register reg = currentRegs.removeLast();
+                freeRegs.addLast(reg);
+            }
         }
     }
 
@@ -331,6 +339,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     LinkedList<Register> freeRegs = new LinkedList<Register>();
+    LinkedList<Register> currentRegs = new LinkedList<Register>();
 
     private Register getFreeRegister() {
         if (!freeRegs.isEmpty()) return freeRegs.removeLast();
@@ -452,7 +461,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         locateParameters(func.parameters());
         while (!localLoopVarStack.isEmpty()) localLoopVarStack.removeLast();
         for (int i = 0; i < maxLenStackSize; i++) {
-            localLoopVarStack.addLast(func.scope().allocateTmp(new IntegerType(64, "_virtual_loop_var")));
+            DefinedVariable loopVar = func.scope().allocateTmp(new IntegerType(64, "_virtual_loop_var"));
+            loopVar.refered();
+            localLoopVarStack.addLast(loopVar);
         }
         StackFrame frame = new StackFrame();
         frame.localVarSize = locateLocalVariables(func.localVarScope(), 0);
@@ -630,6 +641,14 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                     maxReferVar = var;
                 }
             }*/
+            if (var.isTmp()) {
+                Register reg = getFreeRegister();
+                if (reg != null) {
+                    currentRegs.addLast(reg);
+                    var.setMemref(new RegisterMemoryReference(reg));
+                    continue;
+                }
+            }
             size = alignStack(size + STACK_WORD_SIZE, STACK_WORD_SIZE);
             var.setMemref(new IndirectMemoryReference(rbp(), -size, false)); //offset value changeable
         }
@@ -670,7 +689,18 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             if (stringBin) {
                 Register reg1 = push(left, as);
                 Register reg2 = push(rcx(), as);
-                as.mov(rdi(), new ImmediateValue(256));
+                as.mov(rdi(), left);
+                as.call("strlen");
+                pop(reg2, rcx(), as);
+                reg2 = push(rcx(), as);
+                Register reg = push(rax(), as);
+                as.mov(rdi(), right);
+                as.call("strlen");
+                if (reg != null) as.add(rax(), reg);
+                else as.add(rax(), as.virtualStack.top());
+                pop(reg, rdi(), as);
+                as.mov(rdi(), rax());
+                as.add(rdi(), new ImmediateValue(1));
                 as.call("malloc");
                 pop(reg2, rcx(), as);
                 pop(reg1, rdx(), as);
