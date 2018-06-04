@@ -23,4 +23,10 @@ public class UnaryArithmeticOpNode extends UnaryOpNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public UnaryArithmeticOpNode clone() {
+        UnaryArithmeticOpNode newNode = new UnaryArithmeticOpNode(super.operator, expr.clone());
+        newNode.setAmount(amount);
+        return newNode;
+    }
 }

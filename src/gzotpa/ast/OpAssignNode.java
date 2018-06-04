@@ -15,4 +15,8 @@ public class OpAssignNode extends AbstractAssignNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public OpAssignNode clone() {
+        return new OpAssignNode(lhs.clone(), operator, rhs.clone());
+    }
 }

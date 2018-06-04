@@ -14,8 +14,8 @@ public class IntegerLiteralNode extends LiteralNode {
         this.value = value;
     }
 
-    public IntegerLiteralNode(Type type, TypeRef ref, long value) {
-        super(null, ref);
+    public IntegerLiteralNode(Location loc, Type type, TypeRef ref, long value) {
+        super(loc, ref);
         this.typeNode.setType(type);
         this.value = value;
     }
@@ -26,5 +26,11 @@ public class IntegerLiteralNode extends LiteralNode {
      
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
+    }
+
+    public IntegerLiteralNode clone() {
+        IntegerLiteralNode newNode = new IntegerLiteralNode(null, null, super.typeNode.typeRef(), value);
+        newNode.typeNode = this.typeNode;
+        return newNode;
     }
 }

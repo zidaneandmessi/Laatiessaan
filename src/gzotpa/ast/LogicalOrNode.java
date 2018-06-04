@@ -8,4 +8,8 @@ public class LogicalOrNode extends BinaryOpNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public LogicalOrNode clone() {
+        return new LogicalOrNode(left.clone(), right.clone());
+    }
 }

@@ -2,7 +2,7 @@ package gzotpa.ast;
 import gzotpa.type.Type;
 import gzotpa.type.NullType;
 
-public class NullNode extends ExprNode{
+public class NullNode extends ExprNode {
     Location location;
     Type type;
     public NullNode(Location loc) {
@@ -20,5 +20,9 @@ public class NullNode extends ExprNode{
 
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
+    }
+
+    public NullNode clone() {
+        return new NullNode(null);
     }
 }

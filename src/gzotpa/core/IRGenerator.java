@@ -17,13 +17,18 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
         this.typeTable = typeTable;
     }
 
+    AST currentAST = null;
     List<Stmt> stmts;
     LinkedList<LocalScope> scopeStack;
     LinkedList<Label> breakStack;
     LinkedList<Label> continueStack;
     long maxLenStackSize = 0;
 
+    LinkedList<List<Parameter>> inlineFuncFormalParams = new LinkedList<List<Parameter>>();
+    LinkedList<List<Expr>> inlineFuncActualParams = new LinkedList<List<Expr>>();
+
     public IR generate(AST ast) {
+        currentAST = ast;
         for (DefinedVariable var : ast.definedVariables()) {
             if (var.hasInitializer()) {
                 var.setIR(visitExpr(var.initializer()));
@@ -52,7 +57,7 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
             node.accept(this);
     }
 
-    private Expr visitExpr(ExprNode node) {
+    private Expr visitExpr(ExprNode node) { 
         if (node == null) return null;
         exprNestLevel++;
         Expr e = node.accept(this);
@@ -71,10 +76,6 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
 
     private boolean isStatement() {
         return (exprNestLevel == 0);
-    }
-
-    private Var ref(Entity ent) {
-        return new Var(ent);
     }
 
     private Expr addressOf(Expr expr) {
@@ -178,9 +179,9 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
         }
         else {
             DefinedVariable var = tmpVar(node.rhs().type());
-            assign(node.rhs().location(), ref(var), visitExpr(node.rhs()));
-            assign(node.lhs().location(), visitExpr(node.lhs()), ref(var));
-            return ref(var);
+            assign(node.rhs().location(), new Var(var), visitExpr(node.rhs()));
+            assign(node.lhs().location(), visitExpr(node.lhs()), new Var(var));
+            return new Var(var);
         }
     }
 
@@ -422,12 +423,26 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
     public Expr visit(FuncallNode node) {
         List<ExprNode> argList = node.args();
         List<Expr> args = new ArrayList<Expr>();
-        Collections.reverse(argList);
         for (ExprNode arg : argList) {
-            if (arg instanceof VariableNode) {
+            if (arg instanceof VariableNode && ((VariableNode)arg).isResolved()) {
                 ((DefinedVariable)(((VariableNode)arg).entity())).setUsedForParam(true);
             }
-            args.add(0, visitExpr(arg));
+            args.add(visitExpr(arg));
+        }
+        DefinedFunction callFunc = null;
+        for (DefinedFunction func : currentAST.definedFunctions()) {
+            if (func.name().equals(((VariableNode)node.expr()).name())) {
+                callFunc = func;
+            }
+        }
+        if (callFunc != null && callFunc.body().stmts().get(0) instanceof ReturnNode) { // inline statement function
+            ExprNode expr = ((ReturnNode)(callFunc.body().stmts().get(0))).expr().clone();
+            inlineFuncFormalParams.addLast(callFunc.parameters());
+            inlineFuncActualParams.addLast(args);
+            Expr inlineExpr = visitExpr(expr);
+            inlineFuncFormalParams.removeLast();
+            inlineFuncActualParams.removeLast();
+            return inlineExpr;
         }
         Expr call = new Call(visitExpr(node.expr()), args);
         if (isStatement()) {
@@ -439,8 +454,8 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
         }
         else {
             DefinedVariable tmp = tmpVar(node.type());
-            assign(node.location(), ref(tmp), call);
-            return ref(tmp);
+            assign(node.location(), new Var(tmp), call);
+            return new Var(tmp);
         }
     }
 
@@ -452,30 +467,30 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
         Label rightLabel = new Label("_logic_and_right_" + logicAndCnt);
         Label endLabel = new Label("_logic_and_end_" + (logicAndCnt++));
         DefinedVariable var = tmpVar(node.type());
-        assign(node.left().location(), ref(var), visitExpr(node.left()));
-        stmts.add(new ConditionJump(node.location(), ref(var), rightLabel, endLabel));
+        assign(node.left().location(), new Var(var), visitExpr(node.left()));
+        stmts.add(new ConditionJump(node.location(), new Var(var), rightLabel, endLabel));
         stmts.add(new LabelStmt(null, rightLabel));
-        assign(node.right().location(), ref(var), visitExpr(node.right()));
+        assign(node.right().location(), new Var(var), visitExpr(node.right()));
         stmts.add(new LabelStmt(null, endLabel));
         if (isStatement())
             return null;
         else
-            return ref(var);
+            return new Var(var);
     }
 
     public Expr visit(LogicalOrNode node) {
         Label rightLabel = new Label("_logic_or_right_" + logicOrCnt);
         Label endLabel = new Label("_logic_or_end_" + (logicOrCnt++));
         DefinedVariable var = tmpVar(node.type());
-        assign(node.left().location(), ref(var), visitExpr(node.left()));
-        stmts.add(new ConditionJump(node.location(), ref(var), endLabel, rightLabel));
+        assign(node.left().location(), new Var(var), visitExpr(node.left()));
+        stmts.add(new ConditionJump(node.location(), new Var(var), endLabel, rightLabel));
         stmts.add(new LabelStmt(null, rightLabel));
-        assign(node.right().location(), ref(var), visitExpr(node.right()));
+        assign(node.right().location(), new Var(var), visitExpr(node.right()));
         stmts.add(new LabelStmt(null, endLabel));
         if (isStatement())
             return null;
         else
-            return ref(var);
+            return new Var(var);
     }
 
     public Expr visit(MemberNode node) {
@@ -547,10 +562,10 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
             return null;
         }
         else /*if (expr.isVar())*/ { // f(x++) -> v=x, x=v+1, f(v)
-            DefinedVariable v = tmpVar(t);
-            assign(loc, ref(v), expr);
-            assign(loc, expr, new Bin(op, ref(v), imm(t, 1)));
-            return ref(v);
+            DefinedVariable var = tmpVar(t);
+            assign(loc, new Var(var), expr);
+            assign(loc, expr, new Bin(op, new Var(var), imm(t, 1)));
+            return new Var(var);
         }
     }
 
@@ -562,11 +577,24 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
     }
 
     public Expr visit(VariableNode node) {
-        node.entity().refered();
+        if (!node.isResolved() && !inlineFuncFormalParams.isEmpty()) {
+            int i = 0;
+            List<Parameter> formalParams = inlineFuncFormalParams.getLast();
+            List<Expr> actualParams = inlineFuncActualParams.getLast();
+            for (Parameter param : formalParams) {
+                if (param.name().equals(node.name())) {
+                    node.setName("inline_function_virtual_parameter");
+                    return actualParams.get(i);
+                }
+                i++;
+            }
+            throw new Error("Gzotpa! Cannot find matching parameter!");
+        }
         if (node.memVarBase() != null) {
             return visit(node.memVarBase());
         }
-        Var var = ref(node.entity());
+        Var var = new Var(node.entity());
+        node.entity().refered();
         if (node.isLoadable()) return var;
         else return addressOf(var);
     }

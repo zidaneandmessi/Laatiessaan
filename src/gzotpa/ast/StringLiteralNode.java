@@ -28,4 +28,10 @@ public class StringLiteralNode extends LiteralNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public StringLiteralNode clone() {
+        StringLiteralNode newNode = new StringLiteralNode(null, null, value, originValue);
+        newNode.typeNode = this.typeNode;
+        return newNode;
+    }
 }

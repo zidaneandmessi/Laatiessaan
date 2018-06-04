@@ -30,4 +30,8 @@ public class NewTypeNode extends ExprNode {
     }
 
     public boolean isConstant() { return true; }
+
+    public NewTypeNode clone() {
+        return new NewTypeNode(type);
+    }
 }

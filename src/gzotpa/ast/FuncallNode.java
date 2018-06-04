@@ -2,6 +2,7 @@ package gzotpa.ast;
 import gzotpa.type.*;
 import gzotpa.exception.*;
 import java.util.List;
+import java.util.ArrayList;
 
 public class FuncallNode extends ExprNode {
     protected ExprNode expr;
@@ -66,5 +67,12 @@ public class FuncallNode extends ExprNode {
     
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
+    }
+
+    public FuncallNode clone() {
+        List<ExprNode> newArgs = new ArrayList<ExprNode>();
+        for (ExprNode arg : args)
+            newArgs.add(arg.clone());
+        return new FuncallNode(expr.clone(), newArgs, memberFunc);
     }
 }

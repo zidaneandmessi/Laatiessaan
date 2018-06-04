@@ -8,4 +8,8 @@ public class AssignNode extends AbstractAssignNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public AssignNode clone() {
+        return new AssignNode(lhs.clone(), rhs.clone());
+    }
 }

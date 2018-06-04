@@ -8,4 +8,8 @@ public class LogicalAndNode extends BinaryOpNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public LogicalAndNode clone() {
+        return new LogicalAndNode(left.clone(), right.clone());
+    }
 }

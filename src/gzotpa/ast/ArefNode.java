@@ -44,4 +44,8 @@ public class ArefNode extends LHSNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public ArefNode clone() {
+        return new ArefNode(expr.clone(), index.clone());
+    }
 }

@@ -22,6 +22,10 @@ public class Var extends Expr {
         return entity.memref();
     }
 
+    public String name() {
+        return entity.name();
+    }
+
     public <S,E> E accept(IRVisitor<S,E> visitor) {
         return visitor.visit(this);
     }

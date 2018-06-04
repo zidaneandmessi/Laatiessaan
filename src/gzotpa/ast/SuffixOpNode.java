@@ -8,4 +8,8 @@ public class SuffixOpNode extends UnaryArithmeticOpNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public SuffixOpNode clone() {
+        return new SuffixOpNode(operator, expr.clone());
+    }
 }

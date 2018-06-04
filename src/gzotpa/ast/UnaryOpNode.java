@@ -46,4 +46,10 @@ public class UnaryOpNode extends ExprNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public UnaryOpNode clone() {
+        UnaryOpNode newNode = new UnaryOpNode(operator, expr.clone());
+        newNode.setOpType(opType);
+        return newNode;
+    }
 }

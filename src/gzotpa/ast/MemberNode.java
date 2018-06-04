@@ -42,4 +42,8 @@ public class MemberNode extends LHSNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public MemberNode clone() {
+        return new MemberNode(expr.clone(), member);
+    }
 }

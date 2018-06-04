@@ -57,4 +57,8 @@ public class BinaryOpNode extends ExprNode {
     public <S,E> E accept(ASTVisitor<S,E> visitor) {
         return visitor.visit(this);
     }
+
+    public BinaryOpNode clone() {
+        return new BinaryOpNode(type, left.clone(), operator, right.clone());
+    }
 }

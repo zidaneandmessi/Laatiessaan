@@ -100,7 +100,10 @@ public class VariableNode extends LHSNode {
     }
 
     public Type origType() {
-        return entity().type();
+        if (entity == null) {
+            throw new Error("Gzotpa! Null type from empty entity! " + name);
+        }
+        return entity.type();
     }
 
     public Location location() {
@@ -113,5 +116,18 @@ public class VariableNode extends LHSNode {
 
     public String toString() {
         return "Variable " + name;
+    }
+
+    public VariableNode clone() {
+        VariableNode newNode = new VariableNode(null, name);
+        ExprNode newMemFuncBase = null;
+        if (memFuncBase != null) newMemFuncBase = memFuncBase.clone();
+        newNode.setMemFuncBase(newMemFuncBase);
+        MemberNode newMemVarBase = null;
+        if (memVarBase != null) newMemVarBase = memVarBase.clone();
+        newNode.setMemVarBase(newMemVarBase);
+        newNode.setImplicitThis(implicitThis);
+        newNode.setType(type());
+        return newNode;
     }
 }
