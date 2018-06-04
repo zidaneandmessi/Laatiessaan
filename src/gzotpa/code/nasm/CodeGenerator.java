@@ -617,13 +617,16 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         for (DefinedVariable var : scope.localVariables()) {
             if (var instanceof Parameter) continue;
             if (!var.isRefered()) continue;
-            if (var.isLoopCntVar()) {
-                Register reg = getFreeRegister();
-                var.setMemref(new RegisterMemoryReference(reg));
-            }
-            else if (var.cntRefered() > maxRefer) {
-                maxRefer = var.cntRefered();
-                maxReferVar = var;
+            if (currentFunc.name().equals("main")) {
+                if (var.isLoopCntVar()) {
+                    Register reg = getFreeRegister();
+                    var.setMemref(new RegisterMemoryReference(reg));
+                    continue;
+                }
+                else if (var.cntRefered() > maxRefer) {
+                    maxRefer = var.cntRefered();
+                    maxReferVar = var;
+                }
             }
             size = alignStack(size + STACK_WORD_SIZE, STACK_WORD_SIZE);
             var.setMemref(new IndirectMemoryReference(rbp(), -size, false)); //offset value changeable
@@ -1040,7 +1043,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.mov(rdx(), rax());
             Register reg2 = push(rdx(), as);
             Register reg3 = push(rsi(), as);
-            as.mov(rdi(), new ImmediateValue(500));
+            as.mov(rdi(), new ImmediateValue(256));
             as.call("malloc");
             pop(reg3, rsi(), as);
             pop(reg2, rdx(), as);
