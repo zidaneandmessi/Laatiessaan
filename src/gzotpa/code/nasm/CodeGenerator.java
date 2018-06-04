@@ -612,8 +612,8 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private long locateLocalVariables(LocalScope scope, long parentStackSize) {
         long size = parentStackSize;
-        long maxRefer = 0;
-        DefinedVariable maxReferVar = null;
+        // long maxRefer = 0;
+        // DefinedVariable maxReferVar = null;
         for (DefinedVariable var : scope.localVariables()) {
             if (var instanceof Parameter) continue;
             if (!var.isRefered()) continue;
@@ -623,18 +623,20 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                     var.setMemref(new RegisterMemoryReference(reg));
                     continue;
                 }
-                else if (var.cntRefered() > maxRefer) {
+                /*else if (var.cntRefered() > maxRefer) {
                     maxRefer = var.cntRefered();
                     maxReferVar = var;
-                }
+                }*/
             }
             size = alignStack(size + STACK_WORD_SIZE, STACK_WORD_SIZE);
             var.setMemref(new IndirectMemoryReference(rbp(), -size, false)); //offset value changeable
         }
-        if (maxRefer > 10 && !freeRegs.isEmpty()) {
+        /*if (maxRefer > 10 && !freeRegs.isEmpty()) {
             Register reg = getFreeRegister();
+            System.err.println(reg.print());
+            System.err.println(maxReferVar.name());
             maxReferVar.setMemref(new RegisterMemoryReference(reg));
-        }
+        }*/
         long maxSize = size;
         for (LocalScope s : scope.children()) {
             long childLen = locateLocalVariables(s, size);

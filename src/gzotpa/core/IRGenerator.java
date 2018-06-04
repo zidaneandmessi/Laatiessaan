@@ -381,8 +381,6 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
     public Void visit(ForNode node) {
         Label beginLabel = new Label("_for_begin_" + forCnt);
         Label bodyLabel = new Label("_for_body_" + forCnt);
-        Label body2Label = new Label("_for_body2_" + forCnt);
-        Label body3Label = new Label("_for_body3_" + forCnt);
         Label continueLabel = new Label("_for_continue_" + forCnt);
         Label endLabel = new Label("_for_end_" + (forCnt++));
         visitStmt(node.init());
