@@ -30,6 +30,7 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
     public IR generate(AST ast) {
         currentAST = ast;
         for (DefinedVariable var : ast.definedVariables()) {
+            var.setGlobal();
             if (var.hasInitializer()) {
                 var.setIR(visitExpr(var.initializer()));
             }

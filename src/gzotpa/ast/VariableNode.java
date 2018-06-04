@@ -128,6 +128,8 @@ public class VariableNode extends LHSNode {
         newNode.setMemVarBase(newMemVarBase);
         newNode.setImplicitThis(implicitThis);
         newNode.setType(type());
+        if (entity instanceof DefinedVariable && ((DefinedVariable)entity).isGlobal())
+            newNode.setEntity(entity);
         return newNode;
     }
 }
