@@ -205,9 +205,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 || !(var.hasInitializer())) {
                 code.label(new Label("_" + var.name()));
                 generateReserveData(code, var);
-
-                New init = (New)(var.ir());
-                maxLenStackSize = Math.max(maxLenStackSize, init.lenStack().size());
             }
         }
     }
@@ -215,6 +212,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void generateReserveData(AssemblyCode code, DefinedVariable var) {
         if (var.type() instanceof ArrayType && var.hasInitializer()) {
             code.resq(1);
+            New init = (New)(var.ir());
+            if (init.lenStack() != null)
+                maxLenStackSize = Math.max(maxLenStackSize, init.lenStack().size());
         }
         else {
             code.resq(1);
