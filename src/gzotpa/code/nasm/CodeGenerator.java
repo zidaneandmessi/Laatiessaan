@@ -617,7 +617,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         for (DefinedVariable var : scope.localVariables()) {
             if (var instanceof Parameter) continue;
             if (!var.isRefered()) continue;
-            if (currentFunc.name().equals("main")) {
+            /*if (currentFunc.name().equals("main")) {
                 if (var.isLoopCntVar()) {
                     Register reg = getFreeRegister();
                     if (reg != null) {
@@ -625,11 +625,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                         continue;
                     }
                 }
-                /*else if (var.cntRefered() > maxRefer) {
+                else if (var.cntRefered() > maxRefer) {
                     maxRefer = var.cntRefered();
                     maxReferVar = var;
-                }*/
-            }
+                }
+            }*/
             size = alignStack(size + STACK_WORD_SIZE, STACK_WORD_SIZE);
             var.setMemref(new IndirectMemoryReference(rbp(), -size, false)); //offset value changeable
         }
