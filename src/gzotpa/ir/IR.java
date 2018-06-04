@@ -8,15 +8,14 @@ public class IR {
     List<DefinedFunction> defuns;
     List<ClassNode> defcls; 
     ToplevelScope scope;
+    long maxLenStackSize;
 
-    public IR(List<DefinedVariable> defvars,
-                List<DefinedFunction> defuns,  
-                List<ClassNode> defcls,  
-                ToplevelScope scope) {
+    public IR(List<DefinedVariable> defvars, List<DefinedFunction> defuns, List<ClassNode> defcls, ToplevelScope scope, long maxLenStackSize) {
         this.defvars = defvars;
         this.defuns = defuns;
         this.defcls = defcls;
         this.scope = scope;
+        this.maxLenStackSize = maxLenStackSize;
     }
 
     public List<DefinedVariable> defvars() {
@@ -33,6 +32,14 @@ public class IR {
 
     public ToplevelScope scope() {
         return scope;
+    }
+
+    public void setMaxLenStackSize(long maxLenStackSize) {
+        this.maxLenStackSize = maxLenStackSize;
+    }
+
+    public long maxLenStackSize() {
+        return maxLenStackSize;
     }
 
     public void dump() {

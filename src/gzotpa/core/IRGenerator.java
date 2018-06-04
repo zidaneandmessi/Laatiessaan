@@ -21,6 +21,7 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
     LinkedList<LocalScope> scopeStack;
     LinkedList<Label> breakStack;
     LinkedList<Label> continueStack;
+    long maxLenStackSize = 0;
 
     public IR generate(AST ast) {
         for (DefinedVariable var : ast.definedVariables()) {
@@ -36,6 +37,7 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
                 func.setIR(compileFunctionBody(func));
             }
         }
+        ast.setMaxLenStackSize(maxLenStackSize);
         return ast.ir();
     }
     private int exprNestLevel = 0;
@@ -422,6 +424,9 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
         List<Expr> args = new ArrayList<Expr>();
         Collections.reverse(argList);
         for (ExprNode arg : argList) {
+            if (arg instanceof VariableNode) {
+                ((DefinedVariable)(((VariableNode)arg).entity())).setUsedForParam(true);
+            }
             args.add(0, visitExpr(arg));
         }
         Expr call = new Call(visitExpr(node.expr()), args);
@@ -490,6 +495,7 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
                 ExprNode e = lenStack.removeLast();
                 stack.addLast(visitExpr(e));
             }
+            maxLenStackSize = Math.max(maxLenStackSize, stack.size());
             return new New(stack, type);
         }
         else return new New(node.type().allocSize(), node.type());

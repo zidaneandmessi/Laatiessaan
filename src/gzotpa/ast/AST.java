@@ -9,6 +9,7 @@ public class AST extends Node {
     protected Location source;
     protected Declarations declarations;
     protected ToplevelScope scope;
+    protected long maxLenStackSize;
 
     public AST(Location source, Declarations declarations) {
         super();
@@ -56,6 +57,14 @@ public class AST extends Node {
         return source;
     }
 
+    public void setMaxLenStackSize(long maxLenStackSize) {
+        this.maxLenStackSize = maxLenStackSize;
+    }
+
+    public long maxLenStackSize() {
+        return maxLenStackSize;
+    }
+
     public void setScope(ToplevelScope scope) {
         if (this.scope != null) {
             throw new Error("Gzotpa! Toplevel scope set twice!");
@@ -71,6 +80,6 @@ public class AST extends Node {
     }
 
     public IR ir() {
-        return new IR(definedVariables(), definedFunctions(), definedClasses(), scope());
+        return new IR(definedVariables(), definedFunctions(), definedClasses(), scope(), maxLenStackSize);
     }
 }

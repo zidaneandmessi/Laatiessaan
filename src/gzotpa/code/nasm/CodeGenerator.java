@@ -19,6 +19,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     }
 
     public AssemblyCode generateAssemblyCode(IR ir) {
+        maxLenStackSize = ir.maxLenStackSize();
         code.global(new Label("main"));
         code.extern(new Label("malloc"));
         code.extern(new Label("printf"));
@@ -100,7 +101,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         return code;
     }
 
-    int maxLenStackSize = 11;
+    long maxLenStackSize = 0;
 
     private void initFreeRegs() {
         while (!freeRegs.isEmpty()) freeRegs.removeLast();
@@ -204,6 +205,9 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 || !(var.hasInitializer())) {
                 code.label(new Label("_" + var.name()));
                 generateReserveData(code, var);
+
+                New init = (New)(var.ir());
+                maxLenStackSize = Math.max(maxLenStackSize, init.lenStack().size());
             }
         }
     }
@@ -230,11 +234,24 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             }
         }
         for (DefinedFunction func : ir.defuns()) {
-            currentFunc = func;
-            compileFunctionBody(code, func, ir);
-            while (!currentRegs.isEmpty()){
-                Register reg = currentRegs.removeLast();
-                freeRegs.addLast(reg);
+            if (func.name().equals("main")) {
+                currentFunc = func;
+                compileFunctionBody(code, func, ir);
+                while (!currentRegs.isEmpty()){
+                    Register reg = currentRegs.removeLast();
+                    freeRegs.addLast(reg);
+                }
+            }
+        }
+
+        for (DefinedFunction func : ir.defuns()) {
+            if (!func.name().equals("main")) {
+                currentFunc = func;
+                compileFunctionBody(code, func, ir);
+                while (!currentRegs.isEmpty()){
+                    Register reg = currentRegs.removeLast();
+                    freeRegs.addLast(reg);
+                }
             }
         }
     }
@@ -623,24 +640,24 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private long locateLocalVariables(LocalScope scope, long parentStackSize) {
         long size = parentStackSize;
-        // long maxRefer = 0;
-        // DefinedVariable maxReferVar = null;
+        long maxRefer = 0;
+        DefinedVariable maxReferVar = null;
         for (DefinedVariable var : scope.localVariables()) {
             if (var instanceof Parameter) continue;
             if (!var.isRefered()) continue;
-            /*if (currentFunc.name().equals("main")) {
-                if (var.isLoopCntVar()) {
+            if (currentFunc.name().equals("main")) {
+                if (var.isLoopCntVar() && !var.usedForParam()) {
                     Register reg = getFreeRegister();
                     if (reg != null) {
                         var.setMemref(new RegisterMemoryReference(reg));
                         continue;
                     }
                 }
-                else if (var.cntRefered() > maxRefer) {
+                else if (var.cntRefered() > maxRefer && !var.usedForParam()) {
                     maxRefer = var.cntRefered();
                     maxReferVar = var;
                 }
-            }*/
+            }
             if (var.isTmp()) {
                 Register reg = getFreeRegister();
                 if (reg != null) {
@@ -652,12 +669,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             size = alignStack(size + STACK_WORD_SIZE, STACK_WORD_SIZE);
             var.setMemref(new IndirectMemoryReference(rbp(), -size, false)); //offset value changeable
         }
-        /*if (maxRefer > 10 && !freeRegs.isEmpty()) {
+        if (maxRefer > 10 && !freeRegs.isEmpty()) {
+                    System.err.println(maxReferVar.name());
             Register reg = getFreeRegister();
-            System.err.println(reg.print());
-            System.err.println(maxReferVar.name());
-            maxReferVar.setMemref(new RegisterMemoryReference(reg));
-        }*/
+            if (reg != null) maxReferVar.setMemref(new RegisterMemoryReference(reg));
+        }
         long maxSize = size;
         for (LocalScope s : scope.children()) {
             long childLen = locateLocalVariables(s, size);

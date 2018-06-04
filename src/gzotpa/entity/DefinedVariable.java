@@ -11,6 +11,7 @@ public class DefinedVariable extends Variable {
     protected Expr ir;
     protected boolean waitingForInit;
     protected boolean isTmp;
+    protected boolean usedForParam;
     protected Register reg;
     protected HashSet<DefinedVariable> interferers = new HashSet<DefinedVariable>();
 
@@ -18,6 +19,7 @@ public class DefinedVariable extends Variable {
         super(type, name);
         initializer = null;
         waitingForInit = false;
+        usedForParam = false;
         isTmp = false;
         reg = null;
     }
@@ -26,6 +28,7 @@ public class DefinedVariable extends Variable {
         super(type, name);
         initializer = init;
         waitingForInit = false;
+        usedForParam = false;
         isTmp = false;
         reg = null;
         interferers = new HashSet<DefinedVariable>();
@@ -35,6 +38,7 @@ public class DefinedVariable extends Variable {
         super(type, name);
         initializer = init;
         waitingForInit = false;
+        usedForParam = false;
         this.isTmp = isTmp;
         reg = null;
         interferers = new HashSet<DefinedVariable>();
@@ -70,6 +74,14 @@ public class DefinedVariable extends Variable {
 
     public boolean waitingForInit() {
         return waitingForInit;
+    }
+
+    public void setUsedForParam(boolean usedForParam) {
+        this.usedForParam = usedForParam;
+    }
+
+    public boolean usedForParam() {
+        return usedForParam;
     }
 
     public Expr ir() {
