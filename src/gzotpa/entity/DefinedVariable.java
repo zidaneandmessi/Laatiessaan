@@ -12,7 +12,6 @@ public class DefinedVariable extends Variable {
     protected boolean waitingForInit;
     protected boolean isTmp;
     protected boolean usedForParam;
-    protected boolean isGlobal;
     protected Register reg;
     protected HashSet<DefinedVariable> interferers = new HashSet<DefinedVariable>();
 
@@ -21,7 +20,6 @@ public class DefinedVariable extends Variable {
         initializer = null;
         waitingForInit = false;
         usedForParam = false;
-        isGlobal = false;
         isTmp = false;
         reg = null;
     }
@@ -31,7 +29,6 @@ public class DefinedVariable extends Variable {
         initializer = init;
         waitingForInit = false;
         usedForParam = false;
-        isGlobal = false;
         isTmp = false;
         reg = null;
         interferers = new HashSet<DefinedVariable>();
@@ -42,7 +39,6 @@ public class DefinedVariable extends Variable {
         initializer = init;
         waitingForInit = false;
         usedForParam = false;
-        isGlobal = false;
         this.isTmp = isTmp;
         reg = null;
         interferers = new HashSet<DefinedVariable>();
@@ -54,14 +50,6 @@ public class DefinedVariable extends Variable {
 
     public boolean isTmp() {
         return isTmp;
-    }
-
-    public void setGlobal() {
-        isGlobal = true;
-    }
-
-    public boolean isGlobal() {
-        return isGlobal;
     }
 
     public boolean hasInitializer() {

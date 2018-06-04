@@ -184,13 +184,6 @@ public class Compiler {
             AssemblyCode code = new CodeGenerator(types).generateAssemblyCode(ir);
             if (opts.isVerboseMode()) code.dump();
             code.print();
-            /*File file = new File("BuiltinFunction.asm");
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String s;
-            while ((s = reader.readLine()) != null) {  
-                System.out.println(s);
-            }
-            reader.close();*/
             return true;
         }
         catch (SemanticException ex) {

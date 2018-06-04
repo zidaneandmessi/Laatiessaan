@@ -11,12 +11,14 @@ abstract public class Entity {
     protected long cntRefered;
     protected Operand address;
     protected boolean loopCntVar;
+    protected boolean isGlobal;
 
     public Entity(TypeNode type, String name) {
         this.name = name;
-        this.typeNode = type;
-        this.cntRefered = 0;
-        this.loopCntVar = false;
+        typeNode = type;
+        cntRefered = 0;
+        loopCntVar = false;
+        isGlobal = false;
     }
 
     public String name() {
@@ -49,6 +51,14 @@ abstract public class Entity {
 
     public boolean isRefered() {
         return (cntRefered > 0);
+    }
+
+    public void setGlobal() {
+        isGlobal = true;
+    }
+
+    public boolean isGlobal() {
+        return isGlobal;
     }
 
     public void setLoopCntVar() {

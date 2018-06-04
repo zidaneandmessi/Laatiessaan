@@ -1,7 +1,7 @@
 package gzotpa.ast;
 import gzotpa.type.Type;
 import gzotpa.entity.Entity;
-import gzotpa.entity.DefinedVariable;
+import gzotpa.entity.*;
 
 public class VariableNode extends LHSNode {
     private Location location;
@@ -128,7 +128,9 @@ public class VariableNode extends LHSNode {
         newNode.setMemVarBase(newMemVarBase);
         newNode.setImplicitThis(implicitThis);
         newNode.setType(type());
-        if (entity instanceof DefinedVariable && ((DefinedVariable)entity).isGlobal())
+        if (entity instanceof DefinedVariable && entity.isGlobal())
+            newNode.setEntity(entity);
+        if (entity instanceof DefinedFunction && entity.isGlobal())
             newNode.setEntity(entity);
         return newNode;
     }

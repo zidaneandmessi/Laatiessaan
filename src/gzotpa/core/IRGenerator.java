@@ -36,10 +36,12 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
             }
         }
         for (DefinedFunction func : ast.definedFunctions()) {
+            func.setGlobal();
             func.setIR(compileFunctionBody(func));
         }
         for (ClassNode cls : ast.definedClasses()) {
             for (DefinedFunction func : cls.decls().defuns()) {
+                func.setGlobal();
                 func.setIR(compileFunctionBody(func));
             }
         }
@@ -589,6 +591,7 @@ public class IRGenerator implements ASTVisitor<Void, Expr> {
                 }
                 i++;
             }
+            System.err.println(node.name());
             throw new Error("Gzotpa! Cannot find matching parameter!");
         }
         if (node.memVarBase() != null) {
