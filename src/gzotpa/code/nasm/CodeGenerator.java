@@ -653,7 +653,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                         continue;
                     }
                 }
-                else if (var.cntRefered() > maxRefer && !var.usedForParam()) {
+                else if (var.cntRefered() > maxRefer && !var.usedForParam() && !(var.type() instanceof ClassType)) {
                     maxRefer = var.cntRefered();
                     maxReferVar = var;
                 }
@@ -670,7 +670,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             var.setMemref(new IndirectMemoryReference(rbp(), -size, false)); //offset value changeable
         }
         if (maxRefer > 10 && !freeRegs.isEmpty()) {
-                    System.err.println(maxReferVar.name());
             Register reg = getFreeRegister();
             if (reg != null) maxReferVar.setMemref(new RegisterMemoryReference(reg));
         }
