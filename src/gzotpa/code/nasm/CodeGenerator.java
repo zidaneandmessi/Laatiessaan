@@ -620,8 +620,10 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             if (currentFunc.name().equals("main")) {
                 if (var.isLoopCntVar()) {
                     Register reg = getFreeRegister();
-                    var.setMemref(new RegisterMemoryReference(reg));
-                    continue;
+                    if (reg != null) {
+                        var.setMemref(new RegisterMemoryReference(reg));
+                        continue;
+                    }
                 }
                 /*else if (var.cntRefered() > maxRefer) {
                     maxRefer = var.cntRefered();
