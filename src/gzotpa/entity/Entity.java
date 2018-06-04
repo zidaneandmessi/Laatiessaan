@@ -10,11 +10,13 @@ abstract public class Entity {
     protected MemoryReference memref;
     protected long cntRefered;
     protected Operand address;
+    protected boolean loopCntVar;
 
     public Entity(TypeNode type, String name) {
         this.name = name;
         this.typeNode = type;
         this.cntRefered = 0;
+        this.loopCntVar = false;
     }
 
     public String name() {
@@ -41,8 +43,20 @@ abstract public class Entity {
         cntRefered++;
     }
 
+    public long cntRefered() {
+        return cntRefered;
+    }
+
     public boolean isRefered() {
         return (cntRefered > 0);
+    }
+
+    public void setLoopCntVar() {
+        loopCntVar = true;
+    }
+
+    public boolean isLoopCntVar() {
+        return loopCntVar;
     }
 
     public Location location() {

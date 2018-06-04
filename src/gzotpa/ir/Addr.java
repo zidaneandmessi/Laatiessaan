@@ -6,6 +6,7 @@ public class Addr extends Expr {
     Entity entity;
 
     public Addr(Entity entity) {
+        entity.refered();
         this.entity = entity;
     }
 

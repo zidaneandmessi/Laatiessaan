@@ -6,6 +6,7 @@ public class Var extends Expr {
     protected Entity entity;
 
     public Var(Entity entity) {
+        entity.refered();
         this.entity = entity;
     }
 

@@ -543,6 +543,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
     private void fixLocalVariableOffsets(LocalScope scope, long len) {
         for (DefinedVariable var : scope.localVariables()) {
             if (var instanceof Parameter) continue;
+            if (!var.isRefered()) continue;
             var.memref().fixOffset(-len);
         }
     }
@@ -611,10 +612,25 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private long locateLocalVariables(LocalScope scope, long parentStackSize) {
         long size = parentStackSize;
+        long maxRefer = 0;
+        DefinedVariable maxReferVar = null;
         for (DefinedVariable var : scope.localVariables()) {
             if (var instanceof Parameter) continue;
+            if (!var.isRefered()) continue;
+            if (var.isLoopCntVar()) {
+                Register reg = getFreeRegister();
+                var.setMemref(new RegisterMemoryReference(reg));
+            }
+            else if (var.cntRefered() > maxRefer) {
+                maxRefer = var.cntRefered();
+                maxReferVar = var;
+            }
             size = alignStack(size + STACK_WORD_SIZE, STACK_WORD_SIZE);
             var.setMemref(new IndirectMemoryReference(rbp(), -size, false)); //offset value changeable
+        }
+        if (maxRefer > 10 && !freeRegs.isEmpty()) {
+            Register reg = getFreeRegister();
+            maxReferVar.setMemref(new RegisterMemoryReference(reg));
         }
         long maxSize = size;
         for (LocalScope s : scope.children()) {
@@ -647,7 +663,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             if (stringBin) {
                 Register reg1 = push(left, as);
                 Register reg2 = push(rcx(), as);
-                as.mov(rdi(), new ImmediateValue(500));
+                as.mov(rdi(), new ImmediateValue(256));
                 as.call("malloc");
                 pop(reg2, rcx(), as);
                 pop(reg1, rdx(), as);
@@ -984,7 +1000,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         else if (name.equals("getString")) {
             Register reg1 = push(r8(), as);
             Register reg2 = push(r9(), as);
-            as.mov(rdi(), new ImmediateValue(500));
+            as.mov(rdi(), new ImmediateValue(256));
             as.call("malloc");
             Register reg = push(rax(), as);
             as.mov(rsi(), rax());
