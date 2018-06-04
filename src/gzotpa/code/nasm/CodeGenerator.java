@@ -114,8 +114,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private void generateDataSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".data");
-        code.label(new Label("__int_buffer"));
-        code.dq(0);
         for (DefinedVariable var : vars) {
             if (!(var.type() instanceof ArrayType)
                 && !(var.type() instanceof ClassType)
@@ -197,8 +195,6 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
 
     private void generateBssSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".bss");
-        code.label(new Label("__string_buffer"));
-        code.resb(256);
         for (DefinedVariable var : vars) {
             if (var.type() instanceof ArrayType
                 || var.type() instanceof ClassType
@@ -1044,6 +1040,22 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.call("puts");
         }
         else if (name.equals("toString")) {
+            /*as.mov(rdi(), new ImmediateValue(20));
+            as.call("malloc");
+            Register reg = push(rax(), as);
+            as.mov(rdi(), rax());
+            Expr arg = node.args().get(0);
+            visit(arg);
+            as.mov(rdx(), rax());
+            as.mov(rsi(), new ImmediateValue(new Label("_int_format")));
+            as.xor(rax(), rax());
+            as.call("sprintf");
+            pop(reg, rax(), as);*/
+            if (!toStringAdded) {
+                code.setTextIndex();
+                code.addToStringFunction();
+                toStringAdded = true;
+            }
             Expr arg = node.args().get(0);
             visit(arg);
             as.mov(rdi(), rax());
@@ -1111,10 +1123,15 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             as.movzx(rax(), rax(8));
         }
         else if (name.equals("string.parseInt")) {
+            if (!parseIntAdded) {
+                code.setTextIndex();
+                code.addParseIntFunction();
+                parseIntAdded = true;
+            }
             Expr arg = node.args().get(0);
             visit(arg);
             as.mov(rdi(), rax());
-            as.call("__string.parseInt");
+            as.call("__parseInt");
         }
         else if (name.equals("_array.size")) {
             Expr arg = node.args().get(0);
