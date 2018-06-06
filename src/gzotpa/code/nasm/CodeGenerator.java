@@ -164,34 +164,70 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             }
         }
         else if (node instanceof Bin) {
+            long l = calcImmediate(((Bin)node).left());
+            long r = calcImmediate(((Bin)node).right());
             switch (((Bin)node).op()) {
             case ADD:
-                return calcImmediate(((Bin)node).left()) + calcImmediate(((Bin)node).right());
+                return l + r;
             case SUB:
-                return calcImmediate(((Bin)node).left()) - calcImmediate(((Bin)node).right());
+                return l - r;
             case MUL:
-                return calcImmediate(((Bin)node).left()) * calcImmediate(((Bin)node).right());
+                return l * r;
             case DIV:
-                return calcImmediate(((Bin)node).left()) / calcImmediate(((Bin)node).right());
+                return l / r;
             case MOD:
-                return calcImmediate(((Bin)node).left()) % calcImmediate(((Bin)node).right());
+                return l % r;
             case BIT_AND:
-                return calcImmediate(((Bin)node).left()) & calcImmediate(((Bin)node).right());
+                return l & r;
             case BIT_OR:
-                return calcImmediate(((Bin)node).left()) | calcImmediate(((Bin)node).right());
+                return l | r;
             case BIT_XOR:
-                return calcImmediate(((Bin)node).left()) ^ calcImmediate(((Bin)node).right());
+                return l ^ r;
             case BIT_LSHIFT:
-                return calcImmediate(((Bin)node).left()) << calcImmediate(((Bin)node).right());
+                return l << r;
             case ARITH_RSHIFT:
-                return calcImmediate(((Bin)node).left()) >> calcImmediate(((Bin)node).right());
+                return l >> r;
+            case EQ:
+                if (l == r) return 1;
+                else return 0;
+            case NEQ:
+                if (l != r) return 1;
+                else return 0;
+            case GT:
+                if (l > r) return 1;
+                else return 0;
+            case GTEQ:
+                if (l >= r) return 1;
+                else return 0;
+            case LT:
+                if (l < r) return 1;
+                else return 0;
+            case LTEQ:
+                if (l <= r) return 1;
+                else return 0;
             }
         }
         else if (node instanceof Var) {
             return calcImmediate(((DefinedVariable)(((Var)node).entity())).ir());
         }
-        throw new Error("Gzotpa! Unknown global integer initializer!");
+        throw new Error("Gzotpa! Cannot calculate constant integer!");
     }
+
+    String calcConstString(Expr node) {
+        if (node instanceof Str) {
+            return ((Str)node).originValue();
+        }
+        else if (node instanceof Bin) {
+            String l = calcConstString(((Bin)node).left());
+            String r = calcConstString(((Bin)node).right());
+            return l + r;
+        }
+        else if (node instanceof Var) {
+            return calcConstString(((DefinedVariable)(((Var)node).entity())).ir());
+        }
+        throw new Error("Gzotpa! Cannot calculate constant string!");
+    }
+
 
     private void generateBssSection(AssemblyCode code, List<DefinedVariable> vars) {
         code.section(".bss");
@@ -964,16 +1000,44 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                     stmt.accept(this);
             }
         }
+        else if (node.rhs().isIntConstant()) {
+            long val = calcImmediate(node.rhs());
+            if (node.lhs() instanceof Addr && ((Addr)node.lhs()).memref() != null) {
+                as.mov(rax(), new ImmediateValue(val));
+                as.mov(((Addr)node.lhs()).memref(), rax());
+            }
+            else {
+                visit(node.lhs());
+                as.mov(rcx(), rax());
+                as.mov(rax(), new ImmediateValue(val));
+                as.mov(mem(rcx()), rax());
+            }
+        }
+        else if (node.rhs().isStrConstant()) {
+            String str = calcConstString(node.rhs());
+            code.addData(new Label("_const_string_" + constStrCnt));
+            generateStringData(code, str);
+            if (node.lhs() instanceof Addr && ((Addr)node.lhs()).memref() != null) {
+                as.mov(rax(), new ImmediateValue(new Label("_const_string_" + (constStrCnt++))));
+                as.mov(((Addr)node.lhs()).memref(), rax());
+            }
+            else {
+                visit(node.lhs());
+                as.mov(rcx(), rax());
+                as.mov(rax(), new ImmediateValue(new Label("_const_string_" + (constStrCnt++))));
+                as.mov(mem(rcx()), rax());
+            }
+        }
         else if (node.lhs() instanceof Addr && ((Addr)node.lhs()).memref() != null) {
             visit(node.rhs());
             as.mov(((Addr)node.lhs()).memref(), rax());
         }
-        else if (node.rhs() instanceof Int) {
+        /*else if (node.rhs() instanceof Int) {
             visit(node.lhs());
             as.mov(rcx(), rax());
             as.mov(rax(), new ImmediateValue(((Int)(node.rhs())).value()));
             as.mov(mem(rcx()), rax());
-        }
+        }*/
         else {
             visit(node.rhs());
             Register reg = push(rax(), as);
@@ -1027,7 +1091,17 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         String name = node.function().name();
         if (name.equals("print")) {
             Expr arg = node.args().get(0);
-            visit(arg);
+            if (arg.isIntConstant()) {
+                long val = calcImmediate(arg);
+                as.mov(rax(), new ImmediateValue(val));
+            }
+            else if (arg.isStrConstant()) {
+                String str = calcConstString(arg);
+                code.addData(new Label("_const_string_" + constStrCnt));
+                generateStringData(code, str);
+                as.mov(rax(), new ImmediateValue(new Label("_const_string_" + (constStrCnt++))));
+            }
+            else visit(arg);
             as.mov(rsi(), rax());
             as.mov(rdi(), new ImmediateValue(new Label("_str_format")));
             as.xor(rax(), rax());
@@ -1035,7 +1109,17 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         }
         else if (name.equals("println")) {
             Expr arg = node.args().get(0);
-            visit(arg);
+            if (arg.isIntConstant()) {
+                long val = calcImmediate(arg);
+                as.mov(rax(), new ImmediateValue(val));
+            }
+            else if (arg.isStrConstant()) {
+                String str = calcConstString(arg);
+                code.addData(new Label("_const_string_" + constStrCnt));
+                generateStringData(code, str);
+                as.mov(rax(), new ImmediateValue(new Label("_const_string_" + (constStrCnt++))));
+            }
+            else visit(arg);
             as.mov(rdi(), rax());
             as.call("puts");
         }
@@ -1057,7 +1141,11 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
                 toStringAdded = true;
             }
             Expr arg = node.args().get(0);
-            visit(arg);
+            if (arg.isIntConstant()) {
+                long val = calcImmediate(arg);
+                as.mov(rax(), new ImmediateValue(val));
+            }
+            else visit(arg);
             as.mov(rdi(), rax());
             as.call("__toString");
         }
@@ -1163,7 +1251,17 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
             LinkedList<RegisterClass> savedRegisters = new LinkedList<RegisterClass>();
             Collections.reverse(argList);
             for (Expr arg : argList) {
-                visit(arg);
+                if (arg.isIntConstant()) {
+                    long val = calcImmediate(arg);
+                    as.mov(rax(), new ImmediateValue(val));
+                }
+                else if (arg.isStrConstant()) {
+                    String str = calcConstString(arg);
+                    code.addData(new Label("_const_string_" + constStrCnt));
+                    generateStringData(code, str);
+                    as.mov(rax(), new ImmediateValue(new Label("_const_string_" + (constStrCnt++))));
+                }
+                else visit(arg);
                 as.push(rax());
             }
             as.call("_" + name);
@@ -1246,8 +1344,7 @@ public class CodeGenerator implements IRVisitor<Void,Void> {
         code.addData(new Label("_const_string_" + constStrCnt));
         String s = node.originValue();
         generateStringData(code, s);
-        as.mov(rax(), new ImmediateValue(new Label("_const_string_" + constStrCnt)));
-        constStrCnt++;
+        as.mov(rax(), new ImmediateValue(new Label("_const_string_" + (constStrCnt++))));
         return null;
     }
 

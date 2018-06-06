@@ -18,6 +18,14 @@ public class Mem extends Expr {
     public Entity entity() {
         throw new Error("Gzotpa! IR node has no entity!");
     }
+
+    public boolean isIntConstant() {
+        return false;
+    }
+
+    public boolean isStrConstant() {
+        return false;
+    }
     
     public <S,E> E accept(IRVisitor<S,E> visitor) {
         return visitor.visit(this);

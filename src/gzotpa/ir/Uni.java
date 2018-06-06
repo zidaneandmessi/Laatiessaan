@@ -22,6 +22,14 @@ public class Uni extends Expr {
         throw new Error("Gzotpa! IR node has no entity!");
     }
 
+    public boolean isIntConstant() {
+        return expr.isIntConstant();
+    }
+
+    public boolean isStrConstant() {
+        return false;
+    }
+
     public <S,E> E accept(IRVisitor<S,E> visitor) {
         return visitor.visit(this);
     }

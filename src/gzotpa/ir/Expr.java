@@ -16,6 +16,9 @@ abstract public class Expr implements Dumpable {
 
     abstract public Entity entity();
 
+    abstract public boolean isIntConstant();
+    abstract public boolean isStrConstant();
+
     abstract public <S,E> E accept(IRVisitor<S,E> visitor);
     
     public void dump(Dumper d) {

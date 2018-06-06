@@ -23,6 +23,14 @@ public class Str extends Expr {
         throw new Error("Gzotpa! IR node has no entity!");
     }
 
+    public boolean isIntConstant() {
+        return false;
+    }
+
+    public boolean isStrConstant() {
+        return true;
+    }
+
     public <S,E> E accept(IRVisitor<S,E> visitor) {
         return visitor.visit(this);
     }

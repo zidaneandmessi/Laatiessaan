@@ -36,6 +36,14 @@ public class Instruction extends Assembly {
             ((LabelLiteral)((ImmediateValue)operands[0]).val()).value().equals(".text");
     }
 
+    public boolean isBSS() {
+        return name.equals("section") &&
+            operands[0] instanceof ImmediateValue &&
+            ((ImmediateValue)operands[0]).val() instanceof LabelLiteral &&
+            ((LabelLiteral)((ImmediateValue)operands[0]).val()).value().equals(".bss");
+    }
+
+
     public int numOperands() {
         return this.operands.length;
     }

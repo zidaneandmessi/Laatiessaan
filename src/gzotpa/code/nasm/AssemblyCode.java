@@ -23,7 +23,12 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
 
     void setDataIndex() {
         dataIndex = 0;
-        for (Assembly as : assemblies) dataIndex++;
+        for (Assembly as : assemblies) {
+            if (as instanceof Instruction && ((Instruction)as).isBSS()) {
+                break;
+            }
+            dataIndex++;
+        }
     }
 
     void setTextIndex() {
@@ -38,6 +43,7 @@ public class AssemblyCode extends gzotpa.asm.AssemblyCode {
     }
 
     void addData(Assembly as) {
+        setDataIndex();
         assemblies.add((dataIndex++), as);
     }
 

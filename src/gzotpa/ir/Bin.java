@@ -56,6 +56,15 @@ public class Bin extends Expr {
         return stringBin;
     }
 
+    public boolean isIntConstant() {
+        return left.isIntConstant() && right.isIntConstant();
+    }
+
+    public boolean isStrConstant() {
+        if (op != Op.ADD) return false;
+        return left.isStrConstant() && right.isStrConstant();
+    }
+
     public <S,E> E accept(IRVisitor<S,E> visitor) {
         return visitor.visit(this);
     }

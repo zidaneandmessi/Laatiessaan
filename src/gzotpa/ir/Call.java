@@ -28,6 +28,14 @@ public class Call extends Expr {
         return args;
     }
 
+    public boolean isIntConstant() {
+        return false;
+    }
+
+    public boolean isStrConstant() {
+        return false;
+    }   
+
     public Function function() {
         if (expr instanceof Var) {
             return (Function)(((Var)expr).entity());
